@@ -99,12 +99,11 @@ export async function finalReportGeneration(
                     reportPreview: reportOutput.reportPreview,
                     messages: [
                         createMessageFromMessageType(
-                            "ai",
-                            `${reportOutput.reportPreview}`
-                        ),
-                        createMessageFromMessageType(
-                            "ai", 
-                            "--- \nDo you have any questions about your career path report? How can I assist you?"
+                            "tool",
+                            JSON.stringify({
+                                name: "finalReport", 
+                                arguments: { finalReport: reportOutput.reportPreview }
+                            })
                         ),
                     ],
                     notes: []

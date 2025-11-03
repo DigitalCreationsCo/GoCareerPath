@@ -159,6 +159,37 @@ const PurePreviewMessage = ({
               }
             }
 
+            // if (type === "dynamic-tool" && part.text) {
+            //   // We expect the part.text to be a JSON-stringified object with a "name" and "arguments"
+            //   try {
+            //     const payload = JSON.parse(part.text);
+            //     if (
+            //       payload &&
+            //       payload.name === "finalReport" &&
+            //       payload.arguments &&
+            //       payload.arguments.finalReport
+            //     ) {
+            //       // Render the report argument as markdown (with mermaid support) in MessageContent
+            //       return (
+            //         <MessageContent
+            //           className="bg-transparent px-0 py-0 text-left text-zinc-500"
+            //           data-testid="message-final-report-content"
+            //         >
+            //           {/* You may want to further sanitize/validate payload.arguments.finalReport */}
+            //           <Response>{payload.arguments.finalReport}</Response>
+            //         </MessageContent>
+            //       );
+            //     }
+            //   } catch (err) {
+            //     // Optional: handle malformed JSON or missing structure gracefully
+            //     return (
+            //       <div className="p-2 rounded border bg-red-50 text-red-500 text-sm">
+            //         Error displaying final report: {String(err)}
+            //       </div>
+            //     );
+            //   }
+            // }
+
             // if (type === "tool-getWeather") {
             //   const { toolCallId, state } = part;
 

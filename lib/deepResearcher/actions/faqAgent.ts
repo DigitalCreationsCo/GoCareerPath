@@ -15,7 +15,12 @@ export async function faqAgent(
   // If the last message is not from the user, do nothing (await user input)
   if (messages.length === 0 || messages[messages.length - 1]?.type !== "human") {
     // Awaiting a new user question
-    return new Command({ goto: 'faqAgent' });
+    return new Command({  });
+    
+  //   createMessageFromMessageType(
+  //     "ai", 
+  //     "--- \nDo you have any questions about your career path report? How can I assist you?"
+  // ),
   }
 
   // Get the last user ("human") message as the FAQ question
