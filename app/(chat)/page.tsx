@@ -10,6 +10,7 @@ import { Header } from '@/components/ui/header/header';
 
 export default async function LandingPage() {
   const session = await auth();
+
   return (
     <>
       <Header session={session} />
@@ -40,17 +41,13 @@ export default async function LandingPage() {
               </p>
             </div>
             <div className="flex flex-col items-center space-y-4">
-              <div className="space-y-2">
-                <p className="text-muted-foreground line-through whitespace-pre"> Regular: $99 </p>
-                <p className="heading text-success font-[Outfit]">Launch Special $29 <span className="subtext text-muted-foreground">(Limited Time)</span></p>
-              </div>
               <Link href="/sign-up" legacyBehavior>
                 <Button
                   variant="cta"
                   size="xl"
                   className="text-background items-center w-full max-w-xs"
                 >
-                  Get My Career Path Report – $29
+                  Get My Career Path Report
                 </Button>
               </Link>
             </div>
@@ -116,14 +113,14 @@ export default async function LandingPage() {
               <div className="mt-8">
                 <Link href="/sign-up" legacyBehavior>
                   <Button
-                    variant="cta"
-                    size="xl"
-                    className="text-background w-full max-w-sm mx-auto"
-                  >
-                    Start My Personalized Career Report
-                  </Button>
-                </Link>
-              </div>
+                  variant="cta"
+                  size="xl"
+                  className="mx-auto max-w-md text-background whitespace-normal break-words"
+                >
+                  Unlock All 4 Career Paths – Get My Complete Report
+                </Button>
+              </Link>
+            </div>
             </div>
           </div>
         </section>
@@ -328,7 +325,7 @@ export default async function LandingPage() {
                   size="xl"
                   className="mx-auto max-w-md text-background whitespace-normal break-words"
                 >
-                  Unlock All 4 Career Paths – Get My Complete Report for $29
+                  Unlock All 4 Career Paths – Get My Complete Report
                 </Button>
               </Link>
             </div>
@@ -387,10 +384,6 @@ export default async function LandingPage() {
               </p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="space-y-2">
-                <p className="text-muted-foreground line-through whitespace-pre"> Regular: $99 </p>
-                <p className="heading text-success font-[Outfit]">Launch Special $29 <span className="subtext text-muted-foreground">(Limited Time)</span></p>
-              </div>
               <Link href="/sign-up" legacyBehavior>
                 <Button
                   variant="cta"
@@ -400,9 +393,6 @@ export default async function LandingPage() {
                   Get My Career Path Report
                 </Button>
               </Link>
-              <div className="text-xs text-red-400 mt-2">
-                Instant digital access. All sales are final.
-              </div>
             </div>
           </div>
         </section>
