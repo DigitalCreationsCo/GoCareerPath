@@ -98,7 +98,7 @@ export async function POST(req: Request) {
             ],
           };
 
-          const graphStream = await graph.stream(input, streamConfig as any);
+          const graphStream = await graph.stream(input, {...streamConfig} as any);
 
           for await (const streamUpdate of graphStream) {
             const [_, updateType, update] = streamUpdate as any;
