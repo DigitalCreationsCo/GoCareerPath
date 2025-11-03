@@ -157,14 +157,14 @@ export function Chat({
                   console.log('[Chat/fetchResearchStream] Received final report:', chunk.finalReport);
                   setFinalReport(chunk.finalReport);
                 }
-                setStatus("ready");
                 console.log('[Chat/fetchResearchStream] Status set to ready');
               }
-
+              
             } catch (parseError) {
               console.error('[Chat/fetchResearchStream] Failed to parse chunk:', line, parseError);
             }
           }
+          setStatus("ready");
         }
 
         setIsResuming(false);
