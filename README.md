@@ -161,19 +161,6 @@ Agents should output JSON matching your configured schema.
 
 ## License
 
-MIT (or choose your preferred license)
+MIT
 
 ---
-
-## Tags
-
-AI career-pivot LLM research-agent LangGraph Next.js React Node.js Tavily MCP Vercel RAG career-advice automation-resistant
-
----
-
-## ABOUT (short, for portfolio / GitHub)
-
-GoCareerPath is an AI research agent that identifies four high-value, automation-resistant career pivots tailored to a user's background and provides step-by-step learning and job-transition resources. Built with Next.js, LangGraph integrations, and multi-provider LLM support, it combines web search (Tavily/MCP) and structured LLM reasoning to produce concise, actionable final reports suitable for professionals who want a practical, non-disruptive pivot path.
-
-Best regards,
-Bryant Mejia
