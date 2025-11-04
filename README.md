@@ -1,192 +1,179 @@
-# AI SDK Python Streaming Preview
+# GoCareerPath
 
-This template demonstrates the usage of [Data Stream Protocol](https://sdk.vercel.ai/docs/ai-sdk-ui/stream-protocol#data-stream-protocol) to stream chat completions from a Python endpoint ([FastAPI](https://fastapi.tiangolo.com)) and display them using the [useChat](https://sdk.vercel.ai/docs/ai-sdk-ui/chatbot#chatbot) hook in your Next.js application.
+AI research agent that finds 4 well-paying, automation-complementary roles you can pivot to without resetting your career, and gives step-by-step resources to get there.
 
-## Deploy your own
+---
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-python-streaming&env=OPENAI_API_KEY&envDescription=API%20keys%20needed%20for%20application&envLink=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-python-streaming%2Fblob%2Fmain%2F.env.example)
+## Overview
 
-## How to use
+GoCareerPath is a research-first AI agent that scans web search and knowledge sources, compresses findings, and outputs a focused final report listing four practical career pivots tailored to the user's background. It prioritizes roles that are complementary to automation and provides step-by-step learning and job-transition resources.
 
-Run [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+Core capabilities:
+
+* Multi-provider LLM support via `init_chat_model()` (configurable in LangGraph Studio).
+* Structured research pipeline: summarization → research → compression → final report.
+* Pluggable search API support (default: Tavily) and full MCP compatibility.
+* Deployable as a web app (Vercel) with LangGraph Studio UI for control.
+
+---
+
+## Tech stack
+
+* Node.js, Next.js, React
+* LangChain-style orchestration (LangGraph)
+* LLM providers: OpenAI (gpt-4.1, gpt-4.1-mini), Anthropic/Gemini, other providers via `init_chat_model()`
+* Search: Tavily (default), native web search integrations for Anthropic/OpenAI, MCP servers
+* Hosting: Vercel (web app)
+
+---
+
+## How it works (high level)
+
+1. **User input** — background, skills, role preferences.
+2. **Search / Research** — research agent queries configured search tools (Tavily, web search, MCP).
+3. **Summarization** — summarizer model digests search results (default: `openai:gpt-4.1-mini`).
+4. **Research pass** — primary compound research using designated research model (default: `openai:gpt-4.1`).
+5. **Compression** — compress findings for concise evidence (default: `openai:gpt-4.1`).
+6. **Final report** — structured output: 4 role suggestions + rationale + step-by-step resources (default: `openai:gpt-4.1`).
+
+> Note: models must support structured outputs and tool-calling.
+
+---
+
+## Default model roles
+
+* **Summarization:** `openai:gpt-4.1-mini` — condense search results
+* **Research:** `openai:gpt-4.1` — power the search agent and deeper reasoning
+* **Compression:** `openai:gpt-4.1` — compress intermediate findings
+* **Final Report:** `openai:gpt-4.1` — generate the actionable final report
+
+You can override these with any provider supported by `init_chat_model()` in LangGraph Studio.
+
+---
+
+## Search API & Tooling
+
+* Default: **Tavily** search API
+* Native web search adapters for Anthropic and OpenAI
+* Full **MCP** compatibility for custom servers and enterprise data sources
+* Add new search tools by implementing the search adapter interface used by the research agent
+
+---
+
+## Quickstart (developer)
 
 ```bash
-npx create-next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
-```
+# clone
+git clone <repo-url>
+cd go-career-path
 
-```bash
-yarn create next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
-```
+# install
+pnpm install   # or npm/yarn
 
-```bash
-pnpm create next-app --example https://github.com/vercel-labs/ai-sdk-preview-python-streaming ai-sdk-preview-python-streaming-example
-```
-
-To run the example locally you need to:
-
-1. Sign up for accounts with the AI providers you want to use (e.g., OpenAI, Anthropic).
-2. Obtain API keys for each provider.
-3. Set the required environment variables as shown in the `.env.example` file, but in a new file called `.env`.
-4. `pnpm install` to install the required Node dependencies.
-5. `virtualenv venv` to create a virtual environment.
-6. `source venv/bin/activate` to activate the virtual environment.
-7. `pip install -r requirements.txt` to install the required Python dependencies.
-8. `pnpm dev` to launch the development server.
-
-## Learn More
-
-To learn more about the AI SDK or Next.js by Vercel, take a look at the following resources:
-
-- [AI SDK Documentation](https://sdk.vercel.ai/docs)
-- [Next.js Documentation](https://nextjs.org/docs)
-
-
-# 🔬 Open Deep Research
-
-<img width="1388" height="298" alt="full_diagram" src="https://github.com/user-attachments/assets/12a2371b-8be2-4219-9b48-90503eb43c69" />
-
-Deep research has broken out as one of the most popular agent applications. This is a simple, configurable, fully open source deep research agent that works across many model providers, search tools, and MCP servers. It's performance is on par with many popular deep research agents ([see Deep Research Bench leaderboard](https://huggingface.co/spaces/Ayanami0730/DeepResearch-Leaderboard)).
-
-<img width="817" height="666" alt="Screenshot 2025-07-13 at 11 21 12 PM" src="https://github.com/user-attachments/assets/052f2ed3-c664-4a4f-8ec2-074349dcaa3f" />
-
-### 🔥 Recent Updates
-
-**August 14, 2025**: See our free course [here](https://academy.langchain.com/courses/deep-research-with-langgraph) (and course repo [here](https://github.com/langchain-ai/deep_research_from_scratch)) on building open deep research.
-
-**August 7, 2025**: Added GPT-5 and updated the Deep Research Bench evaluation w/ GPT-5 results.
-
-**August 2, 2025**: Achieved #6 ranking on the [Deep Research Bench Leaderboard](https://huggingface.co/spaces/Ayanami0730/DeepResearch-Leaderboard) with an overall score of 0.4344. 
-
-**July 30, 2025**: Read about the evolution from our original implementations to the current version in our [blog post](https://rlancemartin.github.io/2025/07/30/bitter_lesson/).
-
-**July 16, 2025**: Read more in our [blog](https://blog.langchain.com/open-deep-research/) and watch our [video](https://www.youtube.com/watch?v=agGiWUpxkhg) for a quick overview.
-
-### 🚀 Quickstart
-
-1. Clone the repository and activate a virtual environment:
-```bash
-git clone https://github.com/langchain-ai/open_deep_research.git
-cd open_deep_research
-uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
-
-2. Install dependencies:
-```bash
-uv sync
-# or
-uv pip install -r pyproject.toml
-```
-
-3. Set up your `.env` file to customize the environment variables (for model selection, search tools, and other configuration settings):
-```bash
+# env
 cp .env.example .env
+# set LLM_PROVIDER, LLM_API_KEY, TAVILY_API_KEY, MCP_ENDPOINT, NEXT_PUBLIC_VERCEL_URL, etc.
+
+# dev
+pnpm dev        # Next.js dev server
+
+# build + start
+pnpm build
+pnpm start
 ```
 
-4. Launch agent with the LangGraph server locally:
+---
 
-```bash
-# Install dependencies and start the LangGraph server
-uvx --refresh --from "langgraph-cli[inmem]" --with-editable . --python 3.11 langgraph dev --allow-blocking
+## Configuration (important keys)
+
+* `LLM_PROVIDER` — provider id used by `init_chat_model()`
+* `LLM_API_KEY` — API key for chosen provider
+* `TAVILY_API_KEY` — Tavily search API key (if using default search)
+* `MCP_ENDPOINT` — optional MCP server endpoint for enterprise search
+* `NEXT_PUBLIC_SITE_URL` — Vercel/site URL for callbacks
+* `RESEARCH_AGENT_CONFIG` — agent-specific timeouts, tool settings, and output schema
+
+Ensure chosen models support:
+
+* Structured output (JSON schema output)
+* Tool calling (if using tool-enabled reasoning)
+
+---
+
+## Usage (end-user)
+
+* Via LangGraph Studio UI: configure model, run the research workflow, view the final report.
+* Via web app: Input background → run agent → download or view final report with role suggestions and stepwise resources.
+
+---
+
+## Output schema (example)
+
+```json
+{
+  "report_version": "1.0",
+  "candidate_roles": [
+    {
+      "title": "Role A",
+      "monthly_pay_estimate": "range",
+      "why_it_fits": "rationale",
+      "skills_to_build": ["skill1","skill2"],
+      "learning_path": ["link1","link2"],
+      "first_step": "actionable step"
+    }
+  ],
+  "confidence_scores": { "Role A": 0.87 },
+  "sources": ["url1","url2"],
+  "timestamp": "2025-11-03T00:00:00Z"
+}
 ```
 
-This will open the LangGraph Studio UI in your browser.
+Agents should output JSON matching your configured schema.
 
-```
-- 🚀 API: http://127.0.0.1:2024
-- 🎨 Studio UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
-- 📚 API Docs: http://127.0.0.1:2024/docs
-```
+---
 
-Ask a question in the `messages` input field and click `Submit`. Select different configuration in the "Manage Assistants" tab.
+## Best practices & tips
 
-### ⚙️ Configurations
+* Use stronger research models (e.g. `gpt-4.1`) for browsing and tool-enabled passes.
+* Constrain token budgets for summarization/compression to keep costs predictable.
+* Provide the agent with explicit role constraints (seniority, remote/on-site, industry) for targeted outputs.
+* Validate final resource links programmatically or via an automated checker before presenting as canonical guidance.
 
-#### LLM :brain:
+---
 
-Open Deep Research supports a wide range of LLM providers via the [init_chat_model() API](https://python.langchain.com/docs/how_to/chat_models_universal_init/). It uses LLMs for a few different tasks. See the below model fields in the [configuration.py](https://github.com/langchain-ai/open_deep_research/blob/main/src/open_deep_research/configuration.py) file for more details. This can be accessed via the LangGraph Studio UI. 
+## Roadmap
 
-- **Summarization** (default: `openai:gpt-4.1-mini`): Summarizes search API results
-- **Research** (default: `openai:gpt-4.1`): Power the search agent
-- **Compression** (default: `openai:gpt-4.1`): Compresses research findings
-- **Final Report Model** (default: `openai:gpt-4.1`): Write the final report
+* Fine-tune recommended learning tracks by industry and seniority.
+* Add resume/CV tailoring generator tied to selected pivot role.
+* Integrate verified course catalog & micro-credential connectors (Coursera, edX, LinkedIn Learning).
+* Expand MCP adapters for enterprise/private knowledge graphs.
 
-> Note: the selected model will need to support [structured outputs](https://python.langchain.com/docs/integrations/chat/) and [tool calling](https://python.langchain.com/docs/how_to/tool_calling/).
+---
 
-> Note: For OpenRouter: Follow [this guide](https://github.com/langchain-ai/open_deep_research/issues/75#issuecomment-2811472408) and for local models via Ollama  see [setup instructions](https://github.com/langchain-ai/open_deep_research/issues/65#issuecomment-2743586318).
+## Contributing
 
-#### Search API :mag:
+* Fork, branch, and open PRs for feature work.
+* Implement new search adapters under `/packages/search-adapters`.
+* Add model provider connectors via `init_chat_model()` extensions.
+* Follow project linting, testing, and PR guidelines in CONTRIBUTING.md.
 
-Open Deep Research supports a wide range of search tools. By default it uses the [Tavily](https://www.tavily.com/) search API. Has full MCP compatibility and work native web search for Anthropic and OpenAI. See the `search_api` and `mcp_config` fields in the [configuration.py](https://github.com/langchain-ai/open_deep_research/blob/main/src/open_deep_research/configuration.py) file for more details. This can be accessed via the LangGraph Studio UI. 
+---
 
-#### Other 
+## License
 
-See the fields in the [configuration.py](https://github.com/langchain-ai/open_deep_research/blob/main/src/open_deep_research/configuration.py) for various other settings to customize the behavior of Open Deep Research. 
+MIT (or choose your preferred license)
 
-### 📊 Evaluation
+---
 
-Open Deep Research is configured for evaluation with [Deep Research Bench](https://huggingface.co/spaces/Ayanami0730/DeepResearch-Leaderboard). This benchmark has 100 PhD-level research tasks (50 English, 50 Chinese), crafted by domain experts across 22 fields (e.g., Science & Tech, Business & Finance) to mirror real-world deep-research needs. It has 2 evaluation metrics, but the leaderboard is based on the RACE score. This uses LLM-as-a-judge (Gemini) to evaluate research reports against a golden set of reports compiled by experts across a set of metrics.
+## Tags
 
-#### Usage
+AI career-pivot LLM research-agent LangGraph Next.js React Node.js Tavily MCP Vercel RAG career-advice automation-resistant
 
-> Warning: Running across the 100 examples can cost ~$20-$100 depending on the model selection.
+---
 
-The dataset is available on [LangSmith via this link](https://smith.langchain.com/public/c5e7a6ad-fdba-478c-88e6-3a388459ce8b/d). To kick off evaluation, run the following command:
+## ABOUT (short, for portfolio / GitHub)
 
-```bash
-# Run comprehensive evaluation on LangSmith datasets
-python tests/run_evaluate.py
-```
+GoCareerPath is an AI research agent that identifies four high-value, automation-resistant career pivots tailored to a user's background and provides step-by-step learning and job-transition resources. Built with Next.js, LangGraph integrations, and multi-provider LLM support, it combines web search (Tavily/MCP) and structured LLM reasoning to produce concise, actionable final reports suitable for professionals who want a practical, non-disruptive pivot path.
 
-This will provide a link to a LangSmith experiment, which will have a name `YOUR_EXPERIMENT_NAME`. Once this is done, extract the results to a JSONL file that can be submitted to the Deep Research Bench.
-
-```bash
-python tests/extract_langsmith_data.py --project-name "YOUR_EXPERIMENT_NAME" --model-name "you-model-name" --dataset-name "deep_research_bench"
-```
-
-This creates `tests/expt_results/deep_research_bench_model-name.jsonl` with the required format. Move the generated JSONL file to a local clone of the Deep Research Bench repository and follow their [Quick Start guide](https://github.com/Ayanami0730/deep_research_bench?tab=readme-ov-file#quick-start) for evaluation submission.
-
-#### Results 
-
-| Name | Commit | Summarization | Research | Compression | Total Cost | Total Tokens | RACE Score | Experiment |
-|------|--------|---------------|----------|-------------|------------|--------------|------------|------------|
-| GPT-5 | [ca3951d](https://github.com/langchain-ai/open_deep_research/pull/168/commits) | openai:gpt-4.1-mini | openai:gpt-5 | openai:gpt-4.1 |  | 204,640,896 | 0.4943 | [Link](https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6e4766ca-613c-4bda-8bde-f64f0422bbf3/compare?selectedSessions=4d5941c8-69ce-4f3d-8b3e-e3c99dfbd4cc&baseline=undefined) |
-| Defaults | [6532a41](https://github.com/langchain-ai/open_deep_research/commit/6532a4176a93cc9bb2102b3d825dcefa560c85d9) | openai:gpt-4.1-mini | openai:gpt-4.1 | openai:gpt-4.1 | $45.98 | 58,015,332 | 0.4309 | [Link](https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6e4766ca-6[…]ons=cf4355d7-6347-47e2-a774-484f290e79bc&baseline=undefined) |
-| Claude Sonnet 4 | [f877ea9](https://github.com/langchain-ai/open_deep_research/pull/163/commits/f877ea93641680879c420ea991e998b47aab9bcc) | openai:gpt-4.1-mini | anthropic:claude-sonnet-4-20250514 | openai:gpt-4.1 | $187.09 | 138,917,050 | 0.4401 | [Link](https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6e4766ca-6[…]ons=04f6002d-6080-4759-bcf5-9a52e57449ea&baseline=undefined) |
-| Deep Research Bench Submission | [c0a160b](https://github.com/langchain-ai/open_deep_research/commit/c0a160b57a9b5ecd4b8217c3811a14d8eff97f72) | openai:gpt-4.1-nano | openai:gpt-4.1 | openai:gpt-4.1 | $87.83 | 207,005,549 | 0.4344 | [Link](https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6e4766ca-6[…]ons=e6647f74-ad2f-4cb9-887e-acb38b5f73c0&baseline=undefined) |
-
-### 🚀 Deployments and Usage
-
-#### LangGraph Studio
-
-Follow the [quickstart](#-quickstart) to start LangGraph server locally and test the agent out on LangGraph Studio.
-
-#### Hosted deployment
- 
-You can easily deploy to [LangGraph Platform](https://langchain-ai.github.io/langgraph/concepts/#deployment-options). 
-
-#### Open Agent Platform
-
-Open Agent Platform (OAP) is a UI from which non-technical users can build and configure their own agents. OAP is great for allowing users to configure the Deep Researcher with different MCP tools and search APIs that are best suited to their needs and the problems that they want to solve.
-
-We've deployed Open Deep Research to our public demo instance of OAP. All you need to do is add your API Keys, and you can test out the Deep Researcher for yourself! Try it out [here](https://oap.langchain.com)
-
-You can also deploy your own instance of OAP, and make your own custom agents (like Deep Researcher) available on it to your users.
-1. [Deploy Open Agent Platform](https://docs.oap.langchain.com/quickstart)
-2. [Add Deep Researcher to OAP](https://docs.oap.langchain.com/setup/agents)
-
-### Legacy Implementations 🏛️
-
-The `src/legacy/` folder contains two earlier implementations that provide alternative approaches to automated research. They are less performant than the current implementation, but provide alternative ideas understanding the different approaches to deep research.
-
-#### 1. Workflow Implementation (`legacy/graph.py`)
-- **Plan-and-Execute**: Structured workflow with human-in-the-loop planning
-- **Sequential Processing**: Creates sections one by one with reflection
-- **Interactive Control**: Allows feedback and approval of report plans
-- **Quality Focused**: Emphasizes accuracy through iterative refinement
-
-#### 2. Multi-Agent Implementation (`legacy/multi_agent.py`)  
-- **Supervisor-Researcher Architecture**: Coordinated multi-agent system
-- **Parallel Processing**: Multiple researchers work simultaneously
-- **Speed Optimized**: Faster report generation through concurrency
-- **MCP Support**: Extensive Model Context Protocol integration
+Best regards,
+Bryant Mejia
