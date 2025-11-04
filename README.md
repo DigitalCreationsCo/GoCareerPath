@@ -68,18 +68,18 @@ git clone <repo-url>
 cd go-career-path
 
 # install
-pnpm install   # or npm/yarn
+npm install
 
 # env
 cp .env.example .env
 # set LLM_PROVIDER, LLM_API_KEY, TAVILY_API_KEY, MCP_ENDPOINT, NEXT_PUBLIC_VERCEL_URL, etc.
 
 # dev
-pnpm dev        # Next.js dev server
+npm run dev        # Next.js dev server
 
 # build + start
-pnpm build
-pnpm start
+npm run build
+npm run start
 ```
 
 ---
