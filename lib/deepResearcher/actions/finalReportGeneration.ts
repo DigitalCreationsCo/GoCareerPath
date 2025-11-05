@@ -1,6 +1,5 @@
-
 // ============================================
-// finalReportGeneration.ts - FIXED
+// finalReportGeneration.ts
 // ============================================
 import {
     getTodayStr,
@@ -13,7 +12,6 @@ import {
     configurableModel,
     Configuration,
   } from '../configuration'
-  // Remove direct imports of HumanMessage, AIMessage
   import { getBufferString } from '../../messageUtils';
   import { RunnableConfig } from '@langchain/core/runnables'
   import { 
@@ -23,7 +21,6 @@ import {
   import { 
     finalReportGenerationPrompt,
   } from '../prompts';
-import { generateUUID } from '@/lib/utils';
 import { Command, END } from '@langchain/langgraph';
   
 export async function finalReportGeneration(
