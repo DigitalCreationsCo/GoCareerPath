@@ -2,6 +2,10 @@
 const nextConfig = {
   experimental: {
     clientSegmentCache: true,
+    serverExternalPackages: [
+      'md-pdf-md',
+      'shiki',
+    ],
   },
 };
 
