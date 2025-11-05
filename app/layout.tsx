@@ -5,7 +5,6 @@ import { getUser, getTeamForUser } from '@/lib/db/queries/user';
 import { SWRConfig } from 'swr';
 import { Toaster } from "@/components/ui/sonner"
 import { GoogleTagManager } from '@/components/googletagmanager';
-import Head from 'next/head';
 import { cn, dateJobsDisplaced, numJobsDisplaced } from '@/lib/utils';
 import { Header } from '@/components/ui/header/header';
 import { auth } from '@/auth';
@@ -71,14 +70,12 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en" className="">
-      <Head>
-        <GoogleTagManager />
-      </Head>
       <body className={cn([
          manrope.className,
         `bg-background text-foreground`, 
         "antialiased min-h-[100dvh] relative"
       ])}>
+        <GoogleTagManager />
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N5RPQTFM"
         height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript>
 

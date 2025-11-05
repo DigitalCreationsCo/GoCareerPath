@@ -83,11 +83,10 @@ export function DownloadReportButton({ markdownContent }: DownloadReportButtonPr
           }}
         >
           <div
+            className="bg-gradient-to-r from-primary-glow via-primary to-accent"
             style={{
               height: '100%',
               width: `${progress}%`,
-              background:
-                'linear-gradient(90deg, #6e96ff 0%, #1ca7ec 100%)',
               transition: 'width 0.1s linear',
             }}
           ></div>
