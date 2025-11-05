@@ -20,11 +20,13 @@ export function Chat({
   initialMessages,
   autoResume,
   initialLastContext,
+  initialReport,
 }: {
   chatId: string;
   initialMessages: ChatMessage[];
   autoResume: boolean;
   initialLastContext?: AppUsage;
+  initialReport: string;
 }) {
   console.debug('[Chat] Chat component mounted', { chatId, initialMessages, autoResume, initialLastContext });
   
@@ -47,7 +49,7 @@ export function Chat({
   console.debug('[Chat] greetingAnimationDuration:', greetingAnimationDuration);
 
   const [hasSentInitialMessage, setHasSentInitialMessage] = useState(false);
-  const [finalReport, setFinalReport] = useState<string | null>(null);
+  const [finalReport, setFinalReport] = useState<string>(initialReport);
   const isReportFree = process.env.NEXT_PUBLIC_IS_REPORT_PURCHASABLE === "false";
 
   useEffect(() => {

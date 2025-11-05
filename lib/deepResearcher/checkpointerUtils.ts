@@ -116,11 +116,11 @@ export type CheckpointChannelValues = {
  * @param channelValues channel_values from checkpoint
  * @returns Array<UIMessage>
  */
-export function convertGraphMessagesToUIMessages(channelValues: CheckpointChannelValues): UIMessage[] {
+export function convertGraphMessagesToUIMessages(channelValues: CheckpointChannelValues){
   if (!channelValues?.messages || !Array.isArray(channelValues.messages)) {
     return [];
   }
-  return channelValues.messages.map((raw) => {
+  const messages = channelValues.messages.map((raw) => {
     // Determine role
     let role: 'user' | 'assistant' | 'system' = "user";
     if (raw.id && Array.isArray(raw.id)) {
@@ -177,6 +177,10 @@ export function convertGraphMessagesToUIMessages(channelValues: CheckpointChanne
       metadata
     } as UIMessage;
   });
+
+  const finalReport = channelValues?.finalReport || "";
+
+  return [messages, finalReport];
 }
 
 /**

@@ -333,9 +333,8 @@ export default async function LandingPage() {
         </section>
 
         {/* Social Proof (Testimonials) */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-card snap-start md:snap-none">
         {/* <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-gradient-card to-indigo-50 snap-start md:snap-none"> */}
-          
+        {/* <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-card snap-start md:snap-none">
           <div className="max-w-4xl mx-auto text-center space-y-10">
             <h2 className="heading text-transparent bg-gradient-primary bg-clip-text">
               Join 1,000+ Professionals Who've Already AI-Proofed Their Careers
@@ -343,7 +342,6 @@ export default async function LandingPage() {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="max-w-md mx-auto bg-gradient-card 
               rounded-xl p-6">
-              {/* <div className="max-w-md mx-auto bg-gradient-to-br from-muted/30 via-indigo-100/30 to-muted/30 rounded-xl p-6 border border-border shadow-sm"> */}
                 <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="text-yellow-400 mr-1" size={16} fill="currentColor" />
@@ -357,7 +355,6 @@ export default async function LandingPage() {
 
               <div className="max-w-md mx-auto bg-muted/30 
               rounded-xl p-6">
-              {/* <div className="max-w-md mx-auto bg-gradient-to-br from-muted/30 via-yellow-50/60 to-muted/30 rounded-xl p-6 border border-border shadow-sm"> */}
                 <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="text-yellow-400 mr-1" size={16} fill="currentColor" />
@@ -370,7 +367,7 @@ export default async function LandingPage() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Final CTA */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/20 to-background snap-start md:snap-none">

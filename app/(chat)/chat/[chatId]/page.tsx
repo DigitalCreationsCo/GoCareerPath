@@ -29,9 +29,11 @@ export default async function ChatPage({
   const savedState = await getGraphFinalState(chatId, user.id);
 
   let initialMessages: ChatMessage[] = [];
+  let finalReport = "";
   if (savedState && typeof savedState === "object") {
-    initialMessages = convertGraphMessagesToUIMessages(savedState as any) as any;
+    [initialMessages, finalReport] = convertGraphMessagesToUIMessages(savedState as any) as any;
     console.debug('initialMessages: ', JSON.stringify(initialMessages));
+    console.debug('finalReport: ', JSON.stringify(finalReport));
   }
 
   // initialMessages = [
@@ -57,7 +59,7 @@ export default async function ChatPage({
   return (
     <div className="relative bg-gradient-primary-glow">
       <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background animate-gradient" />
-      <ClientChatWrapper initialMessages={initialMessages} />
+      <ClientChatWrapper initialMessages={initialMessages} finalReport={finalReport} />
     </div>
   );
 }

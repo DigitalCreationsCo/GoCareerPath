@@ -10,7 +10,7 @@ export default async function NewChatPage() {
   return (
     <div className="relative bg-gradient-primary-glow">
       <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background animate-gradient" />
-      <ClientChatWrapper initialMessages={[]} />
+      <ClientChatWrapper initialMessages={[]} finalReport="" />
     </div>
   );
 }
