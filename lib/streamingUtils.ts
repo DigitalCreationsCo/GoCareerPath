@@ -165,7 +165,7 @@ export interface StreamChunk {
     
     try {
       for await (const chunk of graphStream) {
-        console.log('Processing graph chunk:', chunk);
+        console.debug('Processing graph chunk:', chunk);
         
         // Detect new AI messages
         const { hasNew, message } = detectNewAIMessage(chunk, previousState);
@@ -261,20 +261,20 @@ export function createAISDKStream(graphStream: AsyncIterable<any>): ReadableStre
   
   return new ReadableStream({
     async start(controller) {
-      console.log("\n[STREAM] ===== Starting AI SDK Stream =====");
+      console.debug("\n[STREAM] ===== Starting AI SDK Stream =====");
 
       try {
         for await (const chunk of graphStream) {  
-          console.log('Stream chunk received:', {
+          console.debug('Stream chunk received:', {
             hasMessages: !!chunk.messages,
             messageCount: chunk.messages?.length || 0,
           });
-          console.log(JSON.stringify(chunk, null, 2));
+          console.debug(JSON.stringify(chunk, null, 2));
           
           // Check if there are new messages
           if (chunk.messages && tracker.hasNewMessages(chunk.messages)) {
             const newMessages = tracker.getNewMessages(chunk.messages);
-            console.log(`[STREAM] ${newMessages.length} new messages detected`);
+            console.debug(`[STREAM] ${newMessages.length} new messages detected`);
 
             // Stream each new AI message
             for (const message of newMessages) {
@@ -286,23 +286,23 @@ export function createAISDKStream(graphStream: AsyncIterable<any>): ReadableStre
                   const textChunk = `0:${JSON.stringify(content)}\n`;
                   controller.enqueue(encoder.encode(textChunk));
                   
-                  console.log('Sent text chunk:', content.substring(0, 50) + '...');
+                  console.debug('Sent text chunk:', content.substring(0, 50) + '...');
                 }
               }
             }
           }
           // Log tool calls
           if (chunk.toolCalls && chunk.toolCalls.length) {
-            console.log(`[STREAM] Tool calls detected: ${chunk.toolCalls.length}`);
+            console.debug(`[STREAM] Tool calls detected: ${chunk.toolCalls.length}`);
             for (const call of chunk.toolCalls) {
-              console.log(`  • Tool: ${call.name}, Args:`, call.args);
+              console.debug(`  • Tool: ${call.name}, Args:`, call.args);
               const toolChunk = `9:${JSON.stringify(call)}\n`;
               controller.enqueue(encoder.encode(toolChunk));
             }
           }
 
           if (chunk.researchBrief) {
-            console.log(`[STREAM] Research brief found (${chunk.researchBrief.length} chars)`);
+            console.debug(`[STREAM] Research brief found (${chunk.researchBrief.length} chars)`);
             const dataChunk = `2:[${JSON.stringify({
               type: "research_brief",
               content: chunk.researchBrief,
@@ -313,13 +313,13 @@ export function createAISDKStream(graphStream: AsyncIterable<any>): ReadableStre
         
         // Send done signal
         controller.enqueue(encoder.encode('d:{"finishReason":"stop"}\n'));
-        console.log('Stream completed');
+        console.debug('Stream completed');
         
       } catch (error) {
         console.error('Stream error:', error);
         controller.error(error);
       } finally {
-        console.log("[STREAM] Stream finalized and controller closed.\n");
+        console.debug("[STREAM] Stream finalized and controller closed.\n");
         controller.close();
       }
     }

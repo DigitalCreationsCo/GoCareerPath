@@ -30,7 +30,7 @@ export async function finalReportGeneration(
     state: AgentState, 
     config: RunnableConfig
 ): Promise<Command> {
-    console.log('finalReportGeneration: Starting', {
+    console.debug('finalReportGeneration: Starting', {
     notesCount: state.notes?.length,
     messageCount: state.messages?.length
     });
@@ -60,7 +60,7 @@ export async function finalReportGeneration(
             getTodayStr()
             );
             
-            console.log('Generating final report...');
+            console.debug('Generating final report...');
             
             const reportModel = await configurableModel
             .withConfig(writerModelConfig)
@@ -76,14 +76,13 @@ export async function finalReportGeneration(
 
             const isSellingReport = process.env.NEXT_PUBLIC_IS_REPORT_PURCHASABLE === "true";
             if (!isSellingReport) {
-                // reveal full report for free
                 reportOutput.reportPreview = reportOutput.finalReport;
             }
             
             const previewTokenCount = reportOutput.reportPreview ? reportModel.getNumTokens(reportOutput.reportPreview) : 0;
             const finalReportTokenCount = reportOutput.finalReport ? reportModel.getNumTokens(reportOutput.finalReport) : 0;
 
-            console.log('Report generated successfully:', {
+            console.debug('Report generated successfully:', {
                 hasPreview: !!reportOutput.reportPreview,
                 previewLength: reportOutput.reportPreview?.length || 0,
                 previewTokenCount,
@@ -105,6 +104,10 @@ export async function finalReportGeneration(
                                 arguments: { finalReport: reportOutput.reportPreview }
                             })
                         ),
+                        createMessageFromMessageType(
+                            "ai",
+                            "Do you have any questions about your career path report? How can I assist you?"
+                        )
                     ],
                     notes: []
                 }

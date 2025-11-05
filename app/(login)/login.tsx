@@ -11,7 +11,7 @@ export function Login() {
         <div className="flex justify-center">
           <Logo size="lg" />
         </div>
-        <h1 className="mt-6 text-center text-2xl font-semibold text-foreground">
+        <h1 className="mt-6 text-center text-xl text-foreground">
           Sign in to GoCareerPath
         </h1>
       </div>

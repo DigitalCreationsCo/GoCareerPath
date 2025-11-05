@@ -26,14 +26,14 @@ export function Chat({
   autoResume: boolean;
   initialLastContext?: AppUsage;
 }) {
-  console.log('[Chat] Chat component mounted', { chatId, initialMessages, autoResume, initialLastContext });
+  console.debug('[Chat] Chat component mounted', { chatId, initialMessages, autoResume, initialLastContext });
   
   const [input, setInput] = useState<string>("");
   const [usage, setUsage] = useState<AppUsage | undefined>(initialLastContext);
   const [isResuming, setIsResuming] = useState(false);
 
   const allInitialMessages = createGreetingMessages().concat(filterEmptyMessages(initialMessages));
-  console.log('[Chat] allInitialMessages:', allInitialMessages);
+  console.debug('[Chat] allInitialMessages:', allInitialMessages);
   const [rawMessages, setRawMessages] = useState<ChatMessage[]>(allInitialMessages);
   const [status, setStatus] = useState<"submitted" | "streaming" | "error" | "ready">("ready");
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -42,23 +42,23 @@ export function Chat({
   const [greetingComplete, setGreetingComplete] = useState(false);
 
   const greetingDelays = useGoldenRatio(1.0, 1.7, greetingMessageParts.length);
-  console.log('[Chat] greetingDelays:', greetingDelays);
+  console.debug('[Chat] greetingDelays:', greetingDelays);
   const greetingAnimationDuration = greetingDelays[greetingDelays.length - 1] + 1;
-  console.log('[Chat] greetingAnimationDuration:', greetingAnimationDuration);
+  console.debug('[Chat] greetingAnimationDuration:', greetingAnimationDuration);
 
   const [hasSentInitialMessage, setHasSentInitialMessage] = useState(false);
   const [finalReport, setFinalReport] = useState<string | null>(null);
   const isReportFree = process.env.NEXT_PUBLIC_IS_REPORT_PURCHASABLE === "false";
 
   useEffect(() => {
-    console.log('[Chat/useEffect:greetingAnimationDuration] effect fired');
+    console.debug('[Chat/useEffect:greetingAnimationDuration] effect fired');
     if (greetingAnimationDuration > 0) {
       const timer = setTimeout(() => {
-        console.log('[Chat/useEffect:greetingAnimationDuration] greetingComplete set true');
+        console.debug('[Chat/useEffect:greetingAnimationDuration] greetingComplete set true');
         setGreetingComplete(true);
       }, greetingAnimationDuration * 1000);
       return () => {
-        console.log('[Chat/useEffect:greetingAnimationDuration] cleanup/clearTimeout');
+        console.debug('[Chat/useEffect:greetingAnimationDuration] cleanup/clearTimeout');
         clearTimeout(timer);
       };
     }
@@ -66,7 +66,7 @@ export function Chat({
   
   const fetchResearchStream = useCallback(
     async ({ message, resume = false }: { message?: ChatMessage; resume?: boolean }) => {
-      console.log('[Chat/fetchResearchStream] called', { chatId, message, resume });
+      console.debug('[Chat/fetchResearchStream] called', { chatId, message, resume });
       setStatus("submitted");
       abortControllerRef.current?.abort();
       const abortController = new AbortController();
@@ -80,7 +80,7 @@ export function Chat({
       };
 
       try {
-        console.log('[Chat/fetchResearchStream] Sending fetch to /api/research/start', body);
+        console.debug('[Chat/fetchResearchStream] Sending fetch to /api/research/start', body);
         const res = await fetch("/api/research/start", {
           method: "POST",
           body: JSON.stringify(body),
@@ -88,7 +88,7 @@ export function Chat({
           signal: abortController.signal,
         });
 
-        console.log('[Chat/fetchResearchStream] Response status:', res.status);
+        console.debug('[Chat/fetchResearchStream] Response status:', res.status);
 
         if (!res.ok) {
           setStatus("error");
@@ -105,7 +105,7 @@ export function Chat({
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
-            console.log('[Chat/fetchResearchStream] Stream done');
+            console.debug('[Chat/fetchResearchStream] Stream done');
             break;
           }
 
@@ -118,7 +118,7 @@ export function Chat({
 
             try {
               const chunk = JSON.parse(line);
-              console.log('[Chat/fetchResearchStream] Chunk arrived:', chunk);
+              console.debug('[Chat/fetchResearchStream] Chunk arrived:', chunk);
 
               if (chunk.type === 'error') {
                 console.error('[Chat/fetchResearchStream] Chunk error:', chunk.error);
@@ -132,7 +132,7 @@ export function Chat({
                     id: msg.id,
                     role: msg.role === 'human' ? 'user' : msg.role === 'ai' ? 'assistant' : msg.role,
                     parts: [{
-                      type: 'text',
+                      type: msg.role === "tool" ? "tool" : "text",
                       text: msg.content || ''
                     }],
                     createdAt: msg.timestamp
@@ -144,7 +144,7 @@ export function Chat({
                         (msg) => !prevMessages.some((prev) => prev.id === msg.id)
                       )
                     ];
-                    console.log('[Chat/fetchResearchStream] setRawMessages (update)', newMessages);
+                    console.debug('[Chat/fetchResearchStream] setRawMessages (update)', newMessages);
                     return newMessages;
                   });
                 }
@@ -154,10 +154,10 @@ export function Chat({
                 if (chunk.finalReport && (chunk.finalReport as string).startsWith("Error")) {
                   throw new Error("An unexpected finalReport was received.");
                 } else {
-                  console.log('[Chat/fetchResearchStream] Received final report:', chunk.finalReport);
+                  console.debug('[Chat/fetchResearchStream] Received final report:', chunk.finalReport);
                   setFinalReport(chunk.finalReport);
                 }
-                console.log('[Chat/fetchResearchStream] Status set to ready');
+                console.debug('[Chat/fetchResearchStream] Status set to ready');
               }
               
             } catch (parseError) {
@@ -168,7 +168,7 @@ export function Chat({
         }
 
         setIsResuming(false);
-        console.log('[Chat/fetchResearchStream] setIsResuming(false)');
+        console.debug('[Chat/fetchResearchStream] setIsResuming(false)');
 
       } catch (error: any) {
         if (error.name === 'AbortError') {
@@ -187,7 +187,7 @@ export function Chat({
 
   const sendMessage = useCallback(
     async (msgInput: { role: "user"; parts: { type: "text"; text: string }[] }) => {
-      console.log('[Chat/sendMessage] called', msgInput);
+      console.debug('[Chat/sendMessage] called', msgInput);
       // Prevent sending if a stream is already active
       if (status === "streaming" || status === "submitted") {
         console.warn("[Chat/sendMessage] Tried to send while busy. Status:", status);
@@ -200,11 +200,11 @@ export function Chat({
         role: "user",
         parts: msgInput.parts,
       };
-      console.log('[Chat/sendMessage] Generated userMsg:', userMsg);
+      console.debug('[Chat/sendMessage] Generated userMsg:', userMsg);
 
       setRawMessages((prev) => {
         const newMsgs = [...prev, userMsg];
-        console.log('[Chat/sendMessage] setRawMessages', newMsgs);
+        console.debug('[Chat/sendMessage] setRawMessages', newMsgs);
         return newMsgs;
       });
       await fetchResearchStream({ message: userMsg });
@@ -213,41 +213,41 @@ export function Chat({
   );
 
   const stop = useCallback(() => {
-    console.log('[Chat/stop] called');
+    console.debug('[Chat/stop] called');
     abortControllerRef.current?.abort();
     setStatus("ready");
-    console.log('[Chat/stop] Status set to ready');
+    console.debug('[Chat/stop] Status set to ready');
   }, []);
 
   const regenerate = useCallback(async () => {
-    console.log('[Chat/regenerate] called');
+    console.debug('[Chat/regenerate] called');
     const lastUserMsg = [...rawMessages].reverse().find((msg) => msg.role === "user");
     if (lastUserMsg) {
-      console.log('[Chat/regenerate] Last user message found:', lastUserMsg);
+      console.debug('[Chat/regenerate] Last user message found:', lastUserMsg);
       const lastUserIndex = rawMessages.findIndex(m => m.id === lastUserMsg.id);
       setRawMessages(rawMessages.slice(0, lastUserIndex + 1));
-      console.log('[Chat/regenerate] setRawMessages up to lastUserIndex:', lastUserIndex + 1);
+      console.debug('[Chat/regenerate] setRawMessages up to lastUserIndex:', lastUserIndex + 1);
       fetchResearchStream({ message: lastUserMsg });
     } else {
-      console.log('[Chat/regenerate] No previous user message found.');
+      console.debug('[Chat/regenerate] No previous user message found.');
     }
   }, [rawMessages, fetchResearchStream]);
 
   const resumeStream = useCallback(async () => {
-    console.log('[Chat/resumeStream] called');
+    console.debug('[Chat/resumeStream] called');
     await fetchResearchStream({ resume: true });
   }, [fetchResearchStream]);
 
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
-  console.log('[Chat] useSearchParams query:', query);
+  console.debug('[Chat] useSearchParams query:', query);
 
   const handleResume = useCallback(async () => {
-    console.log('[Chat/handleResume] Resuming from checkpoint...');
+    console.debug('[Chat/handleResume] Resuming from checkpoint...');
     setIsResuming(true);
     try {
       await resumeStream();
-      console.log('[Chat/handleResume] Resume stream finished successfully');
+      console.debug('[Chat/handleResume] Resume stream finished successfully');
     } catch (error) {
       console.error("[Chat/handleResume] Resume error:", error);
       toast.error("Failed to resume research");
@@ -260,11 +260,11 @@ export function Chat({
     handleResume,
     autoResume
   );
-  console.log('[Chat/useAutoResumeFromCheckpoint]', { hasCheckpoint, session, willResume });
+  console.debug('[Chat/useAutoResumeFromCheckpoint]', { hasCheckpoint, session, willResume });
 
   const hasSentInitialRef = useRef(false);
   useEffect(() => {
-    console.log('[Chat/useEffect:initialMessage] fired', { already: hasSentInitialRef.current, willResume, query, initialMessagesLen: initialMessages.length });
+    console.debug('[Chat/useEffect:initialMessage] fired', { already: hasSentInitialRef.current, willResume, query, initialMessagesLen: initialMessages.length });
     if (hasSentInitialRef.current || willResume || query || initialMessages.length > 0) {
       return;
     }
@@ -275,7 +275,7 @@ export function Chat({
         role: "user",
         parts: [{ type: "text", text: "" }],
       } as any;
-      console.log('[Chat/useEffect:initialMessage] sending initial empty message:', emptyMessage);
+      console.debug('[Chat/useEffect:initialMessage] sending initial empty message:', emptyMessage);
       await fetchResearchStream({ message: emptyMessage });
     };
     sendInitial();
@@ -285,7 +285,7 @@ export function Chat({
     && session?.status === 'active' 
     && !isResuming 
     && rawMessages.length > 2;
-  console.log('[Chat] shouldShowResumeBanner:', shouldShowResumeBanner);
+  console.debug('[Chat] shouldShowResumeBanner:', shouldShowResumeBanner);
 
   return (
     <div className="border overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col">
@@ -342,25 +342,25 @@ export function Chat({
 }
 
 export function isEmptyMessage(message: ChatMessage): boolean {
-  console.log('[Chat/isEmptyMessage] called with message:', message);
+  console.debug('[Chat/isEmptyMessage] called with message:', message);
   const text = message.parts
     ?.map(part => part.type === "text" ? part.text : '')
     .join('')
     .trim();
   const result = text === '' || text.length === 0;
-  console.log('[Chat/isEmptyMessage] result:', result, '| text:', text);
+  console.debug('[Chat/isEmptyMessage] result:', result, '| text:', text);
   return result;
 }
 
 export function filterEmptyMessages(messages: ChatMessage[]): ChatMessage[] {
-  console.log('[Chat/filterEmptyMessages] called with messages:', messages);
+  console.debug('[Chat/filterEmptyMessages] called with messages:', messages);
   const filtered = messages.filter(msg => !isEmptyMessage(msg));
-  console.log('[Chat/filterEmptyMessages] filtered result:', filtered);
+  console.debug('[Chat/filterEmptyMessages] filtered result:', filtered);
   return filtered;
 }
 
 function createGreetingMessages(): ChatMessage[] {
-  console.log('[Chat/createGreetingMessages] called');
+  console.debug('[Chat/createGreetingMessages] called');
   const greetings = greetingMessageParts.map((text, index) => ({
     id: `greeting_synthetic_${index}`,
     role: 'assistant' as const,
@@ -372,6 +372,6 @@ function createGreetingMessages(): ChatMessage[] {
     isGreeting: true,
     greetingIndex: index,
   }));
-  console.log('[Chat/createGreetingMessages] returning greetings:', greetings);
+  console.debug('[Chat/createGreetingMessages] returning greetings:', greetings);
   return greetings;
 }

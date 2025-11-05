@@ -49,7 +49,7 @@ export async function writeResearchBrief(
         ? response 
         : (response as any).researchBrief || response.content?.toString() || '';
       
-      console.log('Research brief generated:', researchBrief.substring(0, 100));
+      console.debug('Research brief generated:', researchBrief.substring(0, 100));
       
       return new Command({
         goto: 'writeResearchOutline',

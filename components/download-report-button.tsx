@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/button';
 
 type DownloadReportButtonProps = {
@@ -8,6 +8,37 @@ type DownloadReportButtonProps = {
 
 export function DownloadReportButton({ markdownContent }: DownloadReportButtonProps) {
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      setProgress(0);
+      const totalMs = 5000;
+      const intervalMs = 100;
+      const totalSteps = totalMs / intervalMs;
+      let currentStep = 0;
+
+      intervalRef.current = setInterval(() => {
+        currentStep += 1;
+        setProgress(Math.min(100, (currentStep / totalSteps) * 100));
+        if (currentStep >= totalSteps) {
+          clearInterval(intervalRef.current!);
+        }
+      }, intervalMs);
+    } else {
+      setProgress(0);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [loading]);
+
   const handleDownload = async () => {
     setLoading(true);
     try {
@@ -38,13 +69,38 @@ export function DownloadReportButton({ markdownContent }: DownloadReportButtonPr
   };
 
   return (
-    <Button
-      onClick={handleDownload}
-      className="bg-primary text-white px-4 py-2 font-bold shadow-lg w-60"
-      disabled={loading}
-    >
-      {loading ? 'Downloading...' : 'Download this report as PDF'}
-    </Button>
+    <>
+      {loading && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            height: '4px',
+            width: '100%',
+            zIndex: 10000,
+            background: 'rgba(0,0,0,0.04)',
+          }}
+        >
+          <div
+            style={{
+              height: '100%',
+              width: `${progress}%`,
+              background:
+                'linear-gradient(90deg, #6e96ff 0%, #1ca7ec 100%)',
+              transition: 'width 0.1s linear',
+            }}
+          ></div>
+        </div>
+      )}
+      <Button
+        onClick={handleDownload}
+        className="bg-primary text-white px-4 py-2 font-bold shadow-lg w-60"
+        disabled={loading}
+      >
+        {loading ? 'Downloading...' : 'Download this report as PDF'}
+      </Button>
+    </>
   );
 }
 

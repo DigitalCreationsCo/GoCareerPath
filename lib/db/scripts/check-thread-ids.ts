@@ -5,9 +5,9 @@ const sessions = await db.select().from(researchSessions);
 
 const issues = sessions.filter(s => !s.threadId);
 
-console.log('Sessions without threadId:', issues.length);
-console.log('Total sessions:', sessions.length);
+console.debug('Sessions without threadId:', issues.length);
+console.debug('Total sessions:', sessions.length);
 
 if (issues.length > 0) {
-  console.log('Problematic sessions:', issues.map(s => s.id));
+  console.debug('Problematic sessions:', issues.map(s => s.id));
 }

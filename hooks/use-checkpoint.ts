@@ -91,7 +91,7 @@ export function useAutoResumeFromCheckpoint(
       hasCheckpoint &&
       session?.status === 'active'
     ) {
-      console.log('Auto-resuming from checkpoint for session:', session.id);
+      console.debug('Auto-resuming from checkpoint for session:', session.id);
       setHasAttemptedResume(true);
       onResume();
     }

@@ -17,7 +17,7 @@ export async function sendWaitlistConfirmationEmail(formData: FormData):Promise<
     throw error;
   }
 
-  console.log(data);
+  console.debug(data);
 
   return { data: "Email sent!" };
 }

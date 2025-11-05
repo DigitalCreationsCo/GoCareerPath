@@ -36,7 +36,7 @@ export class CheckpointerManager {
   async saveCheckpoint(config: RunnableConfig) {
     if (!this.checkpointer) throw new Error("Checkpointer not initialized");
     const existingCheckpoint = await this.checkpointer.get(config);
-    console.log('Existing checkpoint:', existingCheckpoint);
+    console.debug('Existing checkpoint:', existingCheckpoint);
 
     await this.checkpointer.put(config, existingCheckpoint!, {} as any, {})
   }
@@ -68,7 +68,7 @@ export class CheckpointerManager {
     if (!this.checkpointer) throw new Error("Checkpointer not initialized");
 
     for await (const checkpoint of this.checkpointer.list(config)) {
-        console.log(checkpoint);
+        console.debug(checkpoint);
     }
   }
 }

@@ -21,21 +21,17 @@ deepResearcherBuilder.addNode('researchSupervisor', supervisorSubgraph as any)
 deepResearcherBuilder.addNode("finalReportGeneration", finalReportGeneration)
 deepResearcherBuilder.addNode("faqAgent", faqAgent, { ends: ["faqAgent"] });
 
-// Define edges
-deepResearcherBuilder.addEdge(START, 'clarifyWithUser' as any)
+deepResearcherBuilder.addConditionalEdges(START, 
+  (state: typeof AgentState.State) => {
+    if (state.reportPreview) {
+      return "faqAgent";
+    } else {
+      return "clarifyWithUser";
+    }
+  },
+);
 deepResearcherBuilder.addEdge('researchSupervisor' as any, 'finalReportGeneration' as any)
 deepResearcherBuilder.addEdge('finalReportGeneration' as any, 'faqAgent' as any)
-deepResearcherBuilder.addConditionalEdges(
-  'faqAgent' as any,
-  (state: typeof AgentState.State) => {
-    // Always return "continue" to loop back to faqAgent
-    // The graph will interrupt and wait for new messages
-    return "continue";
-  },
-  {
-    continue: "faqAgent" as any
-  }
-);
 
 const deepResearcherGraph = deepResearcherBuilder.compile();
 

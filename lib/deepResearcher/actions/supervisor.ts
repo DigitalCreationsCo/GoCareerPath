@@ -74,7 +74,7 @@ export async function supervisor(
     // }
 
     const response = await researchModel.invoke(supervisorMessages)
-    console.log('Supervisor response:', {
+    console.debug('Supervisor response:', {
         hasToolCalls: !!response.tool_calls,
         toolCallCount: response.tool_calls?.length || 0,
         toolNames: response.tool_calls?.map((tc: any) => tc.name) || [],
@@ -146,7 +146,7 @@ export async function supervisorTools(
     
     for (const toolCall of thinkToolCalls) {
         const reflection = toolCall.args.reflection;
-        console.log('Think tool reflection:', reflection.substring(0, 100));
+        console.debug('Think tool reflection:', reflection.substring(0, 100));
 
         toolMessages.push(
             createMessageFromMessageType(
@@ -164,7 +164,7 @@ export async function supervisorTools(
         try {
             const allowedCalls = conductResearchCalls.slice(0, configurable.maxConcurrentResearchUnits)
             const overflowCalls = conductResearchCalls.slice(configurable.maxConcurrentResearchUnits)
-            console.log('Executing research tasks:', {
+            console.debug('Executing research tasks:', {
                 allowed: allowedCalls.length,
                 overflow: overflowCalls.length
             });
@@ -183,7 +183,7 @@ export async function supervisorTools(
             for (let i = 0; i < results.length; i++) {
                 const result = results[i]
                 const toolCall = allowedCalls[i]
-                console.log('Research result:', {
+                console.debug('Research result:', {
                     topic: toolCall.args.researchTopic.substring(0, 50),
                     hasCompressedResearch: !!result.compressedResearch,
                     notesCount: result.rawNotes?.length || 0

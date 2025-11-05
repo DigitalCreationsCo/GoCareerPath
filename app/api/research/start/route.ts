@@ -119,7 +119,7 @@ export async function POST(req: Request) {
                 for (const nodeName of nodeNames) {
                   const nodeUpdate = (update as any)[nodeName];
     
-                  console.log("Node update:", {
+                  console.debug("Node update:", {
                     node: nodeName,
                     hasMessages: !!nodeUpdate.messages,
                     messageCount: nodeUpdate.messages?.length,
@@ -172,13 +172,13 @@ export async function POST(req: Request) {
                     userMessageId: persistantMessageId, 
                   };
     
-                  controller.enqueue(encoder.encode(JSON.stringify(chunk) + "\n"));
+                controller.enqueue(encoder.encode(JSON.stringify(chunk) + "\n"));
                 }
                 break;
 
               case "messages":
                 const [msg, metadata] = update;
-                console.log("[MESSAGES] update from node:", metadata.langgraph_node, `. Content: `, msg.content);
+                console.debug("[MESSAGES] update from node:", metadata.langgraph_node, `. Content: `, msg.content);
                 break;
 
               case "custom":
