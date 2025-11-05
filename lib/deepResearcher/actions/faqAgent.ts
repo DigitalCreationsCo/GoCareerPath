@@ -3,7 +3,7 @@ import { configurableModel, Configuration, RunnableConfig } from "../configurati
 import { AgentState } from "../state";
 import { createMessageFromMessageType, getApiKeyForModel, getTodayStr } from "../llmUtils";
 import { AIMessage, getBufferString } from "@langchain/core/messages";
-import { buildFAQPrompt } from "../prompts";
+import { buildFaqPrompt } from "../prompts";
 
 export async function faqAgent(
   state: AgentState,
@@ -21,7 +21,7 @@ export async function faqAgent(
 
   const isSellingReport = process.env.NEXT_PUBLIC_IS_REPORT_PURCHASABLE === "true";
 
-  const faqPrompt = buildFAQPrompt(
+  const faqPrompt = buildFaqPrompt(
     userQuestion,
     state.researchBrief || "",
     state.reportPreview || "",

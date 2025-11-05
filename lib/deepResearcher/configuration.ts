@@ -131,25 +131,25 @@ export class Configuration {
     this.summarizationModelMaxTokens = resolveLimit(
       "SUMMARIZATION_MODEL_MAX_TOKENS",
       this.summarizationModel,
-      8192,
+      10000,
       data?.summarizationModelMaxTokens
     );
     this.researchModelMaxTokens = resolveLimit(
       "RESEARCH_MODEL_MAX_TOKENS",
       this.researchModel,
-      20000,
+      24000,
       data?.researchModelMaxTokens
     );
     this.compressionModelMaxTokens = resolveLimit(
       "COMPRESSION_MODEL_MAX_TOKENS",
       this.compressionModel,
-      8192,
+      24000,
       data?.compressionModelMaxTokens
     );
     this.finalReportModelMaxTokens = resolveLimit(
       "FINAL_REPORT_MODEL_MAX_TOKENS",
       this.finalReportModel,
-      12000,
+      42000,
       data?.finalReportModelMaxTokens
     );
 

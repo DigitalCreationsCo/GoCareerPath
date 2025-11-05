@@ -1,7 +1,7 @@
 // === Vitest Unit Tests ===
 import { Configuration, McpConfig, ModelSelector, removeVendorPrefix, RunnableConfig, SearchApi } from '@/lib/deepResearcher/configuration';
 import { getApiKeyForModel, getTodayStr, MODEL_TOKEN_LIMITS } from '@/lib/deepResearcher/llmUtils';
-import { clarifyWithUserInstructions } from '@/lib/deepResearcher/prompts';
+import { clarifyWithUserInstructions } from '@/lib/deepResearcher/prompts/finalReportGenerationPrompt';
 import { ClarifyWithUser } from '@/lib/deepResearcher/state';
 import { getBufferString } from '@/lib/messageUtils';
 import { ChatAnthropic } from '@langchain/anthropic';

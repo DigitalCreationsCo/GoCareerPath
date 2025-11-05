@@ -119,7 +119,7 @@ describe('writeResearchOutline', () => {
     });
 
     it('includes research brief in prompt generation', async () => {
-      const { researchOutlineGenerationPrompt } = await import('@/lib/deepResearcher/prompts');
+      const { researchOutlineGenerationPrompt } = await import('@/lib/deepResearcher/prompts/finalReportGenerationPrompt');
       
       await writeResearchOutline(mockState, mockConfig);
 
@@ -139,7 +139,7 @@ describe('writeResearchOutline', () => {
       const command = result as Command;
       expect(command.goto).toBe('researchSupervisor');
       
-      const { researchOutlineGenerationPrompt } = await import('@/lib/deepResearcher/prompts');
+      const { researchOutlineGenerationPrompt } = await import('@/lib/deepResearcher/prompts/finalReportGenerationPrompt');
       expect(researchOutlineGenerationPrompt).toHaveBeenCalledWith(
         '',
         expect.any(String),
@@ -179,7 +179,7 @@ describe('writeResearchOutline', () => {
     });
 
     it('uses correct configuration values for supervisor prompt', async () => {
-      const { leadResearcherPrompt } = await import('@/lib/deepResearcher/prompts');
+      const { leadResearcherPrompt } = await import('@/lib/deepResearcher/prompts/finalReportGenerationPrompt');
       
       await writeResearchOutline(mockState, mockConfig);
 
