@@ -12,18 +12,10 @@ export async function faqAgent(
   const configurable = Configuration.fromRunnableConfig(config);
   const messages = state.messages || [];
 
-  // If the last message is not from the user, do nothing (await user input)
   if (messages.length === 0 || messages[messages.length - 1]?.type !== "human") {
-    // Awaiting a new user question
-    return new Command({  });
-    
-  //   createMessageFromMessageType(
-  //     "ai", 
-  //     "--- \nDo you have any questions about your career path report? How can I assist you?"
-  // ),
+    return new Command({});
   }
 
-  // Get the last user ("human") message as the FAQ question
   const lastUserMessage = messages[messages.length - 1];
   const userQuestion = getBufferString([lastUserMessage]);
 
@@ -54,15 +46,13 @@ export async function faqAgent(
     ]) as AIMessage;
 
     return new Command({
-      goto: "faqAgent",
       update: {
-        messages: [response]
+        messages: [response],
       }
     });
 
   } catch (error) {
     return new Command({
-      goto: "faqAgent",
       update: {
         messages: [
           createMessageFromMessageType(

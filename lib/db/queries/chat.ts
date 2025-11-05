@@ -39,7 +39,7 @@ export async function getOrCreateChat(
       .limit(1);
 
     if (existingChat) {
-      console.log('Found existing chat:', chatId);
+      console.debug('Found existing chat:', chatId);
       return existingChat;
     }
 
@@ -54,7 +54,7 @@ export async function getOrCreateChat(
     title: title || 'Research Session',
   });
 
-  console.log('Created new chat:', newChat.id);
+  console.debug('Created new chat:', newChat.id);
   return newChat;
 }
 
@@ -68,7 +68,7 @@ export async function saveChat({
   title: string;
 }) {
   try {
-    console.log('saveChat called with:', { id, userId, title });
+    console.debug('saveChat called with:', { id, userId, title });
     if (!id) id = generateUUID();
 
     const newChat = await db.insert(chatsTable).values({
@@ -284,7 +284,7 @@ export async function updateChatTitle(
     .set({ title })
     .where(and(eq(chatsTable.id, chatId), eq(chatsTable.userId, userId)));
 
-  console.log('Updated chat title:', chatId, title);
+  console.debug('Updated chat title:', chatId, title);
 }
 
 export async function updateChatLastContextById({

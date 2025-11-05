@@ -19,7 +19,7 @@ export async function createUser(user: NewUser) {
       role: 'member' 
     }).returning();
 
-    console.log('Created new user in database: ', newUser);
+    console.debug('Created new user in database: ', newUser);
 
     return newUser;
   } catch (error) {

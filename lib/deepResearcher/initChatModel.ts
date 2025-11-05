@@ -6,7 +6,7 @@ const genaiCache = new Map<string, ChatGoogleGenerativeAI>();
 function debugLog(...args: any[]) {
     if (process.env.LLM_DEBUG === "true") {
       const ts = new Date().toISOString();
-      console.log(`[initChatModel][${ts}]`, ...args);
+      console.debug(`[initChatModel][${ts}]`, ...args);
     }
 }
 

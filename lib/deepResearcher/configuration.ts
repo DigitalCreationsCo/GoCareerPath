@@ -408,7 +408,7 @@ export class ModelSelector {
     }
 
     if (this.toolsBinding && this.toolsBinding.length > 0) {
-      console.log('Binding tools to model:', this.toolsBinding.map((t: any) => t.name || t.schema?.title));
+      console.debug('Binding tools to model:', this.toolsBinding.map((t: any) => t.name || t.schema?.title));
       model = model.bindTools?.(this.toolsBinding) as any;
     }
 

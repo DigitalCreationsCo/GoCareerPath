@@ -20,7 +20,7 @@ export class SessionManager {
 
     if (!threadId) throw new Error("Failed to generate threadId");
       
-    console.log('createSession:', {
+    console.debug('createSession:', {
       userId,
       chatId,
       threadId,
@@ -97,7 +97,7 @@ export class SessionManager {
     const existingSession = sessions.find(s => s.chatId === chatId);
     
     if (existingSession) {
-      console.log('Found existing session:', {
+      console.debug('Found existing session:', {
         id: existingSession.id,
         threadId: existingSession.threadId,
         chatId: existingSession.chatId,
@@ -113,7 +113,7 @@ export class SessionManager {
       return existingSession;
     }
 
-    console.log('Creating new session for chatId:', chatId);
+    console.debug('Creating new session for chatId:', chatId);
     return await this.createSession(userId, chatId, configuration);
   }
 
@@ -212,7 +212,7 @@ export class SessionManager {
       Object.assign(config, additionalConfig);
     }
     
-    console.log('Created runnable config:', {
+    console.debug('Created runnable config:', {
       sessionId: session.id,
       threadId: session.threadId,
       hasConfigurable: !!config.configurable,

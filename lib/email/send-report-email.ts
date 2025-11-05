@@ -21,7 +21,7 @@ export async function sendReportEmail(formData: FormData) {
     return { error: error.message };
   }
 
-  console.log(data);
+  console.debug(data);
 
   return { data: "Email sent!" };
 }

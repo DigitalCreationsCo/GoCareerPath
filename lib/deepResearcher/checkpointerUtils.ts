@@ -95,7 +95,7 @@ export async function getGraphFinalState(chatId: string, userId: string): Promis
   
   try {
     const checkpoint = await checkpointer!.get(config);
-    console.log("getGraphFinalState loaded checkpoint:", JSON.stringify(checkpoint));
+    console.debug("getGraphFinalState loaded checkpoint:", JSON.stringify(checkpoint));
 
     return (checkpoint?.channel_values) as any || null;
   } catch (error) {
@@ -206,7 +206,7 @@ export async function initializeResearchSession(
     throw new Error("Checkpointer initialization failed");
   }
   
-  console.log('Initialized research session:', {
+  console.debug('Initialized research session:', {
     sessionId: session.id,
     threadId: session.threadId,
     chatId: session.chatId,
@@ -232,7 +232,7 @@ export async function resumeResearchSession(sessionId: string, userId: string) {
     throw new Error(`No resumable checkpoint found for session ${sessionId}`);
   }
   
-  console.log('Resuming research session:', {
+  console.debug('Resuming research session:', {
     sessionId: session.id,
     threadId: session.threadId,
     status: session.status,

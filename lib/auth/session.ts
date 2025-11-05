@@ -33,7 +33,7 @@ export async function signToken(payload: SessionData) {
 }
 
 export async function verifyToken(input: string) {
-  console.log('token input:', input);
+  console.debug('token input:', input);
   if (!input.includes('.')) {
     console.error("Malformed token, missing sections:", input);
   }

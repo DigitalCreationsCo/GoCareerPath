@@ -1,17 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { convertMarkdownToPdf } from 'md-pdf-md';
+import fs from 'fs/promises';
+import path from 'path';
+import os from 'os';
+import crypto from 'crypto';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  // Helper: Generate a unique filename
+  const uniqueName = (ext: string) =>
+    `tmp-${crypto.randomBytes(8).toString('hex')}.${ext}`;
+
+  const tempDir = os.tmpdir();
+  const cleanUpFiles = async (files: string[]) => {
+    for (const file of files) {
+      try {
+        await fs.unlink(file);
+      } catch {}
+    }
+  };
+
+  let mdFilePath = '';
+  let pdfFilePath = '';
+
   try {
     const body = await req.json();
     const markdown = body.markdown as string | undefined;
     if (!markdown) {
-      return NextResponse.json({ error: 'Markdown content is required.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Markdown content is required.' },
+        { status: 400 }
+      );
     }
-
-    const { mdToPdf } = await import('md-to-pdf');
 
     const frontmatter = `---
 pdf_options:
@@ -42,12 +64,36 @@ pdf_options:
 
     const markdownWithFrontmatter = `${frontmatter}\n${markdown}`;
 
-    const pdf = await mdToPdf({ content: markdownWithFrontmatter });
-    if (!pdf || !pdf.content) {
-      return NextResponse.json({ error: 'Failed to generate PDF.' }, { status: 500 });
+    mdFilePath = path.join(tempDir, uniqueName('md'));
+    pdfFilePath = path.join(tempDir, uniqueName('pdf'));
+
+    // Write markdown to a temp file
+    await fs.writeFile(mdFilePath, markdownWithFrontmatter);
+
+    // Convert using filesystem
+    const pdf = await convertMarkdownToPdf({
+      input: mdFilePath,
+      output: pdfFilePath,
+      theme: 'github',
+      toc: true,
+      pageNumbers: true
+    });
+
+    if (!pdf.success) {
+      await cleanUpFiles([mdFilePath, pdfFilePath]);
+      return NextResponse.json(
+        { error: 'Failed to generate PDF.' },
+        { status: 500 }
+      );
     }
 
-    return new NextResponse(new Uint8Array(pdf.content), {
+    // Read the pdf file as buffer
+    const pdfBuffer = await fs.readFile(pdfFilePath);
+
+    // Cleanup files
+    await cleanUpFiles([mdFilePath, pdfFilePath]);
+
+    return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -55,7 +101,14 @@ pdf_options:
       },
     });
   } catch (error: any) {
+    // Clean up on error as well
+    if (mdFilePath || pdfFilePath) {
+      await cleanUpFiles([mdFilePath, pdfFilePath]);
+    }
     console.error('PDF generation error:', error);
-    return NextResponse.json({ error: error?.message || 'Unexpected error.' }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || 'Unexpected error.' },
+      { status: 500 }
+    );
   }
 }

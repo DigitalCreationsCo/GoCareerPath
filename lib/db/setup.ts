@@ -23,27 +23,27 @@ function question(query: string): Promise<string> {
 }
 
 async function checkStripeCLI() {
-  console.log(
+  console.debug(
     'Step 1: Checking if Stripe CLI is installed and authenticated...'
   );
   try {
     await execAsync('stripe --version');
-    console.log('Stripe CLI is installed.');
+    console.debug('Stripe CLI is installed.');
 
     // Check if Stripe CLI is authenticated
     try {
       await execAsync('stripe config --list');
-      console.log('Stripe CLI is authenticated.');
+      console.debug('Stripe CLI is authenticated.');
     } catch (error) {
-      console.log(
+      console.debug(
         'Stripe CLI is not authenticated or the authentication has expired.'
       );
-      console.log('Please run: stripe login');
+      console.debug('Please run: stripe login');
       const answer = await question(
         'Have you completed the authentication? (y/n): '
       );
       if (answer.toLowerCase() !== 'y') {
-        console.log(
+        console.debug(
           'Please authenticate with Stripe CLI and run this script again.'
         );
         process.exit(1);
@@ -52,7 +52,7 @@ async function checkStripeCLI() {
       // Verify authentication after user confirms login
       try {
         await execAsync('stripe config --list');
-        console.log('Stripe CLI authentication confirmed.');
+        console.debug('Stripe CLI authentication confirmed.');
       } catch (error) {
         console.error(
           'Failed to verify Stripe CLI authentication. Please try again.'
@@ -64,13 +64,13 @@ async function checkStripeCLI() {
     console.error(
       'Stripe CLI is not installed. Please install it and try again.'
     );
-    console.log('To install Stripe CLI, follow these steps:');
-    console.log('1. Visit: https://docs.stripe.com/stripe-cli');
-    console.log(
+    console.debug('To install Stripe CLI, follow these steps:');
+    console.debug('1. Visit: https://docs.stripe.com/stripe-cli');
+    console.debug(
       '2. Download and install the Stripe CLI for your operating system'
     );
-    console.log('3. After installation, run: stripe login');
-    console.log(
+    console.debug('3. After installation, run: stripe login');
+    console.debug(
       'After installation and authentication, please run this setup script again.'
     );
     process.exit(1);
@@ -78,17 +78,17 @@ async function checkStripeCLI() {
 }
 
 async function getPostgresURL(): Promise<string> {
-  console.log('Step 2: Setting up Postgres');
+  console.debug('Step 2: Setting up Postgres');
   const dbChoice = await question(
     'Do you want to use a local Postgres instance with Docker (L) or a remote Postgres instance (R)? (L/R): '
   );
 
   if (dbChoice.toLowerCase() === 'l') {
-    console.log('Setting up local Postgres instance with Docker...');
+    console.debug('Setting up local Postgres instance with Docker...');
     await setupLocalPostgres();
     return 'postgres://postgres:postgres@localhost:54322/postgres';
   } else {
-    console.log(
+    console.debug(
       'You can find Postgres databases at: https://vercel.com/marketplace?category=databases'
     );
     return await question('Enter your POSTGRES_URL: ');
@@ -96,21 +96,21 @@ async function getPostgresURL(): Promise<string> {
 }
 
 async function setupLocalPostgres() {
-  console.log('Checking if Docker is installed...');
+  console.debug('Checking if Docker is installed...');
   try {
     await execAsync('docker --version');
-    console.log('Docker is installed.');
+    console.debug('Docker is installed.');
   } catch (error) {
     console.error(
       'Docker is not installed. Please install Docker and try again.'
     );
-    console.log(
+    console.debug(
       'To install Docker, visit: https://docs.docker.com/get-docker/'
     );
     process.exit(1);
   }
 
-  console.log('Creating docker-compose.yml file...');
+  console.debug('Creating docker-compose.yml file...');
   const dockerComposeContent = `
 services:
   postgres:
@@ -133,12 +133,12 @@ volumes:
     path.join(process.cwd(), 'docker-compose.yml'),
     dockerComposeContent
   );
-  console.log('docker-compose.yml file created.');
+  console.debug('docker-compose.yml file created.');
 
-  console.log('Starting Docker container with `docker compose up -d`...');
+  console.debug('Starting Docker container with `docker compose up -d`...');
   try {
     await execAsync('docker compose up -d');
-    console.log('Docker container started successfully.');
+    console.debug('Docker container started successfully.');
   } catch (error) {
     console.error(
       'Failed to start Docker container. Please check your Docker installation and try again.'
@@ -148,29 +148,29 @@ volumes:
 }
 
 async function getStripeSecretKey(): Promise<string> {
-  console.log('Step 3: Getting Stripe Secret Key');
-  console.log(
+  console.debug('Step 3: Getting Stripe Secret Key');
+  console.debug(
     'You can find your Stripe Secret Key at: https://dashboard.stripe.com/test/apikeys'
   );
   return await question('Enter your Stripe Secret Key: ');
 }
 
 async function createStripeWebhook(): Promise<string> {
-  console.log('Step 4: Creating Stripe webhook...');
+  console.debug('Step 4: Creating Stripe webhook...');
   try {
     const { stdout } = await execAsync('stripe listen --print-secret');
     const match = stdout.match(/whsec_[a-zA-Z0-9]+/);
     if (!match) {
       throw new Error('Failed to extract Stripe webhook secret');
     }
-    console.log('Stripe webhook created.');
+    console.debug('Stripe webhook created.');
     return match[0];
   } catch (error) {
     console.error(
       'Failed to create Stripe webhook. Check your Stripe CLI installation and permissions.'
     );
     if (os.platform() === 'win32') {
-      console.log(
+      console.debug(
         'Note: On Windows, you may need to run this script as an administrator.'
       );
     }
@@ -179,18 +179,18 @@ async function createStripeWebhook(): Promise<string> {
 }
 
 function generateAuthSecret(): string {
-  console.log('Step 5: Generating AUTH_SECRET...');
+  console.debug('Step 5: Generating AUTH_SECRET...');
   return crypto.randomBytes(32).toString('hex');
 }
 
 async function writeEnvFile(envVars: Record<string, string>) {
-  console.log('Step 6: Writing environment variables to .env');
+  console.debug('Step 6: Writing environment variables to .env');
   const envContent = Object.entries(envVars)
     .map(([key, value]) => `${key}=${value}`)
     .join('\n');
 
   await fs.writeFile(path.join(process.cwd(), '.env'), envContent);
-  console.log('.env file created with the necessary variables.');
+  console.debug('.env file created with the necessary variables.');
 }
 
 async function main() {
@@ -210,7 +210,7 @@ async function main() {
     AUTH_SECRET,
   });
 
-  console.log('🎉 Setup completed successfully!');
+  console.debug('🎉 Setup completed successfully!');
 }
 
 main().catch(console.error);

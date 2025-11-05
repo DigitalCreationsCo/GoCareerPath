@@ -5,7 +5,7 @@ import { users, teams, teamMembers, reports } from '@/lib/db/schema';
 import { hashPassword } from '@/lib/auth/session';
 
 async function createStripeProducts() {
-  console.log('Creating Stripe products and prices...');
+  console.debug('Creating Stripe products and prices...');
 
   const baseProduct = await stripe.products.create({
     name: 'Base',
@@ -37,13 +37,13 @@ async function createStripeProducts() {
     },
   });
 
-  console.log('Stripe products and prices created successfully.');
+  console.debug('Stripe products and prices created successfully.');
 }
 
 async function seed() {
 
-  console.log('Seeding database...');
-  console.log('Seeding initial user...');
+  console.debug('Seeding database...');
+  console.debug('Seeding initial user...');
   
   const email = 'bryantmejia722@outlook.com';
   const password = 'andresadmin234';
@@ -60,7 +60,7 @@ async function seed() {
     ])
     .returning();
 
-  console.log('Initial user created.');
+  console.debug('Initial user created.');
 
   const [team] = await db
     .insert(teams)
@@ -75,10 +75,10 @@ async function seed() {
     role: 'owner',
   });
 
-  console.log('Seeding reports...');
+  console.debug('Seeding reports...');
   await db.insert(reports).values(SAMPLE_DATA);
 
-  console.log('Seeding Stripe products and prices...');
+  console.debug('Seeding Stripe products and prices...');
   await createStripeProducts();
 }
 
@@ -88,6 +88,6 @@ seed()
     process.exit(1);
   })
   .finally(() => {
-    console.log('Seed process finished. Exiting...');
+    console.debug('Seed process finished. Exiting...');
     process.exit(0);
   });

@@ -161,7 +161,7 @@ export async function ${functionName}(formData: FormData): Promise<EmailState> {
     throw error;
   }
 
-  console.log(data);
+  console.debug(data);
 
   return { data: "Email sent!" };
 }
@@ -173,8 +173,8 @@ function main() {
 
   if (args.length === 0) {
     console.error("Error: Email name is required");
-    console.log("\nUsage: npx tsx scripts/generate-email.ts <email-name>");
-    console.log("\nExample: npx tsx scripts/generate-email.ts welcome-email");
+    console.debug("\nUsage: npx tsx scripts/generate-email.ts <email-name>");
+    console.debug("\nExample: npx tsx scripts/generate-email.ts welcome-email");
     process.exit(1);
   }
 
@@ -193,7 +193,7 @@ function main() {
   // Create email component directory
   if (!fs.existsSync(emailDir)) {
     fs.mkdirSync(emailDir, { recursive: true });
-    console.log(`✓ Created directory: components/emails/${emailName}`);
+    console.debug(`✓ Created directory: components/emails/${emailName}`);
   } else {
     console.warn(`⚠ Directory already exists: components/emails/${emailName}`);
   }
@@ -203,7 +203,7 @@ function main() {
   const componentFilePath = path.join(emailDir, componentFileName);
   if (!fs.existsSync(componentFilePath)) {
     fs.writeFileSync(componentFilePath, generateEmailComponent(emailName));
-    console.log(`✓ Created: components/emails/${emailName}/${componentFileName}`);
+    console.debug(`✓ Created: components/emails/${emailName}/${componentFileName}`);
   } else {
     console.warn(`⚠ File already exists: components/emails/${emailName}/${componentFileName}`);
   }
@@ -213,7 +213,7 @@ function main() {
   const storiesFilePath = path.join(emailDir, storiesFileName);
   if (!fs.existsSync(storiesFilePath)) {
     fs.writeFileSync(storiesFilePath, generateStorybookFile(emailName));
-    console.log(`✓ Created: components/emails/${emailName}/${storiesFileName}`);
+    console.debug(`✓ Created: components/emails/${emailName}/${storiesFileName}`);
   } else {
     console.warn(`⚠ File already exists: components/emails/${emailName}/${storiesFileName}`);
   }
@@ -223,17 +223,17 @@ function main() {
   const serverFilePath = path.join(libEmailDir, serverFileName);
   if (!fs.existsSync(serverFilePath)) {
     fs.writeFileSync(serverFilePath, generateServerFile(emailName));
-    console.log(`✓ Created: lib/email/${serverFileName}`);
+    console.debug(`✓ Created: lib/email/${serverFileName}`);
   } else {
     console.warn(`⚠ File already exists: lib/email/${serverFileName}`);
   }
 
-  console.log(`\n✓ Successfully generated email: ${emailName}`);
-  console.log("\nNext steps:");
-  console.log(`1. Edit components/emails/${emailName}/${componentFileName} to customize the email template`);
-  console.log(`2. Update the props interface and default values`);
-  console.log(`3. Edit lib/email/${serverFileName} to customize the email sending logic`);
-  console.log(`4. Update the email subject and any additional FormData fields needed`);
+  console.debug(`\n✓ Successfully generated email: ${emailName}`);
+  console.debug("\nNext steps:");
+  console.debug(`1. Edit components/emails/${emailName}/${componentFileName} to customize the email template`);
+  console.debug(`2. Update the props interface and default values`);
+  console.debug(`3. Edit lib/email/${serverFileName} to customize the email sending logic`);
+  console.debug(`4. Update the email subject and any additional FormData fields needed`);
 }
 
 main();
