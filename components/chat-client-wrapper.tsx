@@ -13,8 +13,10 @@ import { useEffect, useState } from "react";
  */
 export default function ClientChatWrapper({
   initialMessages,
+  finalReport,
 }: {
   initialMessages: ChatMessage[];
+  finalReport: string;
 }) {
   const router = useRouter();
   const params = useParams();
@@ -50,10 +52,11 @@ export default function ClientChatWrapper({
 
   return (
     <Chat
-      autoResume={shouldAutoResume}
-      chatId={chatId}
-      initialMessages={initialMessages}
       key={chatId}
+      chatId={chatId}
+      autoResume={shouldAutoResume}
+      initialMessages={initialMessages}
+      initialReport={finalReport}
     />
   );
 }
