@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 export default async function NewChatPage() {
   const user = (await auth())?.user;
   if (!user?.id) {
-    redirect('/login');
+    redirect('/sign-in');
   }
   return (
     <div className="relative bg-gradient-primary-glow">

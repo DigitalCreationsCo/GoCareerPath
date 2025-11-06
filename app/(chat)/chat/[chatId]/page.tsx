@@ -13,7 +13,7 @@ export default async function ChatPage({
 }) {
   const user = (await auth())?.user;
   if (!user?.id) {
-    redirect('/login');
+    redirect('/sign-in');
   }
   
   const chatId = (await params).chatId;
