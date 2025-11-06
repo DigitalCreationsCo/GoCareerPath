@@ -14,7 +14,7 @@ export function DownloadReportButton({ markdownContent }: DownloadReportButtonPr
   useEffect(() => {
     if (loading) {
       setProgress(0);
-      const totalMs = 5000;
+      const totalMs = 8000;
       const intervalMs = 100;
       const totalSteps = totalMs / intervalMs;
       let currentStep = 0;

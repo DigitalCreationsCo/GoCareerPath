@@ -2,11 +2,8 @@
 const nextConfig = {
   experimental: {
     clientSegmentCache: true,
-    serverExternalPackages: [
-      'md-pdf-md',
-      'shiki',
-    ],
   },
+  // transpilePackages: ['md-pdf-md', 'puppeteer', 'puppeteer-core'],
 };
 
 module.exports = nextConfig;
