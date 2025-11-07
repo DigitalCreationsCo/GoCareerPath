@@ -8,5 +8,11 @@
         { "key": "X-Accel-Buffering", "value": "no" }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/pdf.ts": {
+      "maxDuration": 40,
+      "memory": 1024
+    }
+  }
 }
