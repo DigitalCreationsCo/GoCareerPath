@@ -295,7 +295,7 @@ export async function POST(req: NextRequest) {
     // Load appropriate dependencies based on environment
     if (isVercel || !isLocal) {
       // Production: Use serverless chromium
-      chromium = (await import('@sparticuz/chromium')).default;
+      chromium = (await import('@sparticuz/chromium-min')).default;
       puppeteer = await import('puppeteer-core');
       
       // CRITICAL: Set up library path before getting executable path
