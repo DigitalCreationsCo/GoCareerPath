@@ -7,6 +7,7 @@ import crypto from 'crypto';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+export const maxDuration = 40;
 
 export async function POST(req: NextRequest) {
   // Helper: Generate a unique filename
