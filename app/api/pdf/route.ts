@@ -1,29 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
 import { marked } from 'marked';
 import crypto from 'crypto';
 import fs from 'fs/promises';
-import path from 'path';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 export const maxDuration = 40;
 
+/**
+ * Inspect the executable file for debugging purposes
+ */
 async function inspectExecutable(filePath: string) {
   try {
     const stat = await fs.stat(filePath);
     const mode = stat.mode;
     const size = stat.size;
-    // read first 8 bytes
+    
+    // Read first 8 bytes to verify it's a valid binary
     const fd = await fs.open(filePath, 'r');
     const { buffer } = await fd.read(Buffer.alloc(8), 0, 8, 0);
     await fd.close();
     const firstBytesHex = Buffer.from(buffer).toString('hex');
-    return { exists: true, mode, size, firstBytesHex, stat };
+    
+    return { exists: true, mode, size, firstBytesHex, isExecutable: (mode & 0o111) !== 0 };
   } catch (err: any) {
-    return { exists: false, err: err.message || String(err) };
+    return { exists: false, error: err.message || String(err) };
   }
+}
+
+/**
+ * Ensure the chromium binary has executable permissions
+ */
+async function ensureExecutablePermissions(exePath: string) {
+  const inspect = await inspectExecutable(exePath);
+  
+  console.log('Chromium executable inspection:', {
+    path: exePath,
+    platform: process.platform,
+    arch: process.arch,
+    ...inspect
+  });
+
+  if (!inspect.exists) {
+    throw new Error(`Chromium binary not found at path: ${exePath}`);
+  }
+
+  if (inspect.isExecutable === false) {
+    try {
+      await fs.chmod(exePath, 0o755);
+      console.log('Set executable permissions (755) on chromium binary');
+    } catch (chmodErr) {
+      console.warn('Failed to chmod chromium binary:', String(chmodErr));
+    }
+  }
+
+  return inspect;
 }
 
 // GitHub-like CSS styling
@@ -171,13 +202,13 @@ const getHTMLTemplate = (content: string, title: string = 'Document') => `
 
 // Generate table of contents from markdown
 const generateTOC = (html: string): string => {
-const headingRegex = /<h([1-6])[^>]*>(.*?)<\/h\1>/gi;
+  const headingRegex = /<h([1-6])[^>]*>(.*?)<\/h\1>/gi;
   const headings: { level: number; text: string; id: string }[] = [];
   let match;
 
   while ((match = headingRegex.exec(html)) !== null) {
     const level = parseInt(match[1]);
-    const text = match[2].replace(/<[^>]*>/g, ''); // Strip HTML tags
+    const text = match[2].replace(/<[^>]*>/g, '');
     const id = text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
@@ -213,7 +244,7 @@ const headingRegex = /<h([1-6])[^>]*>(.*?)<\/h\1>/gi;
 
 // Add IDs to headings for TOC links
 const addHeadingIds = (html: string): string => {
-  return html.replace(/<h([1-3])([^>]*)>(.*?)<\/h\1>/gi, (match, level, attrs, text) => {
+  return html.replace(/<h([1-6])([^>]*)>(.*?)<\/h\1>/gi, (match, level, attrs, text) => {
     const plainText = text.replace(/<[^>]*>/g, '');
     const id = plainText
       .toLowerCase()
@@ -224,75 +255,99 @@ const addHeadingIds = (html: string): string => {
 };
 
 export async function POST(req: NextRequest) {
-  let browser;
+  let browser: any;
 
   try {
     const body = await req.json();
     const markdown = body.markdown as string | undefined;
-    const includeTOC = body.toc !== false; // Default to true
+    const html = body.html as string | undefined;
+    const includeTOC = body.toc !== false;
 
-    if (!markdown) {
-      return NextResponse.json(
-        { error: 'Markdown content is required.' },
-        { status: 400 }
-      );
+    // Support both markdown and raw HTML input
+    if (!markdown && !html) {
+      return new NextResponse('Either markdown or html content is required.', { status: 400 });
     }
 
-    const rawHtml = await marked.parse(markdown);
-    const htmlWithIds = addHeadingIds(rawHtml);
-    const toc = includeTOC ? generateTOC(htmlWithIds) : '';
-    const finalHtml = toc + htmlWithIds;
-    const fullHtml = getHTMLTemplate(finalHtml);
+    // Prepare HTML content
+    let finalHtml: string;
+    
+    if (markdown) {
+      // Process markdown with TOC
+      const rawHtml = await marked.parse(markdown);
+      const htmlWithIds = addHeadingIds(rawHtml);
+      const toc = includeTOC ? generateTOC(htmlWithIds) : '';
+      const contentHtml = toc + htmlWithIds;
+      finalHtml = getHTMLTemplate(contentHtml);
+    } else {
+      // Use raw HTML directly
+      finalHtml = html!;
+    }
 
-    const exePath = await chromium.executablePath();
-    const inspect = await inspectExecutable(exePath);
-    console.log('chromium.executablePath ->', exePath);
-    console.log('platform/arch ->', process.platform, process.arch);
-    console.log('executable inspect ->', inspect);
+    // Detect environment
+    const isVercel = !!process.env.VERCEL_ENV;
+    const isLocal = process.env.NODE_ENV === 'development';
+    
+    console.log('Environment detected:', { isVercel, isLocal, nodeEnv: process.env.NODE_ENV });
 
-    if (inspect.exists && typeof inspect.mode === 'number') {
-      const isExecutable = (inspect.mode & 0o111) !== 0;
-      if (!isExecutable) {
-        try {
-          await fs.chmod(exePath, 0o755);
-          console.log('Set executable bit on chromium binary.');
-        } catch (chmodErr) {
-          console.warn('Failed to chmod chromium binary:', String(chmodErr));
-        }
+    let puppeteer: any;
+    let chromium: any;
+
+    // Load appropriate dependencies based on environment
+    if (isVercel || !isLocal) {
+      // Production: Use serverless chromium
+      chromium = (await import('@sparticuz/chromium')).default;
+      puppeteer = await import('puppeteer-core');
+      
+      const exePath = await chromium.executablePath();
+      
+      // Ensure executable permissions and inspect binary
+      await ensureExecutablePermissions(exePath);
+
+      // Prepare launch arguments
+      const launchArgs = Array.isArray(chromium.args) ? [...chromium.args] : [];
+      
+      // Ensure critical serverless flags
+      if (!launchArgs.includes('--no-sandbox')) {
+        launchArgs.push('--no-sandbox');
       }
-    } else if (!inspect.exists) {
-      console.error('Chromium executable not found at path:', exePath, 'inspect:', inspect);
-      throw new Error(`Chromium binary not found at path: ${exePath}`);
-    }
+      if (!launchArgs.includes('--disable-setuid-sandbox')) {
+        launchArgs.push('--disable-setuid-sandbox');
+      }
 
-    // Launch browser with additional safe args for serverless
-    const launchArgs = Array.isArray(chromium.args) ? [...chromium.args] : [];
-    // Ensure sandbox flags for serverless environments
-    if (!launchArgs.includes('--no-sandbox')) launchArgs.push('--no-sandbox');
-    if (!launchArgs.includes('--disable-setuid-sandbox')) launchArgs.push('--disable-setuid-sandbox');
+      console.log('Launching puppeteer with args:', launchArgs.slice(0, 5), '...');
 
-    try {
-      // Launch browser with serverless chromium
-      browser = await puppeteer.launch({
-        args: launchArgs,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: exePath,
-        headless: chromium.headless ?? true,
+      try {
+        browser = await puppeteer.launch({
+          args: launchArgs,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: exePath,
+          headless: chromium.headless ?? true,
+        });
+      } catch (launchErr: any) {
+        console.error('Puppeteer launch failed:', {
+          message: launchErr?.message || String(launchErr),
+          code: launchErr?.code,
+          errno: launchErr?.errno,
+          syscall: launchErr?.syscall,
+          exePath,
+          platform: process.platform,
+          arch: process.arch,
+        });
+        throw new Error(`Failed to launch Chromium: ${launchErr?.message || 'Unknown error'}`);
+      }
+    } else {
+      // Local development: Use full puppeteer
+      console.log('Using local puppeteer');
+      puppeteer = await import('puppeteer');
+      browser = await puppeteer.launch({ 
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
-    } catch (launchErr: any) {
-      const errContext = {
-        message: String(launchErr && launchErr.message) || String(launchErr),
-        exePath,
-        inspect,
-        platform: process.platform,
-        arch: process.arch,
-      };
-      console.error('puppeteer.launch failed. context:', errContext);
-      throw new Error(`Failed to launch Chromium. See server logs for diagnostics.`);
     }
 
+    // Generate PDF
     const page = await browser.newPage();
-    await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
+    await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -319,22 +374,42 @@ export async function POST(req: NextRequest) {
 
     await browser.close();
 
-    return new NextResponse(pdfBuffer as any, {
+    const filename = markdown 
+      ? `report-${crypto.randomBytes(4).toString('hex')}.pdf`
+      : 'output.pdf';
+
+    return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="report-${crypto.randomBytes(4).toString('hex')}.pdf"`,
+        'Content-Disposition': `attachment; filename="${filename}"`,
       },
     });
   } catch (error: any) {
+    // Cleanup browser on error
     if (browser) {
       try {
         await browser.close();
-      } catch {}
+      } catch (closeErr) {
+        console.error('Failed to close browser:', closeErr);
+      }
     }
-    console.error('PDF generation error:', error);
+
+    // Comprehensive error logging
+    console.error('PDF generation error:', {
+      message: error?.message || String(error),
+      code: error?.code,
+      errno: error?.errno,
+      syscall: error?.syscall,
+      stack: error?.stack,
+    });
+
     return NextResponse.json(
-      { error: error?.message || 'Unexpected error during PDF generation.' },
+      { 
+        error: error?.message || 'Unexpected error during PDF generation.',
+        code: error?.code,
+        details: process.env.NODE_ENV === 'development' ? error?.stack : undefined
+      },
       { status: 500 }
     );
   }
