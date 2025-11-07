@@ -3,10 +3,28 @@ import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import { marked } from 'marked';
 import crypto from 'crypto';
+import fs from 'fs/promises';
+import path from 'path';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 export const maxDuration = 40;
+
+async function inspectExecutable(filePath: string) {
+  try {
+    const stat = await fs.stat(filePath);
+    const mode = stat.mode;
+    const size = stat.size;
+    // read first 8 bytes
+    const fd = await fs.open(filePath, 'r');
+    const { buffer } = await fd.read(Buffer.alloc(8), 0, 8, 0);
+    await fd.close();
+    const firstBytesHex = Buffer.from(buffer).toString('hex');
+    return { exists: true, mode, size, firstBytesHex, stat };
+  } catch (err: any) {
+    return { exists: false, err: err.message || String(err) };
+  }
+}
 
 // GitHub-like CSS styling
 const getHTMLTemplate = (content: string, title: string = 'Document') => `
@@ -153,7 +171,7 @@ const getHTMLTemplate = (content: string, title: string = 'Document') => `
 
 // Generate table of contents from markdown
 const generateTOC = (html: string): string => {
-  const headingRegex = /<h([1-3])[^>]*>(.*?)<\/h\1>/gi;
+const headingRegex = /<h([1-6])[^>]*>(.*?)<\/h\1>/gi;
   const headings: { level: number; text: string; id: string }[] = [];
   let match;
 
@@ -220,25 +238,62 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Convert markdown to HTML
     const rawHtml = await marked.parse(markdown);
     const htmlWithIds = addHeadingIds(rawHtml);
     const toc = includeTOC ? generateTOC(htmlWithIds) : '';
     const finalHtml = toc + htmlWithIds;
     const fullHtml = getHTMLTemplate(finalHtml);
 
-    // Launch browser with serverless chromium
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-    });
+    const exePath = await chromium.executablePath();
+    const inspect = await inspectExecutable(exePath);
+    console.log('chromium.executablePath ->', exePath);
+    console.log('platform/arch ->', process.platform, process.arch);
+    console.log('executable inspect ->', inspect);
+
+    if (inspect.exists && typeof inspect.mode === 'number') {
+      const isExecutable = (inspect.mode & 0o111) !== 0;
+      if (!isExecutable) {
+        try {
+          await fs.chmod(exePath, 0o755);
+          console.log('Set executable bit on chromium binary.');
+        } catch (chmodErr) {
+          console.warn('Failed to chmod chromium binary:', String(chmodErr));
+        }
+      }
+    } else if (!inspect.exists) {
+      console.error('Chromium executable not found at path:', exePath, 'inspect:', inspect);
+      throw new Error(`Chromium binary not found at path: ${exePath}`);
+    }
+
+    // Launch browser with additional safe args for serverless
+    const launchArgs = Array.isArray(chromium.args) ? [...chromium.args] : [];
+    // Ensure sandbox flags for serverless environments
+    if (!launchArgs.includes('--no-sandbox')) launchArgs.push('--no-sandbox');
+    if (!launchArgs.includes('--disable-setuid-sandbox')) launchArgs.push('--disable-setuid-sandbox');
+
+    try {
+      // Launch browser with serverless chromium
+      browser = await puppeteer.launch({
+        args: launchArgs,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: exePath,
+        headless: chromium.headless ?? true,
+      });
+    } catch (launchErr: any) {
+      const errContext = {
+        message: String(launchErr && launchErr.message) || String(launchErr),
+        exePath,
+        inspect,
+        platform: process.platform,
+        arch: process.arch,
+      };
+      console.error('puppeteer.launch failed. context:', errContext);
+      throw new Error(`Failed to launch Chromium. See server logs for diagnostics.`);
+    }
 
     const page = await browser.newPage();
     await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
 
-    // Generate PDF
     const pdfBuffer = await page.pdf({
       format: 'A4',
       margin: {
