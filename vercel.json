@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/research/start",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache" },
         { "key": "Connection", "value": "keep-alive" },
@@ -11,9 +11,7 @@
   ],
   "functions": {
     "api/pdf.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 30
+      "maxDuration": 40
     }
   }
 }
