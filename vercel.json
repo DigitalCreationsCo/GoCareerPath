@@ -10,7 +10,7 @@
     }
   ],
   "functions": {
-    "api/pdf.ts": {
+    "api/pdf.js": {
       "maxDuration": 40
     }
   }
