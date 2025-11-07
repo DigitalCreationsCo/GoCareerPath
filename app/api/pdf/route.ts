@@ -295,7 +295,7 @@ export async function POST(req: NextRequest) {
     // Load appropriate dependencies based on environment
     if (isVercel || !isLocal) {
       // Production: Use serverless chromium
-      chromium = (await import('@sparticuz/chromium')).default;
+      chromium = (await import('chrome-aws-lambda'));
       puppeteer = await import('puppeteer-core');
       
       // CRITICAL: Set up library path before getting executable path
@@ -309,29 +309,15 @@ export async function POST(req: NextRequest) {
       // Ensure executable permissions and inspect binary
       await ensureExecutablePermissions(exePath);
 
-      // Prepare launch arguments with additional flags for serverless
-      const launchArgs = [
-        ...(Array.isArray(chromium.args) ? chromium.args : []),
-        '--disable-gpu',
-        '--disable-dev-shm-usage',
-        '--disable-setuid-sandbox',
-        '--no-sandbox',
-        '--single-process', // Important for serverless
-        '--no-zygote',
-      ];
 
-      // Remove duplicates
-      const uniqueArgs = [...new Set(launchArgs)];
-
-      console.log('Launching puppeteer with', uniqueArgs.length, 'args');
-      console.log('First 10 args:', uniqueArgs.slice(0, 10));
+      console.log('Launching puppeteer with chrome-aws-lambda', chromium.args);
 
       try {
         browser = await puppeteer.launch({
-          args: uniqueArgs,
+          args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: exePath,
-          headless: true,
+          headless: chromium.headless,
           ignoreHTTPSErrors: true,
         });
       } catch (launchErr: any) {
