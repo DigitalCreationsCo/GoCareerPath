@@ -298,30 +298,41 @@ export async function POST(req: NextRequest) {
       chromium = (await import('@sparticuz/chromium')).default;
       puppeteer = await import('puppeteer-core');
       
+      // CRITICAL: Set up library path before getting executable path
+      // This ensures the chromium binary can find its shared libraries
+      if (chromium.setGraphicsMode) {
+        await chromium.setGraphicsMode(false);
+      }
+      
       const exePath = await chromium.executablePath();
       
       // Ensure executable permissions and inspect binary
       await ensureExecutablePermissions(exePath);
 
-      // Prepare launch arguments
-      const launchArgs = Array.isArray(chromium.args) ? [...chromium.args] : [];
-      
-      // Ensure critical serverless flags
-      if (!launchArgs.includes('--no-sandbox')) {
-        launchArgs.push('--no-sandbox');
-      }
-      if (!launchArgs.includes('--disable-setuid-sandbox')) {
-        launchArgs.push('--disable-setuid-sandbox');
-      }
+      // Prepare launch arguments with additional flags for serverless
+      const launchArgs = [
+        ...(Array.isArray(chromium.args) ? chromium.args : []),
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+        '--no-sandbox',
+        '--single-process', // Important for serverless
+        '--no-zygote',
+      ];
 
-      console.log('Launching puppeteer with args:', launchArgs.slice(0, 5), '...');
+      // Remove duplicates
+      const uniqueArgs = [...new Set(launchArgs)];
+
+      console.log('Launching puppeteer with', uniqueArgs.length, 'args');
+      console.log('First 10 args:', uniqueArgs.slice(0, 10));
 
       try {
         browser = await puppeteer.launch({
-          args: launchArgs,
+          args: uniqueArgs,
           defaultViewport: chromium.defaultViewport,
           executablePath: exePath,
-          headless: chromium.headless ?? true,
+          headless: true,
+          ignoreHTTPSErrors: true,
         });
       } catch (launchErr: any) {
         console.error('Puppeteer launch failed:', {
@@ -332,6 +343,10 @@ export async function POST(req: NextRequest) {
           exePath,
           platform: process.platform,
           arch: process.arch,
+          env: {
+            LD_LIBRARY_PATH: process.env.LD_LIBRARY_PATH,
+            PATH: process.env.PATH?.split(':').slice(0, 3).join(':') + '...',
+          }
         });
         throw new Error(`Failed to launch Chromium: ${launchErr?.message || 'Unknown error'}`);
       }
@@ -344,6 +359,8 @@ export async function POST(req: NextRequest) {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
     }
+
+    console.log('Browser launched successfully');
 
     // Generate PDF
     const page = await browser.newPage();
@@ -377,6 +394,8 @@ export async function POST(req: NextRequest) {
     const filename = markdown 
       ? `report-${crypto.randomBytes(4).toString('hex')}.pdf`
       : 'output.pdf';
+
+    console.log('PDF generated successfully, size:', pdfBuffer.length, 'bytes');
 
     return new NextResponse(pdfBuffer, {
       status: 200,
