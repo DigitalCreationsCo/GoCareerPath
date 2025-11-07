@@ -40,6 +40,9 @@ To learn more about the AI SDK or Next.js by Vercel, take a look at the followin
 - [AI SDK Documentation](https://sdk.vercel.ai/docs)
 - [Next.js Documentation](https://nextjs.org/docs)
 
+## PDF Generation
+
+Regarding the `/api/pdf` route: `md-pdf-md@1.0.2` depends on `puppeteer@22.6.2`, which uses `@sparticuz/chromium@123`. If any of these package versions change, please find the correct peer dependency at https://pptr.dev/supported-browsers
 
 # 🔬 Open Deep Research
 
