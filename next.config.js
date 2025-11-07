@@ -3,7 +3,11 @@ const nextConfig = {
   experimental: {
     clientSegmentCache: true,
   },
-  // transpilePackages: ['md-pdf-md', 'puppeteer', 'puppeteer-core'],
+  serverExternalPackages: [
+    "@sparticuz/chromium",
+    "@sparticuz/chromium-min",
+    "puppeteer-core"
+  ],
 };
 
 module.exports = nextConfig;
