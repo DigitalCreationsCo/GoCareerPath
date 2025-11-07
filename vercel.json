@@ -10,7 +10,8 @@
     }
   ],
   "functions": {
-    "api/pdf.js": {
+    "api/pdf": {
+      "runtime": "nodejs22.x",
       "maxDuration": 40
     }
   }
