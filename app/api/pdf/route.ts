@@ -290,34 +290,31 @@ export async function POST(req: NextRequest) {
     console.log('Environment detected:', { isVercel, isLocal, nodeEnv: process.env.NODE_ENV });
 
     let puppeteer: any;
-    let chromium: any;
 
     // Load appropriate dependencies based on environment
     if (isVercel || !isLocal) {
-      // Production: Use serverless chromium
-      chromium = (await import('chrome-aws-lambda'));
+      // Production: Use chrome-aws-lambda
+      const chromium = await import('chrome-aws-lambda');
       puppeteer = await import('puppeteer-core');
       
-      // CRITICAL: Set up library path before getting executable path
-      // This ensures the chromium binary can find its shared libraries
-      if (chromium.setGraphicsMode) {
-        await chromium.setGraphicsMode(false);
-      }
+      // Get executable path (it's a property, not a function)
+      const exePath = await chromium.default.executablePath;
       
-      const exePath = await chromium.executablePath();
-      
+      console.log('Using chrome-aws-lambda');
+      console.log('Executable path:', exePath);
+
       // Ensure executable permissions and inspect binary
       await ensureExecutablePermissions(exePath);
 
-
-      console.log('Launching puppeteer with chrome-aws-lambda', chromium.args);
+      console.log('Launching puppeteer with chrome-aws-lambda');
+      console.log('Args count:', chromium.default.args.length);
 
       try {
-        browser = await puppeteer.launch({
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
+        browser = await puppeteer.default.launch({
+          args: chromium.default.args,
+          defaultViewport: chromium.default.defaultViewport,
           executablePath: exePath,
-          headless: chromium.headless,
+          headless: chromium.default.headless,
           ignoreHTTPSErrors: true,
         });
       } catch (launchErr: any) {
@@ -331,7 +328,6 @@ export async function POST(req: NextRequest) {
           arch: process.arch,
           env: {
             LD_LIBRARY_PATH: process.env.LD_LIBRARY_PATH,
-            PATH: process.env.PATH?.split(':').slice(0, 3).join(':') + '...',
           }
         });
         throw new Error(`Failed to launch Chromium: ${launchErr?.message || 'Unknown error'}`);
@@ -340,7 +336,7 @@ export async function POST(req: NextRequest) {
       // Local development: Use full puppeteer
       console.log('Using local puppeteer');
       puppeteer = await import('puppeteer');
-      browser = await puppeteer.launch({ 
+      browser = await puppeteer.default.launch({ 
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });

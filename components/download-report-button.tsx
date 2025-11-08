@@ -45,7 +45,7 @@ export function DownloadReportButton({ markdownContent }: DownloadReportButtonPr
       const res = await fetch('/api/pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ markdown: markdownContent }),
+        body: JSON.stringify({ markdown: markdownContent, toc: true }),
       });
       if (!res.ok) {
         throw new Error('Failed to generate PDF');
