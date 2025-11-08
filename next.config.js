@@ -5,7 +5,6 @@ const nextConfig = {
   },
   serverExternalPackages: [
     "@sparticuz/chromium",
-    "chrome-aws-lambda",
     "puppeteer-core"
   ],
 };
