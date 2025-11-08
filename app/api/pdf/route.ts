@@ -6,6 +6,7 @@ import fs from 'fs/promises';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 export const maxDuration = 40;
+export const memory = 1800;
 
 /**
  * Inspect the executable file for debugging purposes
