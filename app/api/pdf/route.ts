@@ -293,30 +293,28 @@ export async function POST(req: NextRequest) {
 
     // Load appropriate dependencies based on environment
     if (isVercel || !isLocal) {
-      // Production: Use chrome-aws-lambda
-      const chromium = await import('chrome-aws-lambda');
+      // Production: Use @sparticuz/chromium
       puppeteer = await import('puppeteer-core');
-      console.log('chromium: ', chromium)
-      console.log('chromium default: ', chromium.default)
+      const chromium = await import('@sparticuz/chromium');
       
-      // Get executable path (it's a property, not a function)
-      const exePath = await chromium.default.executablePath;
+      // Get executable path (it's a function)
+      const exePath = await chromium.executablePath();
       
-      console.log('Using chrome-aws-lambda');
+      console.log('Using @sparticuz/chromium');
       console.log('Executable path:', exePath);
 
       // Ensure executable permissions and inspect binary
       await ensureExecutablePermissions(exePath);
 
-      console.log('Launching puppeteer with chrome-aws-lambda');
-      console.log('Args count:', chromium.default.args.length);
+      console.log('Launching puppeteer with @sparticuz/chromium');
+      console.log('Args count:', chromium.args.length);
 
       try {
         browser = await puppeteer.default.launch({
-          args: chromium.default.args,
-          defaultViewport: chromium.default.defaultViewport,
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
           executablePath: exePath,
-          headless: chromium.default.headless,
+          headless: chromium.headless,
           ignoreHTTPSErrors: true,
         });
       } catch (launchErr: any) {
