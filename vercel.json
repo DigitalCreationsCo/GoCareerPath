@@ -10,7 +10,7 @@
     }
   ],
   "functions": {
-    "api/pdf/route.ts": {
+    "api/pdf": {
       "memory": 1800,
       "maxDuration": 40
     }
