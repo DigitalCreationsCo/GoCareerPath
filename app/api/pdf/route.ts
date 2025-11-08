@@ -295,7 +295,8 @@ export async function POST(req: NextRequest) {
     if (isVercel || !isLocal) {
       // Production: Use @sparticuz/chromium
       puppeteer = await import('puppeteer-core');
-      const chromium = await import('@sparticuz/chromium');
+      const chromiumModule = await import('@sparticuz/chromium');
+      const chromium: any = chromiumModule.default; // Cast to any to bypass TypeScript error
       
       // Get executable path (it's a function)
       const exePath = await chromium.executablePath();
@@ -312,9 +313,9 @@ export async function POST(req: NextRequest) {
       try {
         browser = await puppeteer.default.launch({
           args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
+          defaultViewport: chromium.defaultViewport, // Revert to chromium.defaultViewport
           executablePath: exePath,
-          headless: chromium.headless,
+          headless: chromium.headless, // Revert to chromium.headless
           ignoreHTTPSErrors: true,
         });
       } catch (launchErr: any) {
