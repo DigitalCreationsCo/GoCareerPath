@@ -296,6 +296,8 @@ export async function POST(req: NextRequest) {
       // Production: Use chrome-aws-lambda
       const chromium = await import('chrome-aws-lambda');
       puppeteer = await import('puppeteer-core');
+      console.log('chromium: ', chromium)
+      console.log('chromium default: ', chromium.default)
       
       // Get executable path (it's a property, not a function)
       const exePath = await chromium.default.executablePath;
