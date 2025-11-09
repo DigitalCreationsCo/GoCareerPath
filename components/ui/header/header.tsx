@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link';
-import { CircleIcon, Home, LogOut, Activity, Menu, ReceiptIcon } from 'lucide-react';
+import { CircleIcon, Home, LogOut, Activity, Menu, ReceiptIcon, PlusCircleIcon } from 'lucide-react';
 import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button/button';
 import {
@@ -10,11 +10,12 @@ DropdownMenuItem,
 DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar/avatar';
-import { signOut } from '@/app/(login)/actions';
+// import { signOut } from '@/app/(login)/actions';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/types';
 import useSWR, { mutate } from 'swr';
 import { Logo } from '@/components/logo';
+import { signOut } from '@/auth';
 
 // --- fetcher and UserMenu (unchanged) ---
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -23,6 +24,11 @@ function UserMenu({ session }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const { data: user } = useSWR<User>('/api/user', fetcher);
   const router = useRouter();
+
+  async function handleNewChat() {
+    localStorage.removeItem("chatId");
+    router.push('/chat'); 
+  }
 
   async function handleSignOut() {
     await signOut();
@@ -63,11 +69,22 @@ function UserMenu({ session }: any) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col bg-background">
         <DropdownMenuItem className="cursor-pointer">
+          <Link href="/chat" className="flex w-full items-center">
+            <span>Get My Career Path Report</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleNewChat} className="cursor-pointer">
+          <div className="flex w-full items-center">
+            <PlusCircleIcon className="mr-2 h-4 w-4" />
+            <span>New Chat</span>
+          </div>
+        </DropdownMenuItem>
+        {/* <DropdownMenuItem className="cursor-pointer">
           <Link href="/dashboard" className="flex w-full items-center">
             <Home className="mr-2 h-4 w-4" />
             <span>Dashboard</span>
           </Link>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer">
