@@ -6,7 +6,7 @@ if (!process.env.POSTGRES_URL) {
   throw new Error('POSTGRES_URL environment variable is not set');
 }
 
-export const client = postgres(process.env.POSTGRES_URL, {
+const client = postgres(process.env.POSTGRES_URL, {
   connect_timeout: 60,
   idle_timeout: 60,
   max: 10,
