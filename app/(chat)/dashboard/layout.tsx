@@ -18,7 +18,7 @@ export default function DashboardLayout({
     { href: '/dashboard', icon: ReceiptIcon, label: 'Reports' },
     { href: '/dashboard/team', icon: Users, label: 'Team' },
     { href: '/dashboard/general', icon: Settings, label: 'General' },
-    { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
+    // { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
     { href: '/dashboard/security', icon: Shield, label: 'Security' }
   ];
 

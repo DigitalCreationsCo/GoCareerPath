@@ -17,7 +17,7 @@ export default async function LandingPage() {
       <main className="min-h-screen bg-gradient-hero text-foreground md:overflow-hidden overflow-y-scroll md:h-auto h-screen scroll-smooth snap-y snap-mandatory md:snap-none">
         {/* Hero Section */}
         <section className="bg-gradient-primary-glow relative min-h-screen flex md:items-center justify-center p-2 sm:px-6 lg:px-8 snap-start md:snap-none">
-          <div className="absolute inset-0 bg-gradient-to-b from-background/80 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-background" />
           <div className="relative z-10 max-w-md sm:max-w-[80%] mx-auto text-center space-y-8 animate-slide-up mt-20 md:mt-0">
             <div className="space-y-4 md:pt-4">
               <div className="hidden md:inline-flex items-center px-4 py-2 text-warning mb-0 gap-2">
@@ -54,8 +54,9 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section className="pt-20 pb-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-tr from-background/80 to-muted/10 snap-start md:snap-none">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
+        <section className="relative pt-20 pb-32 px-4 sm:px-6 lg:px-8 bg-gradient-primary-glow snap-start md:snap-none">
+          <div className="absolute inset-0 bg-gradient-to-b from-background/90 from-[1%] to-background" />
+          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8">
             <div>
               <h2 className="heading mb-3">
                 <span className="text-transparent bg-gradient-warning bg-clip-text">
@@ -370,9 +371,9 @@ export default async function LandingPage() {
         </section> */}
 
         {/* Final CTA */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/20 to-background snap-start md:snap-none">
+        <section className="flex py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/20 to-background snap-start md:snap-none min-h-[70vh] items-center justify-center">
         {/* <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-tl from-muted/30 via-pink-100/50 to-background snap-start md:snap-none"> */}
-          <div className="flex flex-col items-center justify-center mx-auto text-center gap-8">
+          <div className="flex flex-col h-full items-center justify-center m-auto text-center gap-8">
             <div className="space-y-3">
               <h2 className="heading text-warning text-2xl sm:text-3xl whitespace-pre-line font-semibold">⚠️ {numJobsDisplaced} jobs will be displaced by {dateJobsDisplaced}
               </h2>
@@ -395,7 +396,7 @@ export default async function LandingPage() {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 px-4 sm:px-6 lg:px-8 snap-start md:snap-none">
+        <footer className="py-10 px-4 sm:px-6 lg:px-8 snap-start md:snap-none">
           <div className="max-w-6xl mx-auto text-center text-xs text-muted-foreground">
             <p>{copyright}</p>
           </div>

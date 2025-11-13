@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 import { User } from '@/lib/types';
 import useSWR, { mutate } from 'swr';
 import { Logo } from '@/components/logo';
-import { signOut } from '@/auth';
+import { signOut } from 'next-auth/react';
 
 // --- fetcher and UserMenu (unchanged) ---
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
