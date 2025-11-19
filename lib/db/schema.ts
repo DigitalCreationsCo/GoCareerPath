@@ -1,10 +1,10 @@
-import { pgTable, foreignKey, uuid, timestamp, text, varchar, jsonb, json, unique, integer, primaryKey, boolean, decimal, date, customType } from "drizzle-orm/pg-core"
-import type { AdapterAccountType } from "@auth/core/adapters"
+import { pgTable, foreignKey, uuid, timestamp, text, varchar, jsonb, json, unique, integer, primaryKey, boolean, decimal, date, customType } from "drizzle-orm/pg-core";
+import type { AdapterAccountType } from "@auth/core/adapters";
 
-const vector = customType<{ data: number[] }>({
-    dataType() {
-      return 'vector(1536)';
-    },
+const vector = customType<{ data: number[]; }>({
+	dataType() {
+		return 'vector(1536)';
+	},
 });
 
 export const chats = pgTable("chats", {
@@ -16,10 +16,10 @@ export const chats = pgTable("chats", {
 	lastContext: jsonb(),
 }, (table) => [
 	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "chats_userId_users_id_fk"
-		}),
+		columns: [ table.userId ],
+		foreignColumns: [ users.id ],
+		name: "chats_userId_users_id_fk"
+	}),
 ]);
 
 export const messages = pgTable("messages", {
@@ -31,10 +31,10 @@ export const messages = pgTable("messages", {
 	createdAt: timestamp({ mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.chatId],
-			foreignColumns: [chats.id],
-			name: "messages_chatId_chats_id_fk"
-		}),
+		columns: [ table.chatId ],
+		foreignColumns: [ chats.id ],
+		name: "messages_chatId_chats_id_fk"
+	}),
 ]);
 
 export const stream = pgTable("stream", {
@@ -76,15 +76,15 @@ export const activityLogs = pgTable("activity_logs", {
 	ipAddress: varchar("ip_address", { length: 45 }),
 }, (table) => [
 	foreignKey({
-			columns: [table.teamId],
-			foreignColumns: [teams.id],
-			name: "activity_logs_team_id_teams_id_fk"
-		}),
+		columns: [ table.teamId ],
+		foreignColumns: [ teams.id ],
+		name: "activity_logs_team_id_teams_id_fk"
+	}),
 	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "activity_logs_user_id_users_id_fk"
-		}),
+		columns: [ table.userId ],
+		foreignColumns: [ users.id ],
+		name: "activity_logs_user_id_users_id_fk"
+	}),
 ]);
 
 export const users = pgTable("users", {
@@ -95,7 +95,7 @@ export const users = pgTable("users", {
 	image: text("image"),
 	passwordHash: text("password_hash"),
 	role: varchar({ length: 20 }).default('member').notNull(),
-	organizationId: uuid('organization_id').references(() => organizations.id),
+	teamId: uuid('team_id').references(() => teams.id),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
@@ -113,15 +113,15 @@ export const invitations = pgTable("invitations", {
 	status: varchar({ length: 20 }).default('pending').notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.invitedBy],
-			foreignColumns: [users.id],
-			name: "invitations_invited_by_users_id_fk"
-		}),
+		columns: [ table.invitedBy ],
+		foreignColumns: [ users.id ],
+		name: "invitations_invited_by_users_id_fk"
+	}),
 	foreignKey({
-			columns: [table.teamId],
-			foreignColumns: [teams.id],
-			name: "invitations_team_id_teams_id_fk"
-		}),
+		columns: [ table.teamId ],
+		foreignColumns: [ teams.id ],
+		name: "invitations_team_id_teams_id_fk"
+	}),
 ]);
 
 export const reports = pgTable("reports", {
@@ -133,10 +133,10 @@ export const reports = pgTable("reports", {
 	globalRationale: text("global_rationale").notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "reports_user_id_users_id_fk"
-		}),
+		columns: [ table.userId ],
+		foreignColumns: [ users.id ],
+		name: "reports_user_id_users_id_fk"
+	}),
 ]);
 
 export const researchSessions = pgTable("research_sessions", {
@@ -151,15 +151,15 @@ export const researchSessions = pgTable("research_sessions", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.chatId],
-			foreignColumns: [chats.id],
-			name: "research_sessions_chat_id_chats_id_fk"
-		}),
+		columns: [ table.chatId ],
+		foreignColumns: [ chats.id ],
+		name: "research_sessions_chat_id_chats_id_fk"
+	}),
 	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "research_sessions_user_id_users_id_fk"
-		}),
+		columns: [ table.userId ],
+		foreignColumns: [ users.id ],
+		name: "research_sessions_user_id_users_id_fk"
+	}),
 	unique("research_sessions_thread_id_unique").on(table.threadId),
 ]);
 
@@ -171,170 +171,159 @@ export const teamMembers = pgTable("team_members", {
 	joinedAt: timestamp("joined_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.teamId],
-			foreignColumns: [teams.id],
-			name: "team_members_team_id_teams_id_fk"
-		}),
+		columns: [ table.teamId ],
+		foreignColumns: [ teams.id ],
+		name: "team_members_team_id_teams_id_fk"
+	}),
 	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "team_members_user_id_users_id_fk"
-		}),
+		columns: [ table.userId ],
+		foreignColumns: [ users.id ],
+		name: "team_members_user_id_users_id_fk"
+	}),
+]);
+
+export const teamManagers = pgTable("team_managers", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	userId: uuid("user_id").notNull().references(() => users.id),
+	teamId: uuid("team_id").notNull().references(() => teams.id),
+}, (table) => [
+	foreignKey({
+		columns: [ table.teamId ],
+		foreignColumns: [ teams.id ],
+		name: "team_managers_team_id_teams_id_fk"
+	}),
+	foreignKey({
+		columns: [ table.userId ],
+		foreignColumns: [ users.id ],
+		name: "team_managers_user_id_users_id_fk"
+	}),
 ]);
 
 export const accounts = pgTable(
 	"account",
 	{
-	  userId: uuid("userId")
-		.notNull()
-		.references(() => users.id, { onDelete: "cascade" }),
-	  type: text("type").$type<AdapterAccountType>().notNull(),
-	  provider: text("provider").notNull(),
-	  providerAccountId: text("providerAccountId").notNull(),
-	  refresh_token: text("refresh_token"),
-	  access_token: text("access_token"),
-	  expires_at: integer("expires_at"),
-	  token_type: text("token_type"),
-	  scope: text("scope"),
-	  id_token: text("id_token"),
-	  session_state: text("session_state"),
+		userId: uuid("userId")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		type: text("type").$type<AdapterAccountType>().notNull(),
+		provider: text("provider").notNull(),
+		providerAccountId: text("providerAccountId").notNull(),
+		refresh_token: text("refresh_token"),
+		access_token: text("access_token"),
+		expires_at: integer("expires_at"),
+		token_type: text("token_type"),
+		scope: text("scope"),
+		id_token: text("id_token"),
+		session_state: text("session_state"),
 	},
 	(account) => [
-	  {
-		compoundKey: primaryKey({
-		  columns: [account.provider, account.providerAccountId],
-		}),
-	  },
+		{
+			compoundKey: primaryKey({
+				columns: [ account.provider, account.providerAccountId ],
+			}),
+		},
 	]
-  )
-   
-  export const sessions = pgTable("session", {
+);
+
+export const sessions = pgTable("session", {
 	sessionToken: text("sessionToken").primaryKey(),
 	userId: uuid("userId")
-	  .notNull()
-	  .references(() => users.id, { onDelete: "cascade" }),
-	expires: timestamp("expires", { mode: "date" }).notNull(),
-  })
-   
-  export const verificationTokens = pgTable(
-	"verificationToken",
-	{
-	  identifier: text("identifier").notNull(),
-	  token: text("token").notNull(),
-	  expires: timestamp("expires", { mode: "date" }).notNull(),
-	},
-	(verificationToken) => [
-	  {
-		compositePk: primaryKey({
-		  columns: [verificationToken.identifier, verificationToken.token],
-		}),
-	  },
-	]
-  )
-   
-  export const authenticators = pgTable(
-	"authenticator",
-	{
-	  credentialID: text("credentialID").notNull().unique(),
-	  userId: uuid("userId")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade" }),
-	  providerAccountId: text("providerAccountId").notNull(),
-	  credentialPublicKey: text("credentialPublicKey").notNull(),
-	  counter: integer("counter").notNull(),
-	  credentialDeviceType: text("credentialDeviceType").notNull(),
-	  credentialBackedUp: boolean("credentialBackedUp").notNull(),
-	  transports: text("transports"),
+	expires: timestamp("expires", { mode: "date" }).notNull(),
+});
+
+export const verificationTokens = pgTable(
+	"verificationToken",
+	{
+		identifier: text("identifier").notNull(),
+		token: text("token").notNull(),
+		expires: timestamp("expires", { mode: "date" }).notNull(),
+	},
+	(verificationToken) => [
+		{
+			compositePk: primaryKey({
+				columns: [ verificationToken.identifier, verificationToken.token ],
+			}),
+		},
+	]
+);
+
+export const authenticators = pgTable(
+	"authenticator",
+	{
+		credentialID: text("credentialID").notNull().unique(),
+		userId: uuid("userId")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		providerAccountId: text("providerAccountId").notNull(),
+		credentialPublicKey: text("credentialPublicKey").notNull(),
+		counter: integer("counter").notNull(),
+		credentialDeviceType: text("credentialDeviceType").notNull(),
+		credentialBackedUp: boolean("credentialBackedUp").notNull(),
+		transports: text("transports"),
 	},
 	(authenticator) => [
-	  {
-		compositePK: primaryKey({
-		  columns: [authenticator.userId, authenticator.credentialID],
-		}),
-	  },
+		{
+			compositePK: primaryKey({
+				columns: [ authenticator.userId, authenticator.credentialID ],
+			}),
+		},
 	]
-  )
-
-// B2B Platform Schema
-export const organizations = pgTable("organizations", {
-    id: uuid('id').defaultRandom().primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-});
-
-export const b2bTeams = pgTable("b2b_teams", {
-    id: uuid('id').defaultRandom().primaryKey(),
-    organizationId: uuid('organization_id').notNull().references(() => organizations.id),
-    managerId: uuid('manager_id').references(() => users.id),
-    name: varchar("name", { length: 255 }).notNull(),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-});
-
-export const employees = pgTable("employees", {
-    id: uuid('id').defaultRandom().primaryKey(),
-    organizationId: uuid('organization_id').notNull().references(() => organizations.id),
-    teamId: uuid('team_id').references(() => b2bTeams.id),
-    name: varchar("name", { length: 255 }).notNull(),
-    email: varchar("email", { length: 255 }).notNull().unique(),
-    role: varchar("role", { length: 255 }),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-});
+);
 
 export const skills = pgTable("skills", {
-    id: uuid('id').defaultRandom().primaryKey(),
-    name: varchar("name", { length: 255 }).notNull().unique(),
-    category: varchar("category", { length: 255 }),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+	id: uuid('id').defaultRandom().primaryKey(),
+	name: varchar("name", { length: 255 }).notNull().unique(),
+	category: varchar("category", { length: 255 }),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 });
 
 export const employeeSkills = pgTable("employee_skills", {
-    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    userId: uuid('user_id').notNull().references(() => users.id),
     skillId: uuid('skill_id').notNull().references(() => skills.id),
-    proficiencyLevel: integer('proficiency_level'),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+	proficiencyLevel: integer('proficiency_level'),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => ({
-    pk: primaryKey({ columns: [table.employeeId, table.skillId] }),
+    pk: primaryKey({ columns: [table.userId, table.skillId] }),
 }));
 
 export const rawReports = pgTable("raw_reports", {
     id: uuid('id').defaultRandom().primaryKey(),
-    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    userId: uuid('user_id').notNull().references(() => users.id),
     rawContentText: text('raw_content_text'),
-    rawContentJson: jsonb('raw_content_json'),
-    embedding: vector('embedding'),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	rawContentJson: jsonb('raw_content_json'),
+	embedding: vector('embedding'),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 });
 
 export const snapshots = pgTable("snapshots", {
     id: uuid('id').defaultRandom().primaryKey(),
-    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    userId: uuid('user_id').notNull().references(() => users.id),
     reportId: uuid('report_id').notNull().references(() => rawReports.id),
-    skillGapScore: integer('skill_gap_score'),
-    upliftProjection: decimal('uplift_projection'),
-    automationRisk: decimal('automation_risk'),
-    promotionTimeline: integer('promotion_timeline'), // in months
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	skillGapScore: integer('skill_gap_score'),
+	upliftProjection: decimal('uplift_projection'),
+	automationRisk: decimal('automation_risk'),
+	promotionTimeline: integer('promotion_timeline'), // in months
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 });
 
 export const roadmaps = pgTable("roadmaps", {
     id: uuid('id').defaultRandom().primaryKey(),
-    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    userId: uuid('user_id').notNull().references(() => users.id),
     snapshotId: uuid('snapshot_id').notNull().references(() => snapshots.id),
-    recommendedRole: varchar('recommended_role', { length: 255 }),
-    steps: text('steps'),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	recommendedRole: varchar('recommended_role', { length: 255 }),
+	steps: text('steps'),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 });
 
 export const trainingEvents = pgTable("training_events", {
     id: uuid('id').defaultRandom().primaryKey(),
-    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    userId: uuid('user_id').notNull().references(() => users.id),
     name: varchar("name", { length: 255 }).notNull(),
-    completionDate: date('completion_date'),
-    cost: decimal('cost', { precision: 10, scale: 2 }),
-    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	completionDate: date('completion_date'),
+	cost: decimal('cost', { precision: 10, scale: 2 }),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 });

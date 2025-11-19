@@ -1,0 +1,382 @@
+@layer utilities {
+  /* Base class for gradient transitions */
+  .bg-gradient-transition {
+    @apply relative;
+    background-color: transparent !important;
+  }
+  
+
+  /* Create pseudo-elements that sit in the background layer */
+  .bg-gradient-transition::before,
+  .bg-gradient-transition::after {
+    content: '';
+    @apply absolute inset-0 rounded-[inherit] transition-opacity duration-300 ease-in-out;
+    z-index: 0;
+  }
+
+  /* Ensure text and child content appears above gradients */
+  .bg-gradient-transition > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .bg-gradient-transition::before {
+    opacity: 1;
+  }
+
+  .bg-gradient-transition::after {
+    opacity: 0;
+  }
+
+  .bg-gradient-transition:hover::before {
+    opacity: 0;
+  }
+
+  .bg-gradient-transition:hover::after {
+    opacity: 1;
+  }
+
+  /* ===== STATIC GRADIENT BACKGROUNDS (for non-transitioning elements) ===== */
+  .bg-gradient-primary {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-primary-glow {
+    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 80%));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-accent {
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-accent-glow {
+    background-image: linear-gradient(135deg, hsl(var(--accent-glow)), hsl(280 100% 80%));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-secondary {
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary) / 0.8));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-destructive {
+    background-image: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-warning {
+    background-image: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning) / 0.8));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-success {
+    background-image: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+    background-color: transparent !important;
+  }
+
+  .bg-gradient-muted {
+    background-image: linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground) / 0.2));
+    background-color: transparent !important;
+  }
+  
+  .bg-gradient-card {
+    background-image: linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)));
+  }
+
+  /* ===== INITIAL STATE GRADIENTS (on ::before for transitions) ===== */
+  .bg-gradient-transition.bg-gradient-primary::before {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  }
+
+  .bg-gradient-transition.bg-gradient-primary-glow::before {
+    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 80%));
+  }
+
+  .bg-gradient-transition.bg-gradient-accent::before {
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+  }
+
+  .bg-gradient-transition.bg-gradient-accent-glow::before {
+    background-image: linear-gradient(135deg, hsl(var(--accent-glow)), hsl(280 100% 80%));
+  }
+
+  .bg-gradient-transition.bg-gradient-secondary::before {
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary) / 0.8));
+  }
+
+  .bg-gradient-transition.bg-gradient-destructive::before {
+    background-image: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8));
+  }
+
+  .bg-gradient-transition.bg-gradient-warning::before {
+    background-image: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning) / 0.8));
+  }
+
+  .bg-gradient-transition.bg-gradient-success::before {
+    background-image: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+  }
+
+  .bg-gradient-transition.bg-gradient-muted::before {
+    background-image: linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground) / 0.2));
+  }
+
+  /* ===== HOVER STATE GRADIENTS (on ::after for transitions) ===== */
+  
+  .bg-gradient-transition.hover\:bg-gradient-primary:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-primary-glow:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 75%));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-accent:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-accent-glow:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent-glow)), hsl(280 100% 75%));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-secondary:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary) / 0.8));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-destructive:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-warning:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning) / 0.8));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-success:hover::after {
+    background-image: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+  }
+
+  .bg-gradient-transition.hover\:bg-gradient-muted:hover::after {
+    background-image: linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground) / 0.2));
+  }
+
+  /* ===== FOCUS STATE GRADIENTS (on ::after for transitions) ===== */
+  
+  .bg-gradient-transition.focus\:bg-gradient-primary:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-primary-glow:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 75%));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-accent:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-accent-glow:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent-glow)), hsl(280 100% 75%));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-secondary:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary) / 0.8));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-destructive:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-warning:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning) / 0.8));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-success:focus::after {
+    background-image: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+  }
+
+  .bg-gradient-transition.focus\:bg-gradient-muted:focus::after {
+    background-image: linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground) / 0.2));
+  }
+
+  /* ===== ACTIVE STATE GRADIENTS (on ::after for transitions) ===== */
+  
+  .bg-gradient-transition.active\:bg-gradient-primary:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-primary-glow:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 75%));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-accent:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-accent-glow:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent-glow)), hsl(280 100% 75%));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-secondary:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary) / 0.8));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-destructive:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-warning:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning) / 0.8));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-success:active::after {
+    background-image: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+  }
+
+  .bg-gradient-transition.active\:bg-gradient-muted:active::after {
+    background-image: linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground) / 0.2));
+  }
+
+  /* ===== FOCUS-VISIBLE STATE GRADIENTS (on ::after for transitions) ===== */
+  
+  .bg-gradient-transition.focus-visible\:bg-gradient-primary:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-primary-glow:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 75%));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-accent:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-accent-glow:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--accent-glow)), hsl(280 100% 75%));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-secondary:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary) / 0.8));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-destructive:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-warning:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--warning) / 0.8));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-success:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+  }
+
+  .bg-gradient-transition.focus-visible\:bg-gradient-muted:focus-visible::after {
+    background-image: linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground) / 0.2));
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 100% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+    100% {
+      background-position: -100% center;
+    }
+  }
+  
+  @keyframes shine-vertical {
+    0% {
+      background-position: center 50%;
+    }
+    50% {
+      background-position: center 100%;
+    }
+    100% {
+      background-position: center 50%;
+    }
+  }
+  
+  .animate-gradient {
+    background-size: auto 200%;
+    animation: shine-vertical 12s ease-in-out infinite;
+  }
+
+  .shiny-text {
+    position: relative;
+    display: inline-block;
+    /* For text gradients */
+    color: transparent;
+    background-image: linear-gradient(
+      110deg,
+      rgb(var(--warning)),
+      rgb(var(--warning-foreground)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning))
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: shine 2.5s linear infinite;
+  }
+  
+  /* SVG support: applies shiny effect to SVG <g> or <svg> with .shiny-text */
+  .shiny-text svg,
+  svg.shiny-text,
+  .shiny-text [fill="currentColor"],
+  .shiny-text path {
+    fill: url(#shiny-text-gradient);
+  }
+  
+  /* If direct application (better browser support for mask-clip) */
+  .shiny-text svg {
+    background-image: linear-gradient(
+      110deg,
+      rgb(var(--warning)),
+      rgb(var(--warning-foreground)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning))
+    );
+    background-size: 200% auto;
+    -webkit-mask-image: linear-gradient(
+      110deg,
+      rgb(var(--warning)),
+      rgb(var(--warning-foreground)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning))
+    );
+    -webkit-mask-size: 200% auto;
+    mask-image: linear-gradient(
+      110deg,
+      rgb(var(--warning)),
+      rgb(var(--warning-foreground)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning)),
+      rgb(var(--warning))
+    );
+    mask-size: 200% auto;
+    animation: shine 2.5s linear infinite;
+  }
+
+  .heading {
+    @apply text-4xl max-w-[400px] md:max-w-full text-center place-self-center mb-8 leading-tight tracking-tight;
+    font-optical-sizing: auto;
+  }
+
+  .subtitle {
+    @apply text-lg leading-snug text-muted-foreground;
+  }
+
+  .subtext {
+    @apply text-muted-foreground;
+  }
+}

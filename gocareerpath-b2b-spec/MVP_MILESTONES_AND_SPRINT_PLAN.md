@@ -1,77 +1,70 @@
 # MVP Milestones & Sprint Plan
 
-## 1. Introduction
+This document outlines the milestones and a sample sprint plan for building the MVP.
 
-This document outlines the milestones and a high-level sprint plan for the development of the GoCareerPath B2B platform MVP. The plan is based on two-week sprint cycles.
+## Milestones
 
-## 2. High-Level Milestones
+*   **Milestone 1: Core Infrastructure & Data Pipeline (End of Sprint 2)**
+    *   Database schema is finalized and implemented.
+    *   Data processing pipeline is functional for ingesting and processing reports.
+    *   Core API endpoints are in place.
+*   **Milestone 2: Manager Dashboard & Employee Snapshot (End of Sprint 4)**
+    *   The manager dashboard is implemented with key analytics.
+    *   The employee skill snapshot page is fully functional.
+    *   Onboarding flow for new companies is complete.
+*   **Milestone 3: Advanced Features & Beta Launch (End of Sprint 6)**
+    *   Training ROI panel and Talent Bench Strength features are complete.
+    *   The platform is ready for a closed beta with a select group of customers.
 
-*   **Milestone 1: Foundation & Data Pipeline (Sprints 1-2)**
-    *   **Goal:** Set up the core infrastructure and build the data processing pipeline.
-    *   **Deliverable:** A functioning pipeline that can ingest a career report, process it, and store the structured data in the database.
-*   **Milestone 2: Core Features & APIs (Sprints 3-4)**
-    *   **Goal:** Develop the backend APIs and the core manager-facing features.
-    *   **Deliverable:** A set of working API endpoints and a basic frontend that can display the Team Dashboard and Employee Snapshot.
-*   **Milestone 3: Polish & Onboarding (Sprints 5-6)**
-    *   **Goal:** Refine the UI/UX, implement the onboarding flow, and prepare for a beta launch.
-    *   **Deliverable:** A polished, end-to-end application that is ready for initial customer testing.
+## Sprint Plan (2-week sprints)
 
-## 3. Sprint Plan
+### Sprint 1: Foundation & Setup
 
-### Sprint 1: Infrastructure & Data Model
-
-*   **Goal:** Set up the project, CI/CD, and database schema.
+*   **Goal:** Set up the project, finalize the tech stack, and implement the core database schema.
 *   **Tasks:**
-    *   Initialize Next.js and Node.js projects.
-    *   Set up Vercel for deployment.
-    *   Provision a PostgreSQL database.
-    *   Implement the database schema (all tables).
-    *   Set up basic authentication (user registration and login).
+    *   Initialize Next.js project.
+    *   Set up PostgreSQL database with `pgvector`.
+    *   Implement the initial database schema using Drizzle ORM.
+    *   Set up authentication.
 
 ### Sprint 2: Data Pipeline
 
-*   **Goal:** Build the end-to-end data processing pipeline.
+*   **Goal:** Build the data pipeline for ingesting and processing reports.
 *   **Tasks:**
-    *   Create the data ingestion service.
-    *   Set up a job queue.
-    *   Implement the report processing worker.
-    *   Integrate with the LLM provider for data extraction.
-    *   Build the normalization and storage logic.
+    *   Create an API endpoint for report ingestion.
+    *   Implement the LLM extraction logic.
+    *   Build the normalization and storage steps.
+    *   Set up background jobs for the pipeline.
 
-### Sprint 3: Backend & APIs
+### Sprint 3: Core APIs & Employee Snapshot UI
 
-*   **Goal:** Develop the core API endpoints.
+*   **Goal:** Build the core APIs and the UI for the employee skill snapshot.
 *   **Tasks:**
-    *   Implement the `/teams/:id/snapshot` endpoint.
-    *   Implement the `/employees/:id/skill-profile` endpoint.
-    *   Implement the `/employees/:id/projection` endpoint.
-    *   Write unit and integration tests for the APIs.
+    *   Implement the API endpoints for employees and teams.
+    *   Create the front-end components for the `EmployeeSkillSnapshot` page.
+    *   Connect the UI to the APIs.
 
-### Sprint 4: Frontend - Core Views
+### Sprint 4: Manager Dashboard
 
-*   **Goal:** Build the main dashboard and employee snapshot views.
+*   **Goal:** Build the manager dashboard.
 *   **Tasks:**
-    *   Build the main application layout and navigation.
-    *   Develop the `TeamOverviewDashboard` component.
-    *   Develop the `SkillHeatmap` and other dashboard cards.
-    *   Develop the `EmployeeSkillSnapshot` component.
-    *   Integrate the frontend views with the APIs.
+    *   Implement the analytics engine and materialized views.
+    *   Create the UI components for the `TeamOverviewDashboard`.
+    *   Integrate the dashboard with the analytics APIs.
 
-### Sprint 5: Analytics & Onboarding
+### Sprint 5: Onboarding & Training ROI
 
-*   **Goal:** Implement the analytics and onboarding features.
+*   **Goal:** Implement the company onboarding flow and the Training ROI panel.
 *   **Tasks:**
-    *   Create the materialized views for the analytics engine.
-    *   Implement the `/analytics/*` endpoints.
-    *   Build the `TrainingROIPanel` and other analytics components.
-    *   Develop the `OrgChartUploader` and `EmployeeReportMapper` components for onboarding.
+    *   Build the UI for org chart uploads.
+    *   Implement the logic for mapping employees to reports.
+    *   Create the `TrainingROIPanel` component and its corresponding APIs.
 
-### Sprint 6: Polish, Testing & Deployment
+### Sprint 6: Talent Bench & Beta Prep
 
-*   **Goal:** Finalize the application and prepare for launch.
+*   **Goal:** Build the Talent Bench Strength feature and prepare for beta launch.
 *   **Tasks:**
+    *   Implement the `TalentBenchStrength` component.
     *   Conduct end-to-end testing.
-    *   Perform UI/UX review and make necessary adjustments.
-    *   Implement comprehensive error handling and logging.
-    *   Prepare deployment scripts and documentation.
-    *   Deploy to production for a limited beta release.
+    *   Gather feedback from internal stakeholders.
+    *   Prepare documentation for beta users.

@@ -6,13 +6,13 @@ export async function middleware(request: NextRequest) {
   const session = await auth();
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith('/b2b') && !pathname.startsWith('/b2b/onboarding')) {
+  if (!pathname.startsWith('/onboarding')) {
     if (!session?.user) {
       return NextResponse.redirect(new URL('/sign-in', request.url));
     }
 
-    if (!session.user.organizationId) {
-      return NextResponse.redirect(new URL('/b2b/onboarding', request.url));
+    if (!session.user.teamId) {
+      return NextResponse.redirect(new URL('/onboarding', request.url));
     }
   }
 
@@ -20,5 +20,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/b2b/:path*'],
+  matcher: ['/:path*'],
 }

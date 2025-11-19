@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/drizzle';
-import { organizations, b2bTeams, employees, users } from '@/lib/db/schema';
+import { teams, users, teamManagers } from '@/lib/db/schema';
 import { auth } from '@/auth';
 import { eq } from 'drizzle-orm';
 
@@ -24,32 +24,31 @@ export async function POST(req: NextRequest) {
     // This is a simplified implementation for the MVP.
     // A real-world implementation would need more robust error handling and validation.
     for (const row of rows) {
-      const [employeeName, employeeEmail, teamName, managerEmail] = row.split(',');
+      const [userName, userEmail, teamName, managerEmail] = row.split(',');
 
-      if (!employeeName || !employeeEmail || !teamName || !managerEmail) {
+      if (!userName || !userEmail || !teamName || !managerEmail) {
         continue;
-      }
-
-      let [organization] = await db.select().from(organizations).limit(1);
-      if (!organization) {
-        [organization] = await db.insert(organizations).values({ name: 'Default Organization' }).returning();
       }
 
       let [manager] = await db.select().from(users).where(eq(users.email, managerEmail));
       if (!manager) {
-        [manager] = await db.insert(users).values({ email: managerEmail, name: managerEmail, organizationId: organization.id }).returning();
+        [manager] = await db.insert(users).values({ email: managerEmail, name: managerEmail }).returning();
       }
 
-      let [team] = await db.select().from(b2bTeams).where(eq(b2bTeams.name, teamName));
+      let [team] = await db.select().from(teams).where(eq(teams.name, teamName));
       if (!team) {
-        [team] = await db.insert(b2bTeams).values({ name: teamName, organizationId: organization.id, managerId: manager.id }).returning();
+        [team] = await db.insert(teams).values({ name: teamName }).returning();
       }
 
-      await db.insert(employees).values({
-        name: employeeName,
-        email: employeeEmail,
+      await db.insert(teamManagers).values({
+        userId: manager.id,
         teamId: team.id,
-        organizationId: organization.id,
+      }).onConflictDoNothing();
+
+      await db.insert(users).values({
+        name: userName,
+        email: userEmail,
+        teamId: team.id,
       }).onConflictDoNothing();
     }
 

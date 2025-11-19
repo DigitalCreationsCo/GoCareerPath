@@ -290,13 +290,13 @@ export function Chat({
   console.debug('[Chat] shouldShowResumeBanner:', shouldShowResumeBanner);
 
   return (
-    <div className="border overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col">
+    <div className="flex flex-col flex-1 min-w-0 overflow-y-scroll overscroll-behavior-contain touch-pan-y">
       {shouldShowResumeBanner && (
-        <div className="border-b border-blue-200 px-4 py-2 text-sm text-primary">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <span>Previous session found. Resuming...</span>
+        <div className="py-2 text-sm border-b border-primary/20 text-primary">
+          <div className="flex items-center justify-between px-4 mx-auto md:px-6 md:max-w-4xl">
+            <span>Resuming your previous session...</span>
             {session.researchBrief && (
-              <span className="text-xs text-blue-600 truncate ml-2 max-w-md">
+              <span className="max-w-md ml-2 truncate text-primary">
                 {session.researchBrief}
               </span>
             )}
@@ -305,7 +305,7 @@ export function Chat({
       )}
 
       {isReportFree && finalReport && (
-        <div className="fixed top-4 right-4 z-10 bg-background rounded-md">
+        <div className="fixed z-10 rounded-md top-4 right-4 bg-background">
           <DownloadReportButton markdownContent={finalReport} />
         </div>
       )}
@@ -319,7 +319,7 @@ export function Chat({
         isShowingGreeting={!greetingComplete}
       />
 
-      <div className="sticky bottom-0 z-1 mx-auto flex w-full max-w-4xl gap-2 px-2 pb-3 md:px-4 md:pb-4">
+      <div className="sticky bottom-0 flex w-full max-w-4xl gap-2 px-2 pb-3 mx-auto z-1 md:px-4 md:pb-4">
         <MultimodalInput
           chatId={chatId}
           input={input}
@@ -334,8 +334,8 @@ export function Chat({
       </div>
 
       {isResuming && !finalReport && (
-        <div className="fixed top-4 right-4 px-4 py-2 rounded-md shadow-lg flex items-center gap-2">
-          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+        <div className="fixed flex items-center gap-2 px-4 py-2 rounded-md shadow-lg top-4 right-4">
+          <div className="w-4 h-4 border-2 border-white rounded-full animate-spin border-t-transparent" />
           <span>Resuming research...</span>
         </div>
       )}

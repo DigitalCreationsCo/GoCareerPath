@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { sendInviteEmail } from '@/lib/email/send-invite-email';
+import { inviteTeamMember } from '@/app/(login)/actions';
+import { getUserById } from '@/lib/db/queries/user';
+import { User } from '@/lib/types';
 
 export async function POST(req: NextRequest) {
     const session = await auth();
@@ -11,22 +13,31 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json();
-        const { emails, organizationName } = body;
+        const { emails } = body;
 
         if (!emails || !Array.isArray(emails) || emails.length === 0) {
             return NextResponse.json({ error: 'Invalid input: emails are required' }, { status: 400 });
         }
-        if (!organizationName) {
-            return NextResponse.json({ error: 'Invalid input: organizationName is required' }, { status: 400 });
+
+        const user = await getUserById(session.user.id);
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const inviteLink = `${process.env.NEXT_PUBLIC_BASE_URL}/chat`; // Placeholder link
+        const invitePromises = emails.map(email => {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('role', 'member');
+            return inviteTeamMember(
+                {
+                    email,
+                    role: 'member',
+                },
+                formData
+            );
+        });
 
-        const sendPromises = emails.map(email =>
-            sendInviteEmail(email, organizationName, inviteLink)
-        );
-
-        await Promise.all(sendPromises);
+        await Promise.all(invitePromises);
 
         return NextResponse.json({ message: 'Invitations sent successfully' }, { status: 200 });
 

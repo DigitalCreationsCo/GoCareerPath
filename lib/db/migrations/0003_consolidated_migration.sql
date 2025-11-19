@@ -1,0 +1,14 @@
+ALTER TABLE "b2b_teams" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "organizations" DISABLE ROW LEVEL SECURITY;
+DROP TABLE "b2b_teams" CASCADE;
+DROP TABLE "organizations" CASCADE;
+ALTER TABLE "employees" DROP CONSTRAINT IF EXISTS "employees_organization_id_organizations_id_fk";
+ALTER TABLE "employees" DROP CONSTRAINT IF EXISTS "employees_team_id_b2b_teams_id_fk";
+ALTER TABLE "snapshots" DROP CONSTRAINT IF EXISTS "snapshots_organization_id_organizations_id_fk";
+ALTER TABLE "users" DROP CONSTRAINT IF EXISTS "users_organization_id_organizations_id_fk";
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "manager_id" uuid;
+ALTER TABLE "employees" ADD CONSTRAINT "employees_team_id_teams_id_fk" FOREIGN KEY ("team_id") REFERENCES "public"."teams"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "teams" ADD CONSTRAINT "teams_manager_id_users_id_fk" FOREIGN KEY ("manager_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "employees" DROP COLUMN IF EXISTS "organization_id";
+ALTER TABLE "snapshots" DROP COLUMN IF EXISTS "organization_id";
+ALTER TABLE "users" DROP COLUMN IF EXISTS "organization_id";

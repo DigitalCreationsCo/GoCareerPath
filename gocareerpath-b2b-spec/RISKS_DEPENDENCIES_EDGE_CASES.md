@@ -1,56 +1,28 @@
 # Risks, Dependencies, & Edge Cases
 
-## 1. Introduction
+This document outlines potential risks, dependencies, and edge cases that should be considered during the development of the MVP.
 
-This document identifies potential risks, dependencies, and edge cases for the GoCareerPath B2B platform MVP. Proactively addressing these areas will help to ensure a smoother development process and a more robust final product.
+## 1. Risks
 
-## 2. Risks
+*   **LLM Accuracy & Consistency:** The accuracy of the extracted data is highly dependent on the performance of the LLM. Inconsistent or inaccurate extractions could lead to misleading insights for managers.
+    *   **Mitigation:** Implement a robust validation layer for the extracted data. Allow for a manual override or correction mechanism for managers.
+*   **Data Privacy & Security:** The platform will handle sensitive employee data. A data breach could have significant legal and reputational consequences.
+    *   **Mitigation:** Adhere to strict security best practices, including data encryption, role-based access control, and regular security audits.
+*   **Scalability of Data Processing:** The data processing pipeline could become a bottleneck as the number of customers and reports grows.
+    *   **Mitigation:** Design the pipeline using scalable, serverless components. Monitor performance and optimize as needed.
+*   **Quality of Consumer Reports:** The quality and format of the underlying GoCareerPath consumer reports may vary, which could impact the extraction process.
+    *   **Mitigation:** Develop flexible parsing and extraction logic that can handle variations in the input data.
 
-### 2.1. Technical Risks
+## 2. Dependencies
 
-*   **LLM Accuracy & Consistency:**
-    *   **Risk:** The accuracy of the data extraction is highly dependent on the performance of the LLM. Inconsistent or inaccurate extractions could lead to unreliable insights.
-    *   **Mitigation:**
-        *   Develop a "golden dataset" of manually annotated reports to benchmark LLM performance.
-        *   Implement a validation layer to check for anomalies in the extracted data.
-        *   Fine-tune a smaller, open-source model if a general-purpose model proves too unreliable or expensive.
-*   **Data Privacy & Security:**
-    *   **Risk:** The platform will handle sensitive employee data. A security breach could have severe consequences.
-    *   **Mitigation:**
-        *   Adhere to security best practices (e.g., encryption, RBAC, secure coding).
-        *   Conduct regular security audits and penetration testing.
-        *   Anonymize or pseudonymize data where possible.
+*   **GoCareerPath Consumer Reports:** The entire platform is dependent on the availability and quality of the existing consumer reports.
+*   **LLM Provider:** The platform relies on an external LLM provider (e.g., OpenAI). Any downtime or changes to their API could impact the service.
+*   **HRIS Systems (Optional):** For companies that want to use the HRIS integration, the platform will be dependent on the APIs and data formats of those systems.
 
-### 2.2. Product & Market Risks
+## 3. Edge Cases
 
-*   **Quality of Consumer Reports:**
-    *   **Risk:** The value of the B2B platform is directly tied to the quality and richness of the underlying consumer career reports. If the reports are sparse or low-quality, the insights will be weak.
-    *   **Mitigation:**
-        *   Analyze a sample of existing reports to set expectations on data quality.
-        *   Build in features to flag employees with insufficient data.
-*   **Manager Adoption:**
-    *   **Risk:** Managers may not find the platform useful or may not have the time to engage with it.
-    *   **Mitigation:**
-        *   Focus on a simple, intuitive UX that provides clear, actionable insights.
-        *   Conduct user testing with a pilot group of managers to gather feedback early and often.
-
-## 3. Dependencies
-
-*   **LLM Provider:** The platform is dependent on a third-party LLM provider (e.g., OpenAI). Any downtime, API changes, or cost increases from the provider will directly impact the service.
-*   **Existing GoCareerPath Platform:** The B2B platform relies on the existence of consumer career reports. Changes to the format or content of these reports will require updates to the data processing pipeline.
-*   **HRIS Systems (Optional):** For automated onboarding, the platform will depend on the APIs of various HRIS providers. These APIs can be inconsistent and complex to integrate with.
-
-## 4. Edge Cases
-
-### 4.1. Data-Related Edge Cases
-
-*   **New Employees:** How is a new employee handled who does not yet have a career report?
-*   **Employees Changing Roles/Teams:** The system must be able to handle updates to the org chart, including employees moving between teams or changing roles.
-*   **Multiple Reports for One Employee:** How does the system handle an employee who has multiple career reports? Does it use the latest one, or does it aggregate the data?
-*   **Sparse or Incomplete Reports:** What happens if a report contains very little information? The system should gracefully handle this and avoid generating misleading insights.
-
-### 4.2. User-Related Edge Cases
-
-*   **Managers with No Direct Reports:** How does the UI appear for a manager who has no one reporting to them?
-*   **Large Teams:** The UI must be designed to handle managers with a large number of direct reports without becoming cluttered or slow.
-*   **Organizational Restructuring:** How does the platform handle major changes to the org structure, such as mergers or reorganizations?
+*   **Missing or Incomplete Reports:** Some employees may not have a GoCareerPath report, or their report may be incomplete. The system should handle these cases gracefully.
+*   **Organizational Restructuring:** Companies may restructure their teams and reporting lines. The system needs a mechanism to update the org chart and re-align employees and managers.
+*   **New Skills & Roles:** The skill taxonomy will need to be updated over time as new skills and roles emerge.
+*   **Employees Changing Roles:** The platform should be able to track an employee's skill development as they move between roles within the company.
+*   **Data for New Employees:** The system will not have historical data for new hires. The UI should clearly indicate when an employee has a limited data history.

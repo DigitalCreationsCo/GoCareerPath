@@ -1,6 +1,6 @@
 import { Tailwind, TailwindConfig } from '@react-email/components';
 import * as React from 'react';
-import tailwindConfig from '@/tailwind.config.js';
+import * as tailwindConfig from '@/tailwind.config.js';
 
 interface TailwindEmailProps {
   children: React.ReactNode;

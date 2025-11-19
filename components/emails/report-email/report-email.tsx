@@ -67,7 +67,7 @@ export const ReportEmail = ({
 
             {/* --- HOMOGENIZED WHAT'S INSIDE CONTENT --- */}
             <Section className="mt-[16px] mb-[0px]">
-              <Text className="mt-4 mb-4 text-2xl text-center text-black text-accent">
+              <Text className="mt-4 mb-4 text-2xl text-center text-accent">
                 What’s Inside
               </Text>
               <ul className="ml-6 mb-2 text-black text-[15px] leading-[22px]">

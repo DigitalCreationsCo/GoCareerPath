@@ -1,49 +1,20 @@
 import { relations } from 'drizzle-orm';
 import {
   users,
-  organizations,
-  b2bTeams,
-  employees,
+  teams,
   skills,
   employeeSkills,
   rawReports,
   snapshots,
   roadmaps,
+  teamManagers,
 } from './schema';
 
-export const usersRelations = relations(users, ({ one }) => ({
-  organization: one(organizations, {
-    fields: [users.organizationId],
-    references: [organizations.id],
-  }),
-}));
-
-export const organizationsRelations = relations(organizations, ({ many }) => ({
-  users: many(users),
-  teams: many(b2bTeams),
-  employees: many(employees),
-}));
-
-export const b2bTeamsRelations = relations(b2bTeams, ({ one, many }) => ({
-  organization: one(organizations, {
-    fields: [b2bTeams.organizationId],
-    references: [organizations.id],
-  }),
-  manager: one(users, {
-    fields: [b2bTeams.managerId],
-    references: [users.id],
-  }),
-  employees: many(employees),
-}));
-
-export const employeesRelations = relations(employees, ({ one, many }) => ({
-  organization: one(organizations, {
-    fields: [employees.organizationId],
-    references: [organizations.id],
-  }),
-  team: one(b2bTeams, {
-    fields: [employees.teamId],
-    references: [b2bTeams.id],
+export const usersRelations = relations(users, ({ many, one }) => ({
+  teamManagers: many(teamManagers),
+  team: one(teams, {
+    fields: [users.teamId],
+    references: [teams.id],
   }),
   employeeSkills: many(employeeSkills),
   rawReports: many(rawReports),
@@ -51,14 +22,30 @@ export const employeesRelations = relations(employees, ({ one, many }) => ({
   roadmaps: many(roadmaps),
 }));
 
+export const teamsRelations = relations(teams, ({ many }) => ({
+  teamManagers: many(teamManagers),
+  users: many(users),
+}));
+
+export const teamManagersRelations = relations(teamManagers, ({ one }) => ({
+  team: one(teams, {
+    fields: [teamManagers.teamId],
+    references: [teams.id],
+  }),
+  user: one(users, {
+    fields: [teamManagers.userId],
+    references: [users.id],
+  }),
+}));
+
 export const skillsRelations = relations(skills, ({ many }) => ({
   employeeSkills: many(employeeSkills),
 }));
 
 export const employeeSkillsRelations = relations(employeeSkills, ({ one }) => ({
-  employee: one(employees, {
-    fields: [employeeSkills.employeeId],
-    references: [employees.id],
+  user: one(users, {
+    fields: [employeeSkills.userId],
+    references: [users.id],
   }),
   skill: one(skills, {
     fields: [employeeSkills.skillId],
@@ -67,16 +54,16 @@ export const employeeSkillsRelations = relations(employeeSkills, ({ one }) => ({
 }));
 
 export const rawReportsRelations = relations(rawReports, ({ one }) => ({
-  employee: one(employees, {
-    fields: [rawReports.employeeId],
-    references: [employees.id],
+  user: one(users, {
+    fields: [rawReports.userId],
+    references: [users.id],
   }),
 }));
 
 export const snapshotsRelations = relations(snapshots, ({ one }) => ({
-  employee: one(employees, {
-    fields: [snapshots.employeeId],
-    references: [employees.id],
+  user: one(users, {
+    fields: [snapshots.userId],
+    references: [users.id],
   }),
   report: one(rawReports, {
     fields: [snapshots.reportId],
@@ -85,9 +72,9 @@ export const snapshotsRelations = relations(snapshots, ({ one }) => ({
 }));
 
 export const roadmapsRelations = relations(roadmaps, ({ one }) => ({
-  employee: one(employees, {
-    fields: [roadmaps.employeeId],
-    references: [employees.id],
+  user: one(users, {
+    fields: [roadmaps.userId],
+    references: [users.id],
   }),
   snapshot: one(snapshots, {
     fields: [roadmaps.snapshotId],
