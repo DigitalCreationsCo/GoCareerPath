@@ -69,26 +69,26 @@ function UserMenu({ session }: any) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col bg-background">
         <DropdownMenuItem className="cursor-pointer">
-          <Link href="/chat" className="flex w-full items-center">
+          <Link href="/chat" className="flex items-center w-full">
             <span>Get My Career Path Report</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleNewChat} className="cursor-pointer">
-          <div className="flex w-full items-center">
-            <PlusCircleIcon className="mr-2 h-4 w-4" />
+          <div className="flex items-center w-full">
+            <PlusCircleIcon className="w-4 h-4 mr-2" />
             <span>New Chat</span>
           </div>
         </DropdownMenuItem>
         {/* <DropdownMenuItem className="cursor-pointer">
-          <Link href="/dashboard" className="flex w-full items-center">
-            <Home className="mr-2 h-4 w-4" />
+          <Link href="/dashboard" className="flex items-center w-full">
+            <Home className="w-4 h-4 mr-2" />
             <span>Dashboard</span>
           </Link>
         </DropdownMenuItem> */}
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
-            <DropdownMenuItem className="w-full flex-1 cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="flex-1 w-full cursor-pointer">
+              <LogOut className="w-4 h-4 mr-2" />
               <span>Sign out</span>
             </DropdownMenuItem>
           </button>
@@ -100,13 +100,13 @@ function UserMenu({ session }: any) {
 
 export function Header({ session }: any) {
   return (
-    <header className="absolute hidden md:block w-full z-10 transition-all duration-300">
-      <div className="mx-auto py-2 px-3 flex justify-between items-center">
+    <header className="hidden w-full transition-all duration-300 md:block">
+      <div className="flex items-center justify-between px-3 pt-2 mx-auto">
         <Link href="/" className="flex items-center">
           <div className='hidden'>
             <Logo />
           </div>
-          <span className="ml-2 font-semibold text-muted-foreground text-lg">GoCareerPath</span>
+          <span className="ml-2 text-lg font-semibold text-muted-foreground">GoCareerPath</span>
         </Link>
         <div className="flex items-center space-x-4">
           <Suspense fallback={<div className="h-9" />}>

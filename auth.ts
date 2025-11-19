@@ -1,16 +1,16 @@
-import NextAuth from "next-auth"
-import "next-auth/jwt"
-import Google from "next-auth/providers/google"
-import { createStorage } from "unstorage"
-import memoryDriver from "unstorage/drivers/memory"
-import vercelKVDriver from "unstorage/drivers/vercel-kv"
-import { UnstorageAdapter } from "@auth/unstorage-adapter"
-import { createUser, getUserByEmail } from "./lib/db/queries/user"
-import { NewUser } from "./lib/types"
-import { generateUUID } from "./lib/utils"
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { db } from "@/lib/db/drizzle"
-import { sessions, accounts, users, verificationTokens } from "./lib/db/schema"
+import NextAuth from "next-auth";
+import "next-auth/jwt";
+import Google from "next-auth/providers/google";
+import { createStorage } from "unstorage";
+import memoryDriver from "unstorage/drivers/memory";
+import vercelKVDriver from "unstorage/drivers/vercel-kv";
+import { UnstorageAdapter } from "@auth/unstorage-adapter";
+import { createUser, getUserByEmail } from "./lib/db/queries/user";
+import { NewUser } from "./lib/types";
+import { generateUUID } from "./lib/utils";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/lib/db/drizzle";
+import { sessions, accounts, users, verificationTokens } from "./lib/db/schema";
 
 export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   debug: !!process.env.AUTH_DEBUG,
@@ -24,11 +24,25 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   basePath: "/auth",
   providers: [
     Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  session: { 
+  session: {
     strategy: "database",
   },
-})
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.organizationId = user.organizationId;
+      }
+      return token;
+    },
+    async session({ session, user }) {
+      if (session.user) {
+        session.user.organizationId = user.organizationId;
+      }
+      return session;
+    },
+  },
+});
