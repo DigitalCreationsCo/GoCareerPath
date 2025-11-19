@@ -2,5 +2,12 @@
   "version": "7",
   "dialect": "postgresql",
   "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1763463307021,
+      "tag": "0000_real_the_fury",
+      "breakpoints": true
+    }
   ]
 }

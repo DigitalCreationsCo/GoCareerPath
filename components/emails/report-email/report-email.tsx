@@ -10,10 +10,10 @@ import {
   Img,
   Preview,
   Section,
-  Tailwind,
   Text,
 } from "@react-email/components";
 import * as React from "react";
+import { TailwindEmail } from "../tailwind-email";
 
 interface ReportEmailProps {
   markdownContent: string;
@@ -40,8 +40,8 @@ export const ReportEmail = ({
     <Html>
       <Head />
       <Preview>{previewText}</Preview>
-      <Tailwind>
-        <Body className="bg-white mx-auto font-sans px-2">
+      <TailwindEmail>
+        <Body className="px-2 mx-auto font-sans bg-white">
           <Container className="rounded my-[40px] mx-auto p-[20px] max-w-[465px] shadow-sm">
 
             {/* Logo */}
@@ -53,13 +53,13 @@ export const ReportEmail = ({
                 alt="GoCareerPath"
                 className="inline"
               />
-              <Text className="inline ml-2 text-muted-foreground text-lg">GoCareerPath</Text>
+              <Text className="inline ml-2 text-lg text-muted-foreground">GoCareerPath</Text>
             </Section>
 
             {/* Confirmation Badge */}
             <Section className="text-center mt-[20px]">
-              <div className="bg-success/20 px-4 py-2 inline-block">
-                <Text className="text-sm m-0">
+              <div className="inline-block px-4 py-2 bg-success/20">
+                <Text className="m-0 text-sm">
                   🎉 Your Personalized Career Report is ready!
                 </Text>
               </div>
@@ -67,11 +67,11 @@ export const ReportEmail = ({
 
             {/* --- HOMOGENIZED WHAT'S INSIDE CONTENT --- */}
             <Section className="mt-[16px] mb-[0px]">
-              <Text className="text-black text-2xl text-accent mt-4 mb-4 text-center">
+              <Text className="mt-4 mb-4 text-2xl text-center text-black text-accent">
                 What’s Inside
               </Text>
               <ul className="ml-6 mb-2 text-black text-[15px] leading-[22px]">
-                <li className="mb-4 flex items-start">
+                <li className="flex items-start mb-4">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Summary">📝</span>
                   <div>
                     <span className="font-semibold">Executive Summary</span>
@@ -80,7 +80,7 @@ export const ReportEmail = ({
                     </div>
                   </div>
                 </li>
-                <li className="mb-4 flex items-start">
+                <li className="flex items-start mb-4">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Paths">🏆</span>
                   <div>
                     <span className="font-semibold">Top 4 Career Paths</span>
@@ -89,7 +89,7 @@ export const ReportEmail = ({
                     </div>
                   </div>
                 </li>
-                <li className="mb-4 flex items-start">
+                <li className="flex items-start mb-4">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Market">💹</span>
                   <div>
                     <span className="font-semibold">Market Data &amp; Salary Projections</span>
@@ -98,7 +98,7 @@ export const ReportEmail = ({
                     </div>
                   </div>
                 </li>
-                <li className="mb-4 flex items-start">
+                <li className="flex items-start mb-4">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Target">🎯</span>
                   <div>
                     <span className="font-semibold">Custom Strategy Plan</span>
@@ -107,7 +107,7 @@ export const ReportEmail = ({
                     </div>
                   </div>
                 </li>
-                <li className="mb-4 flex items-start">
+                <li className="flex items-start mb-4">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Roadmap">🗺️</span>
                   <div>
                     <span className="font-semibold">Learning Roadmap</span>
@@ -116,7 +116,7 @@ export const ReportEmail = ({
                     </div>
                   </div>
                 </li>
-                <li className="mb-4 flex items-start">
+                <li className="flex items-start mb-4">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Book">📚</span>
                   <div>
                     <span className="font-semibold">Skills Gap Analysis</span>
@@ -125,7 +125,7 @@ export const ReportEmail = ({
                     </div>
                   </div>
                 </li>
-                <li className="mb-4 flex items-start">
+                <li className="flex items-start mb-4">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Rocket">🚀</span>
                   <div>
                     <span className="font-semibold">30-Day Sprint</span>
@@ -134,7 +134,7 @@ export const ReportEmail = ({
                     </div>
                   </div>
                 </li>
-                <li className="mb-2 flex items-start">
+                <li className="flex items-start mb-2">
                   <span className="mr-2 mt-[2px]" role="img" aria-label="Briefcase">💼</span>
                   <div>
                     <span className="font-semibold">Offer-Getting Scripts</span>
@@ -180,7 +180,7 @@ export const ReportEmail = ({
             </Text>
           </Container>
         </Body>
-      </Tailwind>
+      </TailwindEmail>
     </Html>
   );
 };

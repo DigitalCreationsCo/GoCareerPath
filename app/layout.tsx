@@ -5,9 +5,7 @@ import { getUser, getTeamForUser } from '@/lib/db/queries/user';
 import { SWRConfig } from 'swr';
 import { Toaster } from "@/components/ui/sonner"
 import { GoogleTagManager } from '@/components/googletagmanager';
-import { cn, dateJobsDisplaced, numJobsDisplaced } from '@/lib/utils';
-import { Header } from '@/components/ui/header/header';
-import { auth } from '@/auth';
+import { cn, dateJobsDisplaced } from '@/lib/utils';
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 export const metadata: Metadata = {
@@ -67,7 +65,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
   return (
     <html lang="en" className="">
       <body className={cn([
@@ -90,7 +87,7 @@ export default async function RootLayout({
           }}
         >
           <NuqsAdapter>
-            {children}
+              {children}
             <Toaster position="bottom-center" />
           </NuqsAdapter>
         </SWRConfig>

@@ -1,5 +1,11 @@
-import { pgTable, foreignKey, uuid, timestamp, text, varchar, jsonb, json, unique, integer, primaryKey, boolean } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, uuid, timestamp, text, varchar, jsonb, json, unique, integer, primaryKey, boolean, decimal, date, customType } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "@auth/core/adapters"
+
+const vector = customType<{ data: number[] }>({
+    dataType() {
+      return 'vector(1536)';
+    },
+});
 
 export const chats = pgTable("chats", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
@@ -89,6 +95,7 @@ export const users = pgTable("users", {
 	image: text("image"),
 	passwordHash: text("password_hash"),
 	role: varchar({ length: 20 }).default('member').notNull(),
+	organizationId: uuid('organization_id').references(() => organizations.id),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
@@ -247,3 +254,87 @@ export const accounts = pgTable(
 	  },
 	]
   )
+
+// B2B Platform Schema
+export const organizations = pgTable("organizations", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+});
+
+export const b2bTeams = pgTable("b2b_teams", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    organizationId: uuid('organization_id').notNull().references(() => organizations.id),
+    managerId: uuid('manager_id').references(() => users.id),
+    name: varchar("name", { length: 255 }).notNull(),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+});
+
+export const employees = pgTable("employees", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    organizationId: uuid('organization_id').notNull().references(() => organizations.id),
+    teamId: uuid('team_id').references(() => b2bTeams.id),
+    name: varchar("name", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
+    role: varchar("role", { length: 255 }),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+});
+
+export const skills = pgTable("skills", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    name: varchar("name", { length: 255 }).notNull().unique(),
+    category: varchar("category", { length: 255 }),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+});
+
+export const employeeSkills = pgTable("employee_skills", {
+    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    skillId: uuid('skill_id').notNull().references(() => skills.id),
+    proficiencyLevel: integer('proficiency_level'),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.employeeId, table.skillId] }),
+}));
+
+export const rawReports = pgTable("raw_reports", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    rawContentText: text('raw_content_text'),
+    rawContentJson: jsonb('raw_content_json'),
+    embedding: vector('embedding'),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+});
+
+export const snapshots = pgTable("snapshots", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    reportId: uuid('report_id').notNull().references(() => rawReports.id),
+    skillGapScore: integer('skill_gap_score'),
+    upliftProjection: decimal('uplift_projection'),
+    automationRisk: decimal('automation_risk'),
+    promotionTimeline: integer('promotion_timeline'), // in months
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+});
+
+export const roadmaps = pgTable("roadmaps", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    snapshotId: uuid('snapshot_id').notNull().references(() => snapshots.id),
+    recommendedRole: varchar('recommended_role', { length: 255 }),
+    steps: text('steps'),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+});
+
+export const trainingEvents = pgTable("training_events", {
+    id: uuid('id').defaultRandom().primaryKey(),
+    employeeId: uuid('employee_id').notNull().references(() => employees.id),
+    name: varchar("name", { length: 255 }).notNull(),
+    completionDate: date('completion_date'),
+    cost: decimal('cost', { precision: 10, scale: 2 }),
+    createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+});

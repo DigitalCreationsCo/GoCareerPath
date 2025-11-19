@@ -18,6 +18,7 @@ export default async function ChatPage({
   
   const chatId = (await params).chatId;
   let chat = await getChatById(chatId, user.id);
+  
   if (!chat) {
     chat = await saveChat({
       id: chatId,

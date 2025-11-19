@@ -1,84 +1,96 @@
-import { relations } from "drizzle-orm/relations";
-import { users, chats, messages, teams, activityLogs, invitations, reports, researchSessions, teamMembers } from "./schema";
+import { relations } from 'drizzle-orm';
+import {
+  users,
+  organizations,
+  b2bTeams,
+  employees,
+  skills,
+  employeeSkills,
+  rawReports,
+  snapshots,
+  roadmaps,
+} from './schema';
 
-export const chatsRelations = relations(chats, ({one, many}) => ({
-	user: one(users, {
-		fields: [chats.userId],
-		references: [users.id]
-	}),
-	messages: many(messages),
-	researchSessions: many(researchSessions),
+export const usersRelations = relations(users, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [users.organizationId],
+    references: [organizations.id],
+  }),
 }));
 
-export const usersRelations = relations(users, ({many}) => ({
-	chats: many(chats),
-	activityLogs: many(activityLogs),
-	invitations: many(invitations),
-	reports: many(reports),
-	researchSessions: many(researchSessions),
-	teamMembers: many(teamMembers),
+export const organizationsRelations = relations(organizations, ({ many }) => ({
+  users: many(users),
+  teams: many(b2bTeams),
+  employees: many(employees),
 }));
 
-export const messagesRelations = relations(messages, ({one}) => ({
-	chat: one(chats, {
-		fields: [messages.chatId],
-		references: [chats.id]
-	}),
+export const b2bTeamsRelations = relations(b2bTeams, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [b2bTeams.organizationId],
+    references: [organizations.id],
+  }),
+  manager: one(users, {
+    fields: [b2bTeams.managerId],
+    references: [users.id],
+  }),
+  employees: many(employees),
 }));
 
-export const activityLogsRelations = relations(activityLogs, ({one}) => ({
-	team: one(teams, {
-		fields: [activityLogs.teamId],
-		references: [teams.id]
-	}),
-	user: one(users, {
-		fields: [activityLogs.userId],
-		references: [users.id]
-	}),
+export const employeesRelations = relations(employees, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [employees.organizationId],
+    references: [organizations.id],
+  }),
+  team: one(b2bTeams, {
+    fields: [employees.teamId],
+    references: [b2bTeams.id],
+  }),
+  employeeSkills: many(employeeSkills),
+  rawReports: many(rawReports),
+  snapshots: many(snapshots),
+  roadmaps: many(roadmaps),
 }));
 
-export const teamsRelations = relations(teams, ({many}) => ({
-	activityLogs: many(activityLogs),
-	invitations: many(invitations),
-	teamMembers: many(teamMembers),
+export const skillsRelations = relations(skills, ({ many }) => ({
+  employeeSkills: many(employeeSkills),
 }));
 
-export const invitationsRelations = relations(invitations, ({one}) => ({
-	user: one(users, {
-		fields: [invitations.invitedBy],
-		references: [users.id]
-	}),
-	team: one(teams, {
-		fields: [invitations.teamId],
-		references: [teams.id]
-	}),
+export const employeeSkillsRelations = relations(employeeSkills, ({ one }) => ({
+  employee: one(employees, {
+    fields: [employeeSkills.employeeId],
+    references: [employees.id],
+  }),
+  skill: one(skills, {
+    fields: [employeeSkills.skillId],
+    references: [skills.id],
+  }),
 }));
 
-export const reportsRelations = relations(reports, ({one}) => ({
-	user: one(users, {
-		fields: [reports.userId],
-		references: [users.id]
-	}),
+export const rawReportsRelations = relations(rawReports, ({ one }) => ({
+  employee: one(employees, {
+    fields: [rawReports.employeeId],
+    references: [employees.id],
+  }),
 }));
 
-export const researchSessionsRelations = relations(researchSessions, ({one}) => ({
-	chat: one(chats, {
-		fields: [researchSessions.chatId],
-		references: [chats.id]
-	}),
-	user: one(users, {
-		fields: [researchSessions.userId],
-		references: [users.id]
-	}),
+export const snapshotsRelations = relations(snapshots, ({ one }) => ({
+  employee: one(employees, {
+    fields: [snapshots.employeeId],
+    references: [employees.id],
+  }),
+  report: one(rawReports, {
+    fields: [snapshots.reportId],
+    references: [rawReports.id],
+  }),
 }));
 
-export const teamMembersRelations = relations(teamMembers, ({one}) => ({
-	team: one(teams, {
-		fields: [teamMembers.teamId],
-		references: [teams.id]
-	}),
-	user: one(users, {
-		fields: [teamMembers.userId],
-		references: [users.id]
-	}),
+export const roadmapsRelations = relations(roadmaps, ({ one }) => ({
+  employee: one(employees, {
+    fields: [roadmaps.employeeId],
+    references: [employees.id],
+  }),
+  snapshot: one(snapshots, {
+    fields: [roadmaps.snapshotId],
+    references: [snapshots.id],
+  }),
 }));
