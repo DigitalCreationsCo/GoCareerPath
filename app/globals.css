@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../design-system/utilities.css";
 
 @source "../node_modules/streamdown/dist/index.js";
 
@@ -84,147 +85,13 @@
   * {
     @apply border-border;
   }
-}
 
-@layer utilities {
-  .bg-gradient-primary {
-    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    transition: all;
-  }
-  
-  .bg-gradient-primary-glow {
-    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 80%));
-    transition: all; 
-  }
-
-  .hover\:bg-gradient-primary-glow:hover {
-    background-image: linear-gradient(135deg, hsl(var(--primary-glow)), hsl(217 91% 75%));
-    transition: all;
-  }
-
-  .bg-gradient-accent {
-    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
-  }
-  
-  .bg-gradient-hero {
-    background-image: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)));
-  }
-  
-  .bg-gradient-card {
-    background-image: linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)));
-  }
- 
-  .bg-gradient-warning {
-    background-image: linear-gradient(145deg, hsl(var(--destructive)), hsl(var(--warning)));
-  }
-  
-  .bg-gradient-radial-primary {
-    background-image: radial-gradient(145deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-  }
-
-  @keyframes shine {
-    0% {
-      background-position: 100% center;
-    }
-    50% {
-      background-position: 100% center;
-    }
-    100% {
-      background-position: -100% center;
-    }
-  }
-  
-  @keyframes shine-vertical {
-    0% {
-      background-position: center 50%;
-    }
-    50% {
-      background-position: center 100%;
-    }
-    100% {
-      background-position: center 50%;
-    }
-  }
-  
-  .animate-gradient {
-    background-size: auto 200%;
-    animation: shine-vertical 12s ease-in-out infinite;
-  }
-
-  .shiny-text {
-    position: relative;
-    display: inline-block;
-    /* For text gradients */
-    color: transparent;
-    background-image: linear-gradient(
-      110deg,
-      rgb(var(--warning)),
-      rgb(var(--warning-foreground)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning))
-    );
-    background-size: 200% auto;
-    background-clip: text;
-    -webkit-background-clip: text;
-    animation: shine 2.5s linear infinite;
-  }
-  /* SVG support: applies shiny effect to SVG <g> or <svg> with .shiny-text */
-  .shiny-text svg,
-  svg.shiny-text,
-  .shiny-text [fill="currentColor"],
-  .shiny-text path {
-    fill: url(#shiny-text-gradient);
-  }
-  /* If direct application (better browser support for mask-clip) */
-  .shiny-text svg {
-    background-image: linear-gradient(
-      110deg,
-      rgb(var(--warning)),
-      rgb(var(--warning-foreground)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning))
-    );
-    background-size: 200% auto;
-    -webkit-mask-image: linear-gradient(
-      110deg,
-      rgb(var(--warning)),
-      rgb(var(--warning-foreground)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning))
-    );
-    -webkit-mask-size: 200% auto;
-    mask-image: linear-gradient(
-      110deg,
-      rgb(var(--warning)),
-      rgb(var(--warning-foreground)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning)),
-      rgb(var(--warning))
-    );
-    mask-size: 200% auto;
-    animation: shine 2.5s linear infinite;
-  }
-
-  .heading {
-    @apply text-4xl max-w-[400px] md:max-w-full text-center place-self-center mb-8 leading-tight tracking-tight;
-    font-optical-sizing: auto;
-  }
-
-  .subtitle {
-    @apply text-muted-foreground text-lg leading-snug;
-  }
-
-  .subtext {
+  label {
     @apply text-muted-foreground;
   }
 }
+
+@layer utilities {}
 
   :root {
 
@@ -242,7 +109,7 @@
 
     /* Primary Brand - Electric Blue for Tech Feel */
     --primary: 217 91% 60%;
-    --primary-foreground: 240 10% 3.9%;
+    --primary-foreground: 0 0% 100%;
     --primary-glow: 217 91% 70%;
     --primary-dark: 217 91% 45%;
 
@@ -256,7 +123,7 @@
 
     /* Accent - Vibrant Cyan for CTAs */
     --accent: 200 85% 60%;
-    --accent-foreground: 240 10% 3.9%;
+    --accent-foreground: 0 0% 100%;
     --accent-glow: 200 85% 70%;
 
     /* Warning/Urgency - Orange Red */

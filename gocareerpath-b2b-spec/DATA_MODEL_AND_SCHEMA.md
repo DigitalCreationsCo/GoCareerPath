@@ -1,268 +1,171 @@
 # Data Model & Schema
 
-## 1. Introduction
+## 1. Logical Data Model
 
-This document defines the data model and database schema for the GoCareerPath B2B platform. The schema is designed for PostgreSQL and utilizes the `pgvector` extension for handling vector embeddings.
+The data model is designed to support the core requirements of the platform, including employee skill tracking, snapshot generation, and analytics.
 
-## 2. Entity-Relationship Diagram (ERD)
+*   **Organizations:** Represents a customer company.
+*   **Users:** Represents individual users (managers, admins) within an organization.
+*   **Teams:** Represents teams within an organization, with a designated manager.
+*   **Employees:** Represents the employees of a customer company, whose skills are being tracked.
+*   **Skills:** A centralized taxonomy of skills.
+*   **EmployeeSkills:** A join table that links employees to skills and stores their proficiency level.
+*   **RawReports:** Stores the raw data from GoCareerPath consumer reports.
+*   **Snapshots:** Stores the structured, AI-extracted data from the raw reports at a point in time.
+*   **Roadmaps:** Stores the career progression plans for employees.
+*   **TrainingEvents:** Logs training and development activities for employees.
 
-```mermaid
-erDiagram
-    organizations {
-        uuid id PK
-        varchar name
-        timestamp created_at
-        timestamp updated_at
-    }
+## 2. PostgreSQL Schema
 
-    users {
-        uuid id PK
-        uuid organization_id FK
-        varchar email
-        varchar role
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    teams {
-        uuid id PK
-        uuid organization_id FK
-        uuid manager_id FK
-        varchar name
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    employees {
-        uuid id PK
-        uuid organization_id FK
-        uuid team_id FK
-        varchar name
-        varchar email
-        varchar role
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    skills {
-        uuid id PK
-        varchar name
-        varchar category
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    employee_skills {
-        uuid employee_id FK
-        uuid skill_id FK
-        integer proficiency_level
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    raw_reports {
-        uuid id PK
-        uuid employee_id FK
-        text raw_content_text
-        jsonb raw_content_json
-        vector embedding
-        timestamp created_at
-    }
-
-    snapshots {
-        uuid id PK
-        uuid employee_id FK
-        uuid report_id FK
-        integer skill_gap_score
-        float uplift_projection
-        float automation_risk
-        integer promotion_timeline
-        timestamp created_at
-    }
-
-    roadmaps {
-        uuid id PK
-        uuid employee_id FK
-        uuid snapshot_id FK
-        varchar recommended_role
-        text steps
-        timestamp created_at
-    }
-
-    training_events {
-        uuid id PK
-        uuid employee_id FK
-        varchar name
-        date completion_date
-        decimal cost
-        timestamp created_at
-    }
-
-    organizations ||--o{ users : "has"
-    organizations ||--o{ teams : "has"
-    organizations ||--o{ employees : "has"
-    users }|--|| teams : "manages"
-    teams ||--o{ employees : "has"
-    employees ||--o{ employee_skills : "has"
-    skills ||--o{ employee_skills : "has"
-    employees ||--o{ raw_reports : "has"
-    employees ||--o{ snapshots : "has"
-    employees ||--o{ roadmaps : "has"
-    employees ||--o{ training_events : "has"
-    raw_reports ||--|{ snapshots : "generates"
-    snapshots ||--|{ roadmaps : "generates"
-
-```
-
-## 3. Table Definitions
+Below is the SQL schema for the PostgreSQL database.
 
 ### `organizations`
 
-Stores information about the customer companies.
-
 ```sql
-CREATE TABLE organizations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "organizations" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "name" varchar(255) NOT NULL,
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL
 );
 ```
 
 ### `users`
 
-Stores information about the manager and admin users of the platform.
-
 ```sql
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    role VARCHAR(50) NOT NULL, -- e.g., 'manager', 'admin'
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "users" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "name" varchar(100),
+    "email" varchar(255) NOT NULL,
+    "emailVerified" timestamp,
+    "image" text,
+    "password_hash" text,
+    "role" varchar(20) DEFAULT 'member' NOT NULL,
+    "organization_id" uuid,
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL,
+    "deleted_at" timestamp,
+    CONSTRAINT "users_email_unique" UNIQUE("email"),
+    FOREIGN KEY ("organization_id") REFERENCES "organizations"("id")
 );
 ```
 
-### `teams`
-
-Stores information about the teams within an organization.
+### `b2b_teams`
 
 ```sql
-CREATE TABLE teams (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id),
-    manager_id UUID REFERENCES users(id),
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "b2b_teams" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "organization_id" uuid NOT NULL,
+    "manager_id" uuid,
+    "name" varchar(255) NOT NULL,
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL,
+    FOREIGN KEY ("organization_id") REFERENCES "organizations"("id"),
+    FOREIGN KEY ("manager_id") REFERENCES "users"("id")
 );
 ```
 
 ### `employees`
 
-Stores information about the employees of a customer company.
-
 ```sql
-CREATE TABLE employees (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id),
-    team_id UUID REFERENCES teams(id),
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    role VARCHAR(255),
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "employees" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "organization_id" uuid NOT NULL,
+    "team_id" uuid,
+    "name" varchar(255) NOT NULL,
+    "email" varchar(255) NOT NULL UNIQUE,
+    "role" varchar(255),
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL,
+    FOREIGN KEY ("organization_id") REFERENCES "organizations"("id"),
+    FOREIGN KEY ("team_id") REFERENCES "b2b_teams"("id")
 );
 ```
 
 ### `skills`
 
-A taxonomy of skills.
-
 ```sql
-CREATE TABLE skills (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) UNIQUE NOT NULL,
-    category VARCHAR(255),
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "skills" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "name" varchar(255) NOT NULL UNIQUE,
+    "category" varchar(255),
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL
 );
 ```
 
 ### `employee_skills`
 
-A join table linking employees to skills and their proficiency.
-
 ```sql
-CREATE TABLE employee_skills (
-    employee_id UUID NOT NULL REFERENCES employees(id),
-    skill_id UUID NOT NULL REFERENCES skills(id),
-    proficiency_level INTEGER, -- e.g., 1-5 scale
-    PRIMARY KEY (employee_id, skill_id),
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "employee_skills" (
+    "employee_id" uuid NOT NULL,
+    "skill_id" uuid NOT NULL,
+    "proficiency_level" integer,
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL,
+    PRIMARY KEY ("employee_id", "skill_id"),
+    FOREIGN KEY ("employee_id") REFERENCES "employees"("id"),
+    FOREIGN KEY ("skill_id") REFERENCES "skills"("id")
 );
 ```
 
 ### `raw_reports`
 
-Stores the raw consumer career reports.
-
 ```sql
--- Requires pgvector extension: CREATE EXTENSION vector;
-CREATE TABLE raw_reports (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id UUID NOT NULL REFERENCES employees(id),
-    raw_content_text TEXT,
-    raw_content_json JSONB,
-    embedding VECTOR(1536), -- Dimension depends on the embedding model
-    created_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "raw_reports" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "employee_id" uuid NOT NULL,
+    "raw_content_text" text,
+    "raw_content_json" jsonb,
+    "embedding" vector(1536),
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    FOREIGN KEY ("employee_id") REFERENCES "employees"("id")
 );
 ```
 
 ### `snapshots`
 
-Stores the structured data extracted from each report.
-
 ```sql
-CREATE TABLE snapshots (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id UUID NOT NULL REFERENCES employees(id),
-    report_id UUID NOT NULL REFERENCES raw_reports(id),
-    skill_gap_score INTEGER,
-    uplift_projection FLOAT,
-    automation_risk FLOAT,
-    promotion_timeline INTEGER, -- in months
-    created_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "snapshots" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "employee_id" uuid NOT NULL,
+    "organization_id" uuid NOT NULL,
+    "report_id" uuid NOT NULL,
+    "skill_gap_score" integer,
+    "uplift_projection" decimal,
+    "automation_risk" decimal,
+    "promotion_timeline" integer,
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    FOREIGN KEY ("employee_id") REFERENCES "employees"("id"),
+    FOREIGN KEY ("organization_id") REFERENCES "organizations"("id"),
+    FOREIGN KEY ("report_id") REFERENCES "raw_reports"("id")
 );
 ```
 
 ### `roadmaps`
 
-Stores the career roadmap generated from a snapshot.
-
 ```sql
-CREATE TABLE roadmaps (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id UUID NOT NULL REFERENCES employees(id),
-    snapshot_id UUID NOT NULL REFERENCES snapshots(id),
-    recommended_role VARCHAR(255),
-    steps TEXT, -- Could be JSONB for a more structured roadmap
-    created_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "roadmaps" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "employee_id" uuid NOT NULL,
+    "snapshot_id" uuid NOT NULL,
+    "recommended_role" varchar(255),
+    "steps" text,
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    FOREIGN KEY ("employee_id") REFERENCES "employees"("id"),
+    FOREIGN KEY ("snapshot_id") REFERENCES "snapshots"("id")
 );
 ```
 
 ### `training_events`
 
-Stores information about training and learning activities.
-
 ```sql
-CREATE TABLE training_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    employee_id UUID NOT NULL REFERENCES employees(id),
-    name VARCHAR(255) NOT NULL,
-    completion_date DATE,
-    cost DECIMAL(10, 2),
-    created_at TIMESTAMPTZ DEFAULT now()
+CREATE TABLE "training_events" (
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    "employee_id" uuid NOT NULL,
+    "name" varchar(255) NOT NULL,
+    "completion_date" date,
+    "cost" decimal(10, 2),
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    FOREIGN KEY ("employee_id") REFERENCES "employees"("id")
 );

@@ -5,7 +5,7 @@ import { createStorage } from "unstorage";
 import memoryDriver from "unstorage/drivers/memory";
 import vercelKVDriver from "unstorage/drivers/vercel-kv";
 import { UnstorageAdapter } from "@auth/unstorage-adapter";
-import { createUser, getUserByEmail } from "./lib/db/queries/user";
+import { createUser, getUserByEmail, getUserWithTeam } from "./lib/db/queries/user";
 import { NewUser } from "./lib/types";
 import { generateUUID } from "./lib/utils";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
@@ -34,13 +34,18 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.organizationId = user.organizationId;
+        const userWithTeam = await getUserWithTeam(user.id);
+        if (userWithTeam) {
+          token.role = userWithTeam.user.role;
+          token.teamId = userWithTeam.teamId ?? undefined;
+        }
       }
       return token;
     },
-    async session({ session, user }) {
+    async session({ session, token, user }) {
       if (session.user) {
-        session.user.organizationId = user.organizationId;
+        session.user.role = token.role as string;
+        session.user.teamId = token.teamId as string;
       }
       return session;
     },

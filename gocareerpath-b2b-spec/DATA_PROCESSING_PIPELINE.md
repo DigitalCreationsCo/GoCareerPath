@@ -1,73 +1,45 @@
 # Data Processing Pipeline
 
-## 1. Introduction
+This document outlines the steps involved in processing raw career reports and transforming them into structured, actionable data.
 
-This document describes the data processing pipeline for the GoCareerPath B2B platform. The pipeline is designed to be a series of sequential, idempotent steps that transform raw career reports into structured, queryable data.
+## 1. Ingestion
 
-## 2. Pipeline Overview
+*   **Trigger:** The pipeline is triggered when a new career report is uploaded for an employee. This can be done via an API endpoint or a manual process.
+*   **Action:** The raw report (text and/or JSON) is saved to a storage location (e.g., `raw_reports` table or an S3 bucket). A new entry is created in the `raw_reports` table with a reference to the employee.
 
-The pipeline is triggered when a new career report is uploaded. It consists of the following high-level stages:
+## 2. Pre-processing & Embedding
 
-1.  **Ingestion:** Receive and store the raw report.
-2.  **Queuing:** Add a processing job to a queue.
-3.  **Extraction:** Use an LLM to extract structured data.
-4.  **Normalization & Storage:** Normalize the extracted data and store it in the database.
-5.  **Snapshot Generation:** Generate or update the employee's skill snapshot.
+*   **Trigger:** A new entry in the `raw_reports` table.
+*   **Action:**
+    *   The text content of the report is cleaned and prepared for processing.
+    *   A vector embedding is generated from the text content using a pre-trained model.
+    *   The embedding is stored in the `embedding` column of the `raw_reports` table.
 
-## 3. Pipeline Stages in Detail
+## 3. LLM Extraction
 
-### Stage 1: Ingestion
+*   **Trigger:** Successful embedding generation.
+*   **Action:** A series of calls are made to an LLM provider (e.g., OpenAI) using the prompts defined in `LLM_EXTRACTION_PROMPTS.md`.
+    *   **Step 3.1:** Extract key skills and proficiency.
+    *   **Step 3.2:** Generate the quantitative skill snapshot.
+    *   **Step 3.3:** Create the career roadmap.
 
-*   **Trigger:** An HTTP POST request to the `/import/report` endpoint (or a similar mechanism).
-*   **Process:**
-    1.  The ingestion service receives the raw report (text and/or JSON).
-    2.  The report is associated with an `employee_id`.
-    3.  The raw report is saved to the `raw_reports` table, along with the `employee_id`.
-    4.  A job is enqueued for processing, containing the `report_id`.
-*   **Technology:** Serverless function (e.g., Vercel Function, AWS Lambda).
+## 4. Normalization & Storage
 
-### Stage 2: Queuing
+*   **Trigger:** Successful data extraction from the LLM.
+*   **Action:** The structured data from the LLM is normalized and stored in the PostgreSQL database.
+    *   The extracted skills are stored in the `skills` and `employee_skills` tables.
+    *   A new record is created in the `snapshots` table with the extracted snapshot data.
+    *   A new record is created in the `roadmaps` table with the career roadmap information.
 
-*   **Purpose:** To decouple the ingestion from the processing and to handle backpressure.
-*   **Process:**
-    1.  The ingestion service pushes a message to a queue (e.g., SQS, Redis queue).
-    2.  The message contains the `report_id` that needs to be processed.
-*   **Technology:** A managed queueing service is recommended for reliability.
+## 5. Snapshot & Analytics Update
 
-### Stage 3: Extraction
+*   **Trigger:** A new snapshot is created.
+*   **Action:**
+    *   The **Snapshot Engine** calculates any necessary time-series deltas (e.g., `skill_gap_delta`).
+    *   The **Analytics Engine** is triggered to update the materialized views (`team_skill_heatmap`, `promotion_readiness_index`, etc.) that are affected by the new data.
 
-*   **Trigger:** A worker process polls the queue for new jobs.
-*   **Process:**
-    1.  The worker retrieves a `report_id` from the queue.
-    2.  It fetches the raw report content from the `raw_reports` table.
-    3.  It generates a vector embedding of the report content and saves it back to the `raw_reports` table.
-    4.  It calls the LLM provider with the prompts defined in `LLM_EXTRACTION_PROMPTS.md`.
-    5.  The LLM returns a JSON object containing the extracted skills, projections, and roadmap.
-*   **Technology:** A background job runner (e.g., a separate Node.js service, AWS Lambda).
+## 6. Error Handling
 
-### Stage 4: Normalization & Storage
-
-*   **Process:**
-    1.  The worker process takes the JSON output from the LLM.
-    2.  **Skills:**
-        *   For each extracted skill, it checks if the skill exists in the `skills` taxonomy table. If not, it adds it.
-        *   It inserts or updates the `employee_skills` table with the `employee_id`, `skill_id`, and `proficiency_level`.
-    3.  **Snapshot & Roadmap:**
-        *   It creates a new record in the `snapshots` table with the extracted projections.
-        *   It creates a new record in the `roadmaps` table with the recommended role and steps.
-*   **Data Integrity:** All database operations within this stage should be performed in a single transaction to ensure atomicity.
-
-### Stage 5: Snapshot Generation & Analytics Update
-
-*   **Trigger:** A successful transaction in Stage 4.
-*   **Process:**
-    1.  A database trigger or an event-driven mechanism initiates the snapshot engine.
-    2.  The snapshot engine calculates the time-series deltas (30/60/90 days) for the employee's projections.
-    3.  The relevant materialized views for analytics (e.g., `team_skill_heatmap`) are refreshed to include the new data.
-*   **Technology:** PostgreSQL triggers or a pub/sub mechanism.
-
-## 4. Error Handling
-
-*   **Retries:** The worker process should implement a retry mechanism with exponential backoff for transient errors (e.g., LLM API failures).
-*   **Dead-Letter Queue:** If a job fails after multiple retries, it should be moved to a dead-letter queue for manual inspection.
-*   **Logging:** Comprehensive logging should be implemented at each stage of the pipeline to facilitate debugging.
+*   Each step of the pipeline will have robust error handling and logging.
+*   If a step fails, the process will be retried a configurable number of times.
+*   If a report consistently fails to be processed, it will be flagged for manual review.

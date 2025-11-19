@@ -6,7 +6,7 @@ import { z } from "zod";
 // import type { requestSuggestions } from "./ai/tools/request-suggestions";
 // import type { updateDocument } from "./ai/tools/update-document";
 import type { AppUsage } from "./usage";
-import { activityLogs, chats, messages, reports, researchSessions, stream, teamMembers, teams, users } from "./db/schema";
+import { activityLogs, chats, invitations, messages, reports, researchSessions, stream, teamMembers, teams, users } from "./db/schema";
 
 export type Chat = typeof chats.$inferSelect;
 export type NewChat = typeof chats.$inferInsert;
@@ -22,10 +22,10 @@ export type NewUser = typeof users.$inferInsert & {
 export type Team = typeof teams.$inferSelect;
 export type NewTeam = typeof teams.$inferInsert;
 
-export type TeamMember = typeof teamMembers.$inferSelect;
-export type NewTeamMember = typeof teamMembers.$inferInsert;
+export type Invitation = typeof invitations.$inferSelect;
 export type TeamDataWithMembers = Team & {
-  teamMembers: (TeamMember & { user: Pick<User, 'id' | 'name' | 'email'> })[]
+  users: Pick<User, 'id' | 'name' | 'email' | 'role'>[];
+  invitations: Invitation[];
 };
 
 export type NewActivityLog = typeof activityLogs.$inferInsert;

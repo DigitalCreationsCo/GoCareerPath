@@ -10,12 +10,12 @@ import {
   activityLogs,
   invitations
 } from '@/lib/db/schema';
-import type { 
-  User, 
+import type {
+  User,
   NewUser,
   NewTeam,
   NewTeamMember,
-  NewActivityLog 
+  NewActivityLog
 } from '@/lib/types';
 import { ActivityType } from '@/lib/types';
 import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
@@ -28,6 +28,7 @@ import {
   validatedActionWithUser
 } from '@/lib/auth/middleware';
 import { signIn } from 'auth';
+import { sendInviteEmail } from '@/lib/email/send-invite-user-email';
 
 async function logActivity(
   teamId: string | null | undefined,
@@ -78,7 +79,7 @@ export const signInWithEmail = validatedAction(signInSchema, async (data, formDa
     };
   }
 
-  const { user: foundUser, team: foundTeam } = userWithTeam[0];
+  const { user: foundUser, team: foundTeam } = userWithTeam[ 0 ];
 
   const isPasswordValid = await comparePasswords(
     password,
@@ -135,10 +136,10 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   const newUser: NewUser = {
     email,
     passwordHash,
-    role: 'owner' // Default role, will be overridden if there's an invitation
+    role: 'member' // Default role, will be overridden if there's an invitation
   };
 
-  const [createdUser] = await db.insert(users).values(newUser).returning();
+  const [ createdUser ] = await db.insert(users).values(newUser).returning();
 
   if (!createdUser) {
     return {
@@ -154,7 +155,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
   if (inviteId) {
     // Check if there's a valid invitation
-    const [invitation] = await db
+    const [ invitation ] = await db
       .select()
       .from(invitations)
       .where(
@@ -177,7 +178,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
       await logActivity(teamId, createdUser.id, ActivityType.ACCEPT_INVITATION);
 
-      [createdTeam] = await db
+      [ createdTeam ] = await db
         .select()
         .from(teams)
         .where(eq(teams.id, teamId))
@@ -186,12 +187,12 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
       return { error: 'Invalid or expired invitation.', email, password };
     }
   } else {
-    // Create a new team if there's no invitation
+    // Create a new organization and team if there's no invitation
     const newTeam: NewTeam = {
-      name: `${email}'s Team`
+      name: `${email}'s Team`,
     };
 
-    [createdTeam] = await db.insert(teams).values(newTeam).returning();
+    [ createdTeam ] = await db.insert(teams).values(newTeam).returning();
 
     if (!createdTeam) {
       return {
@@ -203,6 +204,11 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
     teamId = createdTeam.id;
     userRole = 'owner';
+
+    await db
+      .update(users)
+      .set({ role: 'owner' })
+      .where(eq(users.id, createdUser.id));
 
     await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
   }
@@ -400,7 +406,7 @@ export const removeTeamMember = validatedActionWithUser(
 
 const inviteTeamMemberSchema = z.object({
   email: z.string().email('Invalid email address'),
-  role: z.enum(['member', 'owner'])
+  role: z.enum([ 'member', 'owner' ])
 });
 
 export const inviteTeamMember = validatedActionWithUser(
@@ -458,8 +464,10 @@ export const inviteTeamMember = validatedActionWithUser(
       ActivityType.INVITE_TEAM_MEMBER
     );
 
-    // TODO: Send invitation email and include ?inviteId={id} to sign-up URL
-    // await sendInvitationEmail(email, userWithTeam.team.name, role)
+    const inviteLink = `${process.env.NEXT_PUBLIC_BASE_URL}/sign-up?inviteId=${invitations.id}`;
+    if (userWithTeam.team) {
+      await sendInviteEmail(email, userWithTeam.team.name, inviteLink);
+    }
 
     return { success: 'Invitation sent successfully' };
   }

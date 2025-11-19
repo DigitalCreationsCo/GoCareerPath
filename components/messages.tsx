@@ -52,12 +52,12 @@ function PureMessages({
 
   return (
     <div
-      className="overscroll-behavior-contain -webkit-overflow-scrolling-touch flex-1 touch-pan-y overflow-y-scroll"
+      className="flex-1 overflow-y-scroll overscroll-behavior-contain -webkit-overflow-scrolling-touch touch-pan-y"
       ref={messagesContainerRef}
       style={{ overflowAnchor: "none" }}
     >
-      <Conversation className="mx-auto flex w-full min-w-0 flex-col gap-4 md:gap-6">
-        <ConversationContent className="mx-auto flex flex-col max-w-4xl gap-4 px-2 py-4 md:gap-4 md:px-4">
+      <Conversation className="flex flex-col w-full min-w-0 gap-4 mx-auto md:gap-6">
+        <ConversationContent className="flex flex-col max-w-4xl gap-4 px-2 py-4 mx-auto md:gap-4 md:px-4">
           {messages.map((message, index) => {
             const delay = isShowingGreeting ? greetingDelays[index] : 0;
             return (
@@ -93,7 +93,7 @@ function PureMessages({
       {!isAtBottom && (
         <button
           aria-label="Scroll to bottom"
-          className="-translate-x-1/2 absolute bottom-40 left-1/2 z-10 rounded-full border border-muted-foreground bg-background p-2 shadow-lg transition-colors hover:bg-muted"
+          className="absolute z-10 p-2 transition-colors -translate-x-1/2 border rounded-full shadow-lg bottom-40 left-1/2 border-muted-foreground bg-background hover:bg-muted"
           onClick={() => scrollToBottom("smooth")}
           type="button"
         >

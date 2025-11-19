@@ -1,22 +1,22 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from '../drizzle';
 import { activityLogs, teamMembers, teams, users } from '@/lib/db/schema';
-import { NewUser, User } from '@/lib/types';
+import { NewUser, User, TeamDataWithMembers } from '@/lib/types';
 import { cookies } from 'next/headers';
 import { hashPassword, verifyToken } from '@/lib/auth/session';
 
 export async function createUser(user: NewUser) {
   try {
     console.debug('createUser: ', user);
-    let passwordHash = ''
+    let passwordHash = '';
     if (user.password) {
       passwordHash = await hashPassword(user.password);
     }
-    const [newUser] = await db.insert(users).values({ 
-      ...user, 
-      id: user.id, 
-      passwordHash, 
-      role: 'member' 
+    const [ newUser ] = await db.insert(users).values({
+      ...user,
+      id: user.id,
+      passwordHash,
+      role: 'member'
     }).returning();
 
     console.debug('Created new user in database: ', newUser);
@@ -75,7 +75,7 @@ export async function getUser() {
     return null;
   }
 
-  return user[0];
+  return user[ 0 ];
 }
 
 export async function getTeamByStripeCustomerId(customerId: string) {
@@ -85,7 +85,7 @@ export async function getTeamByStripeCustomerId(customerId: string) {
     .where(eq(teams.stripeCustomerId, customerId))
     .limit(1);
 
-  return result.length > 0 ? result[0] : null;
+  return result.length > 0 ? result[ 0 ] : null;
 }
 
 export async function updateTeamSubscription(
@@ -110,14 +110,15 @@ export async function getUserWithTeam(userId: string) {
   const result = await db
     .select({
       user: users,
-      teamId: teamMembers.teamId
+      teamId: users.teamId,
+      team: teams
     })
     .from(users)
-    .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
+    .leftJoin(teams, eq(users.teamId, teams.id))
     .where(eq(users.id, userId))
     .limit(1);
 
-  return result[0];
+  return result[ 0 ];
 }
 
 export async function getActivityLogs() {
@@ -143,30 +144,34 @@ export async function getActivityLogs() {
 
 export async function getTeamForUser() {
   const user = await getUser();
-  if (!user) {
+  if (!user || !user.teamId) {
     return null;
   }
 
-  const result = await db.query.teamMembers.findFirst({
-    where: eq(teamMembers.userId, user.id),
+  const result = await db.query.teams.findFirst({
+    where: eq(teams.id, user.teamId),
     with: {
-      team: {
+      teamManagers: {
         with: {
-          teamMembers: {
-            with: {
-              user: {
-                columns: {
-                  id: true,
-                  name: true,
-                  email: true
-                }
-              }
+          user: {
+            columns: {
+              id: true,
+              name: true,
+              email: true
             }
           }
+        }
+      },
+      users: {
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
         }
       }
     }
   });
 
-  return result?.team || null;
+  return result as unknown as TeamDataWithMembers;
 }
