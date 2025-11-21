@@ -1,10 +1,9 @@
 "use client"
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Users, Settings, Shield, Activity, Menu, ReceiptIcon } from 'lucide-react';
+import { Users, Settings, Shield, Activity, Menu, ReceiptIcon, LayoutDashboard, LineChart, Home } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Header } from '@/components/ui/header/header';
 
 export default function DashboardLayout({
   children
@@ -15,52 +14,58 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navItems = [
-    { href: '/dashboard', icon: ReceiptIcon, label: 'Reports' },
+    { href: '/dashboard', icon: Home, label: 'Overview' },
+    { href: '/dashboard/reports', icon: LineChart, label: 'Reports' },
     { href: '/dashboard/team', icon: Users, label: 'Team' },
     { href: '/dashboard/general', icon: Settings, label: 'General' },
-    // { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
+    { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
     { href: '/dashboard/security', icon: Shield, label: 'Security' }
   ];
 
   return (
-    <>
-    <Header />
-    <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-7xl mx-auto w-full">
+    <div className="flex flex-col min-h-[calc(100dvh-42px)] mx-auto w-full">
       {/* Mobile header */}
-      <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
-        <div className="flex items-center">
-          <span className="font-medium">Settings</span>
-        </div>
+      <div className="flex items-center justify-between px-2 pt-4 lg:hidden backdrop-blur-sm">
         <Button
           className="-mr-3"
           variant="ghost"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="h-6 w-6" />
+          <Menu className="w-5 h-5" />
           <span className="sr-only">Toggle sidebar</span>
         </Button>
       </div>
 
-      <div className="flex flex-1 overflow-hidden h-full">
+      <div className="flex flex-1 h-full overflow-hidden">
         {/* Sidebar */}
         <aside
-          className={`w-64 bg-white lg:bg-gray-50 border-r border-gray-200 lg:block ${
+          className={`w-48 lg:bg-gradient-to-t lg:from-primary/10 lg:block ${
             isSidebarOpen ? 'block' : 'hidden'
           } lg:relative absolute inset-y-0 left-0 z-40 transform transition-transform duration-100 ease-in-out lg:translate-x-0 ${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <nav className="h-full overflow-y-auto p-4">
+          <div className="flex items-center justify-between px-2 pt-4 lg:hidden backdrop-blur-sm">
+            <Button
+              className="-mr-3"
+              variant="ghost"
+              onClick={ () => setIsSidebarOpen(!isSidebarOpen) }
+            >
+              <Menu className="w-5 h-5" />
+              <span className="sr-only">Toggle sidebar</span>
+            </Button>
+          </div>
+          <nav className="h-full p-4 overflow-y-auto bg-background lg:bg-transparent">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href} passHref>
                 <Button
-                  variant={pathname === item.href ? 'secondary' : 'ghost'}
-                  className={`shadow-none my-1 w-full justify-start ${
-                    pathname === item.href ? 'bg-gray-100' : ''
+                  variant={ pathname === item.href ? 'ghost' : 'ghost'}
+                  className={`w-full justify-start hover:bg-background/50 ${
+                    pathname === item.href ? 'bg-background/50 inset-shadow-xs' : ''
                   }`}
                   onClick={() => setIsSidebarOpen(false)}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="w-4 h-4 mr-2" />
                   {item.label}
                 </Button>
               </Link>
@@ -69,9 +74,8 @@ export default function DashboardLayout({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-0 lg:p-4">{children}</main>
+        <main className="flex-1 p-0 overflow-y-auto lg:p-4">{children}</main>
       </div>
     </div>
-    </>
   );
 }

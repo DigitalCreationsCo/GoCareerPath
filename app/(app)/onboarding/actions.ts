@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
-import { teams } from '@/lib/db/schema';
+import { teams, users, teamManagers, teamMembers } from '@/lib/db/schema';
 import { validatedActionWithUser } from '@/lib/auth/middleware';
 import { getUserWithTeam } from '@/lib/db/queries/user';
 
@@ -17,15 +17,49 @@ export const updateTeam = validatedActionWithUser(
     const { teamName } = data;
     const userWithTeam = await getUserWithTeam(user.id);
 
-    if (!userWithTeam?.teamId) {
-      return { error: 'User is not part of a team' };
+    if (!userWithTeam) {
+      return { error: 'User not found' };
     }
 
-    await db
-      .update(teams)
-      .set({ name: teamName })
-      .where(eq(teams.id, userWithTeam.teamId));
+    if (userWithTeam.teamId) {
+      await db
+        .update(teams)
+        .set({ name: teamName })
+        .where(eq(teams.id, userWithTeam.teamId));
+      
+      return { success: 'Team updated successfully' };
+    } else {
+      // Create new team
+      const [newTeam] = await db.insert(teams).values({
+        name: teamName,
+      }).returning();
 
-    return { success: 'Team updated successfully' };
+      if (!newTeam) {
+        return { error: 'Failed to create team' };
+      }
+
+      // Update user with teamId and role='owner'
+      await db.update(users)
+        .set({ 
+          teamId: newTeam.id,
+          role: 'owner' 
+        })
+        .where(eq(users.id, user.id));
+
+      // Add user as team manager
+      await db.insert(teamManagers).values({
+        userId: user.id,
+        teamId: newTeam.id,
+      });
+
+      // Add user as team member
+      await db.insert(teamMembers).values({
+        userId: user.id,
+        teamId: newTeam.id,
+        role: 'owner'
+      });
+
+      return { success: 'Team created successfully' };
+    }
   }
 );

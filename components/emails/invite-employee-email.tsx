@@ -19,7 +19,7 @@ interface InviteUserEmailProps {
   inviteLink: string;
 }
 
-export const InviteUserEmail = ({
+export const InviteEmployeeEmail = ({
   teamName,
   inviteLink,
 }: InviteUserEmailProps) => {
@@ -85,4 +85,4 @@ export const InviteUserEmail = ({
   );
 };
 
-export default InviteUserEmail;
+export default InviteEmployeeEmail;

@@ -2,27 +2,37 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 import { Mixpanel } from '@/lib/mixpanel';
 import { updateTeam } from './actions';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Briefcase, User } from 'lucide-react';
 
 export default function OnboardingPage() {
-  const [ step, setStep ] = useState(1);
+  const [ step, setStep ] = useState(0);
   const [ teamName, setTeamName ] = useState('');
   const [ roles, setRoles ] = useState('');
   const [ emails, setEmails ] = useState('');
   const [ message, setMessage ] = useState('');
   const [ isLoading, setIsLoading ] = useState(false);
+  const { update } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const role = searchParams.get('role');
 
   useEffect(() => {
     Mixpanel.track('Onboarding Started');
-  }, []);
+    if (role === 'owner') {
+      setStep(2); // Skip to Team Creation
+    } else {
+      setStep(0); // Show Selection
+    }
+  }, [role]);
 
   const handleTeamSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +56,8 @@ export default function OnboardingPage() {
       setIsLoading(false);
       return;
     }
+
+    await update(); // Update session to include new teamId
 
     Mixpanel.track('Team Created', { teamName });
     setIsLoading(false);
@@ -91,10 +103,51 @@ export default function OnboardingPage() {
     <div className="relative container flex items-center justify-center min-h-[calc(100vh-8rem)] p-4 mx-auto">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="mb-0! text-transparent heading bg-gradient-accent bg-clip-text">Onboarding</CardTitle>
+          <CardTitle className="mb-0! text-transparent heading bg-gradient-accent bg-clip-text">
+            {step === 0 ? 'Welcome to GoCareerPath' : 'Onboarding'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
+          { step === 0 && (
+            <motion.div
+              initial={ { opacity: 0, y: 20 } }
+              animate={ { opacity: 1, y: 0 } }
+              transition={ { duration: 0.7 } }
+              className="space-y-8 text-center"
+            >
+              <div>
+                <h2 className="subtext">How are you using GoCareerPath?</h2>
+                <p className="subtext">Choose the option that best describes you.</p>
+              </div>
+              
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card
+                  className="flex flex-col items-center p-6 cursor-pointer hover:border-primary/50 hover:bg-primary/10"
+                  onClick={() => router.push('/chat')}
+                >
+                  <div className="p-3 mb-4 transition-transform rounded-full text-primary bg-primary/20 group-hover:scale-110">
+                    <User size={32} />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold">For Myself</h3>
+                  <p className="text-sm text-muted-foreground">I want personalized career advice and upskilling.</p>
+                </Card>
+
+                <Card
+                  className="flex flex-col items-center p-6 cursor-pointer hover:border-primary/50 hover:bg-primary/10"
+                  onClick={() => setStep(2)}
+                >
+                  <div className="p-3 mb-4 text-blue-500 transition-transform rounded-full bg-primary/20 group-hover:scale-110">
+                    <Briefcase size={32} />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold">For My Team</h3>
+                  <p className="text-sm text-muted-foreground">I want to manage skills and career paths for my employees.</p>
+                </Card>
+              </div>
+            </motion.div>
+          ) }
+
           { step === 1 && (
+             // Deprecated step, but keeping logic just in case fallback is needed
             <motion.div
               initial={ { opacity: 0, y: 20 } }
               animate={ { opacity: 1, y: 0 } }

@@ -8,6 +8,7 @@ import {
   snapshots,
   roadmaps,
   teamManagers,
+  invitations,
 } from './schema';
 
 export const usersRelations = relations(users, ({ many, one }) => ({
@@ -25,6 +26,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamManagers: many(teamManagers),
   users: many(users),
+  invitations: many(invitations),
 }));
 
 export const teamManagersRelations = relations(teamManagers, ({ one }) => ({
@@ -34,6 +36,17 @@ export const teamManagersRelations = relations(teamManagers, ({ one }) => ({
   }),
   user: one(users, {
     fields: [teamManagers.userId],
+    references: [users.id],
+  }),
+}));
+
+export const invitationsRelations = relations(invitations, ({ one }) => ({
+  team: one(teams, {
+    fields: [invitations.teamId],
+    references: [teams.id],
+  }),
+  invitedBy: one(users, {
+    fields: [invitations.invitedBy],
     references: [users.id],
   }),
 }));

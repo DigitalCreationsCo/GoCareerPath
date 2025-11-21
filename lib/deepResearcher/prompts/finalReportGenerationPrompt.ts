@@ -67,25 +67,53 @@ Return ONLY the raw JSON object.
 - Top employers list with hiring strategies
 - Networking scripts and offer negotiation tactics
 
-~~~mermaid
+\`\`\`mermaid
 flowchart TD
-    A["Your Current Profile<br/>Experience: [X years]<br/>Top Skills: [2-3 key skills]"] --> B{"4 Automation-Resistant<br/>Career Paths"}
-    
-    B -->|"Score: X/10"| C["🥇 PATH #1<br/>$XXX-XXXk range<br/>Automation Risk: LOW"]
-    B -->|"Score: X/10"| D["🥈 PATH #2<br/>$XXX-XXXk range<br/>Automation Risk: LOW"]
-    B -->|"Score: X/10"| E["🥉 PATH #3<br/>$XXX-XXXk range<br/>Automation Risk: LOW"]
-    B -->|"Score: X/10"| F["4️⃣ PATH #4<br/>$XXX-XXXk range<br/>Automation Risk: MEDIUM"]
-    
-    C -->|"Best Overall Match"| G["✅ TOP RECOMMENDATION<br/>Highest ROI + Future-Proof<br/>Timeline: [X months]"]
-    
+    subgraph Profile["👤 Your Current Profile"]
+        direction TB
+        A["Role: [Current Role]<br/>Exp: [X] Years"]
+        A1["Key Skill: [Skill 1]"]
+        A2["Key Skill: [Skill 2]"]
+        A --> A1
+        A --> A2
+    end
+
+    subgraph Analysis["🤖 Automation-Resistant Analysis"]
+        direction TB
+        B{"4 Paths Analyzed"}
+    end
+
+    subgraph Paths["🚀 Recommended Career Paths"]
+        direction TB
+        C["🥇 PATH #1: [Title]<br/>💰 $XXX-XXXk<br/>🛡️ Risk: LOW<br/>📈 Growth: +X%"]
+        D["🥈 PATH #2: [Title]<br/>💰 $XXX-XXXk<br/>🛡️ Risk: LOW<br/>📈 Growth: +X%"]
+        E["🥉 PATH #3: [Title]<br/>💰 $XXX-XXXk<br/>🛡️ Risk: LOW<br/>📈 Growth: +X%"]
+        F["4️⃣ PATH #4: [Title]<br/>💰 $XXX-XXXk<br/>🛡️ Risk: MED<br/>📈 Growth: +X%"]
+    end
+
+    subgraph Recommendation["✅ Top Choice"]
+        direction TB
+        G["🎯 [Path #1 Title]<br/>Best ROI & Future-Proof<br/>Timeline: [X] Months"]
+    end
+
+    Profile --> Analysis
+    Analysis --> Paths
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+    C --> Recommendation
+
     style A fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
+    style A1 fill:#E0E0E0,stroke:#BDC3C7,stroke-width:1px,color:#2C3E50
+    style A2 fill:#E0E0E0,stroke:#BDC3C7,stroke-width:1px,color:#2C3E50
     style B fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#FFFFFF
     style C fill:#FFD700,stroke:#B8860B,stroke-width:3px,color:#2C3E50
     style D fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
     style E fill:#FF8C42,stroke:#C86A2F,stroke-width:2px,color:#FFFFFF
     style F fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
     style G fill:#5DD39E,stroke:#3AA76D,stroke-width:3px,color:#FFFFFF
-~~~
+\`\`\`
 
 ---
 
@@ -123,10 +151,11 @@ Maintain a **50/50 text-to-visual balance** where diagrams convey insights text 
 Use **dynamic, informative Mermaid diagrams** with the specified color palette.
 
 **CRITICAL MERMAID SYNTAX:**
-- Use ~~~ (triple tildes) instead of backticks for mermaid code blocks
-- This ensures JSON serializability AND proper rendering in both browser and PDF
-- Keep diagrams clear and not overly complex for PDF compatibility
-- Test that all node labels are concise to prevent rendering issues
+- Use standard markdown code fences (\`\`\`) for mermaid code blocks.
+- Ensure the diagram direction (e.g., TD, LR) is appropriate for the content.
+- **MAKE DIAGRAMS 10X MORE DETAILED:** Use subgraphs to group related nodes, add detailed labels to edges, and ensure every step is clearly visualized.
+- Use the specified color palette to differentiate categories.
+- Ensure all node labels are descriptive but readable.
 
 ---
 
@@ -142,17 +171,36 @@ Use **dynamic, informative Mermaid diagrams** with the specified color palette.
 - Clear statement of top recommendation with key differentiators
 - Brief mention of automation resistance focus]
 
-~~~mermaid
+\`\`\`mermaid
 flowchart TD
-    A["Your Current Profile<br/>Role: [Specific Role]<br/>Experience: X years<br/>Industry: [Industry]"] --> B{"4 Automation-Resistant<br/>Paths Analyzed"}
-    
-    B -->|"Score: X/10"| C["🥇 Path #1<br/>[FULL Career Title]<br/>$XXX-XXXk<br/>🛡️ Automation Risk: LOW"]
-    B -->|"Score: X/10"| D["🥈 Path #2<br/>[FULL Career Title]<br/>$XXX-XXXk<br/>🛡️ Automation Risk: LOW"]
-    B -->|"Score: X/10"| E["🥉 Path #3<br/>[FULL Career Title]<br/>$XXX-XXXk<br/>🛡️ Automation Risk: LOW"]
-    B -->|"Score: X/10"| F["4️⃣ Path #4<br/>[FULL Career Title]<br/>$XXX-XXXk<br/>🛡️ Automation Risk: MEDIUM"]
-    
-    C -->|"Best Overall Match"| G["✅ RECOMMENDED<br/>Highest ROI + Future-Proof<br/>Start: [X months]"]
-    
+    subgraph Current["👤 Your Profile"]
+        A["Role: [Specific Role]<br/>Exp: [X] Years<br/>Ind: [Industry]"]
+    end
+
+    subgraph Analysis["🧠 Deep Analysis"]
+        B{"4 Automation-Resistant<br/>Paths Evaluated"}
+    end
+
+    subgraph Paths["🚀 Recommended Paths"]
+        direction TB
+        C["🥇 Path #1: [Title]<br/>💰 $XXXk+ | 🛡️ Low Risk"]
+        D["🥈 Path #2: [Title]<br/>💰 $XXXk+ | 🛡️ Low Risk"]
+        E["🥉 Path #3: [Title]<br/>💰 $XXXk+ | 🛡️ Low Risk"]
+        F["4️⃣ Path #4: [Title]<br/>💰 $XXXk+ | 🛡️ Med Risk"]
+    end
+
+    subgraph Winner["🏆 Top Recommendation"]
+        G["✅ [Path #1 Title]<br/>Highest ROI & Future-Proof<br/>Entry: [X] Months"]
+    end
+
+    Current --> Analysis
+    Analysis --> Paths
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+    C --> Winner
+
     style A fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
     style B fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#FFFFFF
     style C fill:#FFD700,stroke:#B8860B,stroke-width:3px,color:#2C3E50
@@ -160,27 +208,36 @@ flowchart TD
     style E fill:#FF8C42,stroke:#C86A2F,stroke-width:2px,color:#FFFFFF
     style F fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
     style G fill:#5DD39E,stroke:#3AA76D,stroke-width:3px,color:#FFFFFF
-~~~
+\`\`\`
 
 ---
 
 ## 🏆 Path Rankings Overview
 
-~~~mermaid
+\`\`\`mermaid
 flowchart LR
-    A1["🥇 #1: [Title]<br/>Match: X/10<br/>Salary: $XXX-XXXk<br/>🛡️ Auto Risk: LOW<br/>Entry: X months<br/>Growth: +X%/yr"]
-    A2["🥈 #2: [Title]<br/>Match: X/10<br/>Salary: $XXX-XXXk<br/>🛡️ Auto Risk: LOW<br/>Entry: X months<br/>Growth: +X%/yr"]
-    A3["🥉 #3: [Title]<br/>Match: X/10<br/>Salary: $XXX-XXXk<br/>🛡️ Auto Risk: LOW<br/>Entry: X months<br/>Growth: +X%/yr"]
-    A4["4️⃣ #4: [Title]<br/>Match: X/10<br/>Salary: $XXX-XXXk<br/>🛡️ Auto Risk: MED<br/>Entry: X months<br/>Growth: +X%/yr"]
-    
-    A1 -.->|"Winner because"| B["Highest skill match<br/>Best salary/effort ratio<br/>Strong future-proofing<br/>Clearest entry path"]
-    
+    subgraph Rankings["🏆 Path Rankings"]
+        direction TB
+        A1["🥇 #1: [Title]<br/>Match: X/10 | 💰 $XXXk<br/>🛡️ Low Risk | 📈 +X% Growth"]
+        A2["🥈 #2: [Title]<br/>Match: X/10 | 💰 $XXXk<br/>🛡️ Low Risk | 📈 +X% Growth"]
+        A3["🥉 #3: [Title]<br/>Match: X/10 | 💰 $XXXk<br/>🛡️ Low Risk | 📈 +X% Growth"]
+        A4["4️⃣ #4: [Title]<br/>Match: X/10 | 💰 $XXXk<br/>🛡️ Med Risk | 📈 +X% Growth"]
+    end
+
+    subgraph WhyWinner["💡 Why Path #1 Wins"]
+        direction TB
+        B["✅ Highest Skill Match<br/>✅ Best Salary/Effort Ratio<br/>✅ Strongest Future-Proofing"]
+    end
+
+    Rankings --> WhyWinner
+    A1 -.-> B
+
     style A1 fill:#FFD700,stroke:#B8860B,stroke-width:3px,color:#2C3E50
     style A2 fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
     style A3 fill:#FF8C42,stroke:#C86A2F,stroke-width:2px,color:#FFFFFF
     style A4 fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
-    style B fill:#5DD39E,stroke:#3AA76D,stroke-width:2px,color:#FFFFFF
-~~~
+    style B fill:#5DD39E,stroke:#3AA76D,stroke-width:3px,color:#FFFFFF
+\`\`\`
 
 ---
 
@@ -206,18 +263,33 @@ flowchart LR
 - [Trend 2]: [Specific opportunities emerging]
 - [Trend 3]: [How role adapts and remains relevant]
 
-~~~mermaid
+\`\`\`mermaid
 flowchart TD
-    A["🤖 Automation Threats"] --> B{"Role Resilience<br/>Factors"}
-    C["📈 Future Trends"] --> B
-    
-    B --> D["✅ High Human Judgment<br/>Complex decision-making<br/>required"]
-    B --> E["✅ Evolving Skill Set<br/>Role adapts with<br/>technology"]
-    B --> F["✅ Relationship-Driven<br/>Trust & collaboration<br/>essential"]
-    
-    D --> G["🛡️ LOW AUTOMATION RISK<br/>Role remains valuable<br/>through 2035+"]
-    E --> G
-    F --> G
+    subgraph Threats["⚠️ External Pressures"]
+        A["🤖 AI & Automation"]
+        C["📈 Market Trends"]
+    end
+
+    subgraph Resilience["🛡️ Resilience Factors"]
+        B{"Role Adaptability"}
+        D["✅ Complex Decisions<br/>Requires Human Judgment"]
+        E["✅ Tech Integration<br/>Role Evolves with AI"]
+        F["✅ Human Connection<br/>Relationship-Driven"]
+    end
+
+    subgraph Outcome["🔮 Future Outlook"]
+        G["🏆 LOW RISK<br/>Secure through 2035+"]
+    end
+
+    Threats --> Resilience
+    A --> B
+    C --> B
+    B --> D
+    B --> E
+    B --> F
+    D --> Outcome
+    E --> Outcome
+    F --> Outcome
     
     style A fill:#E74C3C,stroke:#C0392B,stroke-width:2px,color:#FFFFFF
     style C fill:#4A90E2,stroke:#2E5C8A,stroke-width:2px,color:#FFFFFF
@@ -226,33 +298,30 @@ flowchart TD
     style E fill:#5DD39E,stroke:#3AA76D,stroke-width:2px,color:#FFFFFF
     style F fill:#5DD39E,stroke:#3AA76D,stroke-width:2px,color:#FFFFFF
     style G fill:#FFD700,stroke:#B8860B,stroke-width:3px,color:#2C3E50
-~~~
+\`\`\`
 
 ### Your Fit Analysis
 
-~~~mermaid
+\`\`\`mermaid
 mindmap
-  root(("💼 YOU TO ROLE<br/>Match: XX%"))
-    ✅ Current Skills
-      [Skill 1]: Direct transfer
-      [Skill 2]: 90% applicable
-      [Skill 3]: Strong foundation
-      [Skill 4]: Proven experience
-    🔄 Experience Leverage
-      [Current role]: Maps XX% directly
-      [Past project/role]: Highly relevant
-      [Industry knowledge]: Competitive edge
-      [Years experience]: Meets requirements
-    🎯 Goal Alignment
-      Meets [specific goal 1]
-      Satisfies [specific goal 2]
-      Timeline: Realistic
-      Growth: Clear path visible
-    ⚡ Unique Advantage
-      Your edge: [Specific differentiator]
-      Rare combo: [Skill A] + [Skill B]
-      Market gap: [What makes you stand out]
-~~~
+  root(("💼 FIT ANALYSIS<br/>Match: XX%"))
+    ✅ Your Skills
+      [Skill 1]<br/>(Direct Transfer)
+      [Skill 2]<br/>(High Applicability)
+      [Skill 3]<br/>(Strong Base)
+    🔄 Leverage
+      [Current Role]<br/>(Maps XX%)
+      [Past Project]<br/>(Relevant)
+      [Industry]<br/>(Advantage)
+    🎯 Goals
+      [Goal 1]<br/>(Met)
+      [Goal 2]<br/>(Satisfied)
+      Timeline<br/>(Realistic)
+    ⚡ Your Edge
+      [Differentiator]
+      [Skill Combo]
+      [Market Gap]
+\`\`\`
 
 **Skill Transfer Breakdown:**
 
@@ -284,22 +353,25 @@ mindmap
 
 ### Salary Progression Path
 
-~~~mermaid
+\`\`\`mermaid
 flowchart LR
-    A["🌱 ENTRY<br/>$XXk-XXk<br/>Years 0-2<br/>Learning & proving value"] 
-    B["📈 MID-LEVEL<br/>$XXXk-XXXk<br/>Years 3-5<br/>Independent contributor<br/>& team collaboration"]
-    C["🎯 SENIOR<br/>$XXXk-XXXk<br/>Years 5-8<br/>Leadership & mentoring<br/>Strategic input"]
-    D["🏆 PRINCIPAL/DIRECTOR<br/>$XXXk-XXXk+<br/>Years 8+<br/>Org-wide impact<br/>Vision setting"]
-    
-    A -->|"+X% annual"| B
-    B -->|"+X% annual"| C
-    C -->|"+X% annual"| D
+    subgraph Progression["💰 Salary Progression Map"]
+        direction LR
+        A["🌱 Entry Level<br/>$XX-XXk<br/>(0-2 Years)"] 
+        B["📈 Mid-Level<br/>$XX-XXk<br/>(3-5 Years)"]
+        C["🎯 Senior Level<br/>$XX-XXk<br/>(5-8 Years)"]
+        D["🏆 Principal/Lead<br/>$XXk+<br/>(8+ Years)"]
+    end
+
+    A -->|"+X% Growth"| B
+    B -->|"+X% Growth"| C
+    C -->|"+X% Growth"| D
     
     style A fill:#50C8E8,stroke:#2E8BA6,stroke-width:2px,color:#FFFFFF
     style B fill:#4A90E2,stroke:#2E5C8A,stroke-width:2px,color:#FFFFFF
     style C fill:#9B59B6,stroke:#6C3483,stroke-width:2px,color:#FFFFFF
     style D fill:#5DD39E,stroke:#3AA76D,stroke-width:3px,color:#FFFFFF
-~~~
+\`\`\`
 
 ---
 
@@ -329,21 +401,21 @@ flowchart LR
 - **[Skill 1]**: [How to practice/develop]
 - **[Skill 2]**: [Specific exercises/resources]
 
-~~~mermaid
+\`\`\`mermaid
 mindmap
-  root(("🧭 Learning Priority Map<br/>Total: X months"))
-    🔴 CRITICAL (Months 1-3)
-      [Skill 1]<br/>[Specific cert/course]
-      [Skill 2]<br/>[Specific training]
-      [Skill 3]<br/>[Practice method]
-    🟡 IMPORTANT (Months 4-6)
-      [Skill 4]<br/>[Resource]
-      [Skill 5]<br/>[Learning path]
-      [Skill 6]<br/>[Development method]
-    🟢 BENEFICIAL (Months 7-12)
-      [Skill 7]<br/>[Optional cert]
-      [Skill 8]<br/>[Nice to have]
-~~~
+  root(("🧭 SKILL ROADMAP<br/>Total: X Months"))
+    🔴 PHASE 1: CRITICAL
+      [Skill 1]<br/>(Top Priority)
+      [Skill 2]<br/>(Must Have)
+      [Skill 3]<br/>(Foundation)
+    🟡 PHASE 2: IMPORTANT
+      [Skill 4]<br/>(Core)
+      [Skill 5]<br/>(Advanced)
+      [Skill 6]<br/>(Practice)
+    🟢 PHASE 3: BENEFICIAL
+      [Skill 7]<br/>(Bonus)
+      [Skill 8]<br/>(Specialized)
+\`\`\`
 
 ---
 
@@ -369,24 +441,34 @@ mindmap
 | **Geographic Flexibility** | High/Med/Low | High/Med/Low | High/Med/Low | High/Med/Low |
 | **Entrepreneurial Potential** | High/Med/Low | High/Med/Low | High/Med/Low | High/Med/Low |
 
-~~~mermaid
+\`\`\`mermaid
 flowchart TD
-    A["Choose Your Path"] --> B{"What Matters Most?"}
+    subgraph Decision["🤔 Decision Matrix"]
+        B{"What Is Your<br/>Top Priority?"}
+    end
+
+    subgraph Options["📋 Best Path For..."]
+        C["💰 Highest Salary<br/>Path #X: [Title]"]
+        D["⚡ Fastest Entry<br/>Path #X: [Title]"]
+        E["🛡️ Most Secure<br/>Path #X: [Title]"]
+        F["🎯 Best Fit<br/>Path #X: [Title]"]
+        G["📈 Most Jobs<br/>Path #X: [Title]"]
+    end
+
+    Decision --> Options
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+    B --> G
     
-    B -->|"Highest Pay"| C["Path #X<br/>[Title]<br/>$XXXk-XXXk"]
-    B -->|"Fastest Entry"| D["Path #X<br/>[Title]<br/>X months"]
-    B -->|"Best Future-Proofing"| E["Path #X<br/>[Title]<br/>Lowest automation risk"]
-    B -->|"Best Skill Match"| F["Path #X<br/>[Title]<br/>X/10 compatibility"]
-    B -->|"Most Openings"| G["Path #X<br/>[Title]<br/>X,XXX jobs"]
-    
-    style A fill:#4A90E2,stroke:#2E5C8A,stroke-width:2px,color:#FFFFFF
     style B fill:#9B59B6,stroke:#6C3483,stroke-width:3px,color:#FFFFFF
     style C fill:#FFD700,stroke:#B8860B,stroke-width:2px,color:#2C3E50
     style D fill:#50C8E8,stroke:#2E8BA6,stroke-width:2px,color:#FFFFFF
     style E fill:#5DD39E,stroke:#3AA76D,stroke-width:2px,color:#FFFFFF
     style F fill:#FF8C42,stroke:#C86A2F,stroke-width:2px,color:#FFFFFF
     style G fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
-~~~
+\`\`\`
 
 ---
 
@@ -394,19 +476,39 @@ flowchart TD
 
 ### Overall Timeline & Milestones
 
-~~~mermaid
+\`\`\`mermaid
 flowchart TD
-    A["🔍 PHASE 1: Assessment<br/>Month 1<br/>Define goals & gaps"] --> B["📚 PHASE 2: Skill Building<br/>Months 2-8<br/>Targeted learning"]
-    B --> C["💼 PHASE 3: Portfolio<br/>Months 7-10<br/>Build proof of work"]
-    C --> D["🚀 PHASE 4: Job Search<br/>Months 10-12<br/>Applications & interviews"]
-    D --> E["✅ PHASE 5: Transition<br/>Month 12+<br/>New role secured"]
+    subgraph Phase1["🔍 Phase 1: Foundation"]
+        A["Month 1: Assessment<br/>Goals & Gaps"]
+    end
+
+    subgraph Phase2["📚 Phase 2: Upskilling"]
+        B["Months 2-8: Learning<br/>Courses & Certs"]
+    end
+
+    subgraph Phase3["💼 Phase 3: Experience"]
+        C["Months 7-10: Portfolio<br/>Projects & Proof"]
+    end
+
+    subgraph Phase4["🚀 Phase 4: Launch"]
+        D["Months 10-12: Search<br/>Networking & Apps"]
+    end
+
+    subgraph Goal["✅ Goal Reached"]
+        E["Month 12+: New Role<br/>Transition Complete"]
+    end
+
+    Phase1 --> Phase2
+    Phase2 --> Phase3
+    Phase3 --> Phase4
+    Phase4 --> Goal
     
     style A fill:#BDC3C7,stroke:#7F8C8D,stroke-width:2px,color:#2C3E50
     style B fill:#50C8E8,stroke:#2E8BA6,stroke-width:2px,color:#FFFFFF
     style C fill:#4A90E2,stroke:#2E5C8A,stroke-width:2px,color:#FFFFFF
     style D fill:#FFD700,stroke:#B8860B,stroke-width:2px,color:#2C3E50
     style E fill:#5DD39E,stroke:#3AA76D,stroke-width:3px,color:#FFFFFF
-~~~
+\`\`\`
 
 ### Detailed Phase Breakdown
 
@@ -476,32 +578,33 @@ flowchart TD
 | **Day 29** | Reflect on 30 days, document learnings | 2 hrs | Progress report |
 | **Day 30** | Plan next 30 days with refined strategy | 2 hrs | 60-day roadmap |
 
-~~~mermaid
+\`\`\`mermaid
 gantt
-    title 30-Day Sprint Timeline
+    title 30-Day Action Sprint
     dateFormat YYYY-MM-DD
+    axisFormat %d
     
-    section Week 1: Foundation
+    section 🏁 Wk 1: Setup
     Skills Audit & Research        :2025-01-01, 3d
-    Resume & Profile Updates       :2025-01-04, 3d
-    Planning & Setup               :2025-01-07, 1d
+    Resume & LinkedIn Update       :2025-01-04, 3d
+    Planning & Tools               :2025-01-07, 1d
     
-    section Week 2: Learning
-    Course Launch                  :2025-01-08, 4d
-    Skill Practice                 :2025-01-12, 2d
-    Week Review                    :2025-01-14, 1d
+    section 📚 Wk 2: Learn
+    Start Primary Course           :2025-01-08, 4d
+    Hands-on Practice              :2025-01-12, 2d
+    Review & Adjust                :2025-01-14, 1d
     
-    section Week 3: Networking
-    Content Creation               :2025-01-15, 2d
+    section 🤝 Wk 3: Network
+    Create Content                 :2025-01-15, 2d
     Outreach & Events              :2025-01-17, 3d
-    Portfolio Start                :2025-01-20, 1d
-    Week Review                    :2025-01-21, 1d
+    Start Portfolio                :2025-01-20, 1d
+    Review                         :2025-01-21, 1d
     
-    section Week 4: Applications
-    Resume Tailoring               :2025-01-22, 2d
-    Job Applications               :2025-01-24, 5d
-    Planning Next Phase            :2025-01-29, 2d
-~~~
+    section 🚀 Wk 4: Apply
+    Tailor Resumes                 :2025-01-22, 2d
+    Submit Applications            :2025-01-24, 5d
+    Plan Next 60 Days              :2025-01-29, 2d
+\`\`\`
 
 **30-Day Sprint Success Metrics:**
 - ✅ 1 course/certification started (min 25% completed)
@@ -844,27 +947,28 @@ Based on comprehensive analysis of your profile, the job market, and future tren
 **Days 31-60**: Building (Certification progress, portfolio creation, active applications)
 **Days 61-90**: Momentum (Interview prep, offer negotiation, transition planning)
 
-~~~mermaid
+\`\`\`mermaid
 gantt
-    title Your 90-Day Transition Roadmap
+    title 90-Day Transition Roadmap
     dateFormat YYYY-MM-DD
+    axisFormat %b
     
-    section Month 1: Foundation
-    Assessment & Planning          :2025-01-01, 7d
-    Learning Launch               :2025-01-08, 14d
-    Initial Networking            :2025-01-15, 9d
+    section 🏗️ Month 1: Foundation
+    Assess & Plan                  :2025-01-01, 7d
+    Launch Learning                :2025-01-08, 14d
+    Start Networking               :2025-01-15, 9d
     
-    section Month 2: Building
-    Certification Progress        :2025-02-01, 20d
-    Portfolio Development         :2025-02-10, 18d
-    Active Applications           :2025-02-21, 7d
+    section 🛠️ Month 2: Build
+    Certifications                 :2025-02-01, 20d
+    Portfolio Projects             :2025-02-10, 18d
+    Apply & Connect                :2025-02-21, 7d
     
-    section Month 3: Momentum
-    Interview Preparation         :2025-03-01, 10d
-    Interview Rounds              :2025-03-11, 12d
-    Offer Negotiation            :2025-03-23, 7d
-    Transition Planning          :2025-03-30, 2d
-~~~
+    section 🚀 Month 3: Launch
+    Interview Prep                 :2025-03-01, 10d
+    Interviews                     :2025-03-11, 12d
+    Negotiate & Sign               :2025-03-23, 7d
+    Onboarding                     :2025-03-30, 2d
+\`\`\`
 
 ---
 
@@ -910,19 +1014,19 @@ END OF FULL REPORT
 Return ONLY this JSON structure (no markdown fences):
 
 {
-  "reportPreview": "[complete preview markdown with ~~~ for mermaid]",
-  "finalReport": "[complete report markdown with ~~~ for mermaid]"
+  "reportPreview": "[complete preview markdown with \`\`\`mermaid ... \`\`\` for mermaid]",
+  "finalReport": "[complete report markdown with \`\`\`mermaid ... \`\`\` for mermaid]"
 }
 
 **CRITICAL FINAL REMINDERS:**
-1. Use ~~~ (triple tildes) for ALL mermaid diagrams - ensures JSON and PDF compatibility
-2. Be generous with timelines - always use upper bound only (no ranges)
-3. Keep diagrams clear and not overly complex for PDF rendering
-4. Focus heavily on automation resistance and future trends
-5. Make every action item specific and immediately actionable
-6. Maintain 50/50 text-to-visual balance throughout
-7. Use hex color palette consistently across all diagrams
-8. Ensure all salary and market data is sourced and cited
-9. Make the 30-day sprint as detailed and prescriptive as possible
-10. Professional, encouraging, data-driven tone throughout
+1. Use standard markdown code fences (\`\`\`) for ALL mermaid diagrams.
+2. Ensure all diagrams are detailed, using subgraphs and explicit styling where appropriate.
+3. Be generous with timelines - always use upper bound only (no ranges).
+4. Focus heavily on automation resistance and future trends.
+5. Make every action item specific and immediately actionable.
+6. Maintain 50/50 text-to-visual balance throughout.
+7. Use hex color palette consistently across all diagrams.
+8. Ensure all salary and market data is sourced and cited.
+9. Make the 30-day sprint as detailed and prescriptive as possible.
+10. Professional, encouraging, data-driven tone throughout.
 `;

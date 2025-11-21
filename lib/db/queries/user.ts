@@ -2,8 +2,8 @@ import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from '../drizzle';
 import { activityLogs, teamMembers, teams, users } from '@/lib/db/schema';
 import { NewUser, User, TeamDataWithMembers } from '@/lib/types';
-import { cookies } from 'next/headers';
-import { hashPassword, verifyToken } from '@/lib/auth/session';
+import { hashPassword } from '@/lib/auth/session';
+import { auth } from '@/auth';
 
 export async function createUser(user: NewUser) {
   try {
@@ -47,28 +47,15 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
 }
 
 export async function getUser() {
-  const sessionCookie = (await cookies()).get('authjs.session-token');
-  if (!sessionCookie || !sessionCookie.value) {
-    return null;
-  }
-
-  const sessionData = await verifyToken(sessionCookie.value);
-  if (
-    !sessionData ||
-    !sessionData.user ||
-    typeof sessionData.user.id !== 'string'
-  ) {
-    return null;
-  }
-
-  if (new Date(sessionData.expires) < new Date()) {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
     return null;
   }
 
   const user = await db
     .select()
     .from(users)
-    .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
+    .where(and(eq(users.id, session.user.id), isNull(users.deletedAt)))
     .limit(1);
 
   if (user.length === 0) {
@@ -167,6 +154,14 @@ export async function getTeamForUser() {
           id: true,
           name: true,
           email: true,
+          role: true,
+        }
+      },
+      invitations: {
+        columns: {
+          id: true,
+          email: true,
+          status: true,
           role: true,
         }
       }

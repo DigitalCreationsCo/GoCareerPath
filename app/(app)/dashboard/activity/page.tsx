@@ -72,55 +72,52 @@ export default async function ActivityPage() {
   const logs = await getActivityLogs();
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-foreground mb-6">
+    <section className="flex-1 px-4 lg:px-8">
+      <h1 className="heading2">
         Activity Log
       </h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {logs.length > 0 ? (
-            <ul className="space-y-4">
-              {logs.map((log) => {
-                const Icon = iconMap[log.action as ActivityType] || Settings;
-                const formattedAction = formatAction(
-                  log.action as ActivityType
-                );
+      <hr/>
+      <h2>Recent Activity</h2>
+      <div className="py-4">
+        {logs.length > 0 ? (
+          <ul className="space-y-4">
+            {logs.map((log) => {
+              const Icon = iconMap[log.action as ActivityType] || Settings;
+              const formattedAction = formatAction(
+                log.action as ActivityType
+              );
 
-                return (
-                  <li key={log.id} className="flex items-center space-x-4">
-                    <div className="bg-orange-100 rounded-full p-2">
-                      <Icon className="w-5 h-5 text-warning" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">
-                        {formattedAction}
-                        {log.ipAddress && ` from IP ${log.ipAddress}`}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {getRelativeTime(new Date(log.timestamp))}
-                      </p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <div className="flex flex-col items-center justify-center text-center py-12">
-              <AlertCircle className="h-12 w-12 text-warning mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                No activity yet
-              </h3>
-              <p className="text-sm text-gray-500 max-w-sm">
-                When you perform actions like signing in or updating your
-                account, they'll appear here.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              return (
+                <li key={log.id} className="flex items-center space-x-4">
+                  <div className="p-2 bg-orange-100 rounded-full">
+                    <Icon className="w-5 h-5 text-warning" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground">
+                      {formattedAction}
+                      {log.ipAddress && ` from IP ${log.ipAddress}`}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {getRelativeTime(new Date(log.timestamp))}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <AlertCircle className="w-12 h-12 mb-4 text-warning" />
+            <h3 className="mb-2 text-lg font-semibold text-foreground">
+              No activity yet
+            </h3>
+            <p className="max-w-sm text-sm text-gray-500">
+              When you perform actions like signing in or updating your
+              account, they'll appear here.
+            </p>
+          </div>
+        ) }
+      </div>
     </section>
   );
 }

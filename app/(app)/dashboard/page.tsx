@@ -15,6 +15,8 @@ import {
   CheckCircle,
   type LucideIcon,
 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { ExpandableList } from '@/components/dashboard/expandable-list';
 
 type TeamSnapshot = {
   team_id: string;
@@ -47,7 +49,6 @@ export default async function DashboardPage() {
     redirect('/chat');
   }
 
-  // We'll need a way to get the user's team ID. For now, we'll hardcode it.
   const teamId = session.user.teamId;
   if (!teamId) {
     return (
@@ -117,100 +118,141 @@ export default async function DashboardPage() {
     }
   }
 
-  return (
-    <div className="container p-4 mx-auto">
-      <h1 className="mb-4 text-2xl font-bold">Team Dashboard: { teamData?.name }</h1>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="p-4 border rounded">
-          <h2 className="text-lg font-semibold">Team Members</h2>
-          <ul>
-            { teamData?.users.map((user) => (
-              <li key={ user.id }>
-                { user.name || user.email } ({ user.role })
-              </li>
-            )) }
-          </ul>
-        </div>
-        <div className="p-4 border rounded">
-          <h2 className="text-lg font-semibold">Invitations</h2>
-          <ul>
-            { teamData?.invitations.map((invitation) => (
-              <li key={ invitation.id }>
-                { invitation.email } ({ invitation.status })
-              </li>
-            )) }
-          </ul>
-        </div>
-        <div className="p-4 border rounded">
-          <h2 className="text-lg font-semibold">Skill Heatmap</h2>
-          <ul>
-            { snapshot.skill_heatmap.map((skill) => (
-              <li key={ skill.skillName }>
-                { skill.skillName }: { skill.averageProficiency.toFixed(1) }
-              </li>
-            )) }
-          </ul>
-        </div>
-        <div className="p-4 border rounded">
-          <h2 className="text-lg font-semibold">Promotion Readiness</h2>
-          <ul>
-            { snapshot.promotion_readiness.map((employee) => (
-              <li key={ employee.employeeId }>
-                { employee.employeeName }: { (employee.readiness_score * 100).toFixed(0) }%
-              </li>
-            )) }
-          </ul>
-        </div>
-        <div className="p-4 border rounded">
-          <h2 className="text-lg font-semibold">Attrition Risk</h2>
-          <ul>
-            { snapshot.attrition_risk.map((employee) => (
-              <li key={ employee.employeeId }>
-                { employee.employeeName }: { (employee.risk_score * 100).toFixed(0) }%
-              </li>
-            )) }
-          </ul>
-        </div>
-        <div className="p-4 border rounded">
-          <h2 className="text-lg font-semibold">Recent Activity</h2>
-          { logs.length > 0 ? (
-            <ul className="space-y-4">
-              { logs.map((log) => {
-                const Icon = iconMap[ log.action as ActivityType ] || Settings;
-                const formattedAction = formatAction(
-                  log.action as ActivityType
-                );
+  const teamMemberItems = teamData?.users.map((user) => (
+    <div key={user.id} className="flex items-center justify-between">
+      <span className="font-medium">{ user.name || user.email }</span>
+      <span className="px-2 py-1 text-xs rounded-full bg-muted text-muted-foreground">{ user.role }</span>
+    </div>
+  )) || [];
 
-                return (
-                  <li key={ log.id } className="flex items-center space-x-4">
-                    <div className="p-2 bg-orange-100 rounded-full">
-                      <Icon className="w-5 h-5 text-warning" />
+  const activityItems = logs.map((log) => {
+    const Icon = iconMap[ log.action as ActivityType ] || Settings;
+    const formattedAction = formatAction(log.action as ActivityType);
+    return (
+      <div key={log.id} className="flex items-start space-x-3">
+        <div className="mt-1 p-1.5 bg-muted rounded-full shrink-0">
+          <Icon className="w-4 h-4 text-muted-foreground" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate text-foreground">
+            { formattedAction }
+          </p>
+          <p className="text-xs text-muted-foreground">
+            { getRelativeTime(new Date(log.timestamp)) }
+          </p>
+        </div>
+      </div>
+    );
+  });
+
+  const invitationItems = teamData?.invitations.map((invitation) => (
+    <div key={ invitation.id } className="flex items-center justify-between p-2 text-sm rounded bg-muted/50">
+      <span className="truncate">{ invitation.email }</span>
+      <span className="text-xs capitalize text-muted-foreground">{ invitation.status }</span>
+    </div>
+  )) || [];
+
+  return (
+    <div className="container relative px-4 mx-auto space-y-6">
+      <div className="flex flex-col">
+        <h1 className="text-2xl! heading2">{ teamData?.name }</h1>
+        <h2 className="subtitle">Team Dashboard</h2>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Column 1: Lists */}
+        <div className="space-y-6 lg:col-span-1">
+          <Card className="p-4">
+            <h2 className="mb-4 text-lg font-semibold">Team Members</h2>
+            <ExpandableList
+              items={teamMemberItems}
+              />
+          </Card>
+
+          <Card className="p-4">
+            <h2 className="mb-4 text-lg font-semibold">Recent Activity</h2>
+            <ExpandableList
+              items={activityItems}
+              />
+          </Card>
+
+          <Card className="p-4">
+            <h2 className="mb-4 text-lg font-semibold">Pending Invitations</h2>
+            <ExpandableList
+              items={ invitationItems }
+              emptyText='No pending invitations.'
+            />
+          </Card>
+        </div>
+
+        {/* Columns 2 & 3: Data Cards */}
+        <div className="grid content-start grid-cols-1 gap-6 md:grid-cols-2 lg:col-span-2">
+          <Card className="p-6 border shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold">Skill Heatmap</h2>
+            {snapshot.skill_heatmap.length > 0 ? (
+              <div className="space-y-3">
+                { snapshot.skill_heatmap.map((skill) => (
+                  <div key={ skill.skillName }>
+                    <div className="flex justify-between mb-1 text-sm">
+                      <span>{ skill.skillName }</span>
+                      <span className="font-medium">{ skill.averageProficiency.toFixed(1) }/5</span>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">
-                        { formattedAction }
-                        { log.ipAddress && ` from IP ${log.ipAddress}` }
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        { getRelativeTime(new Date(log.timestamp)) }
-                      </p>
+                    <div className="h-2 overflow-hidden rounded-full bg-muted">
+                      <div 
+                        className="h-full bg-blue-500 rounded-full" 
+                        style={{ width: `${(skill.averageProficiency / 5) * 100}%` }} 
+                      />
                     </div>
+                  </div>
+                )) }
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <p className="text-sm text-muted-foreground">No skill data available.</p>
+                <p className="mt-1 text-xs text-muted-foreground">Employees need to complete skill assessments via chat.</p>
+              </div>
+            )}
+          </Card>
+
+          <Card className="p-6 border shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold">Promotion Readiness</h2>
+            {snapshot.promotion_readiness.length > 0 ? (
+              <ul className="space-y-3">
+                { snapshot.promotion_readiness.map((employee) => (
+                  <li key={ employee.employeeId } className="flex items-center justify-between">
+                    <span className="text-sm">{ employee.employeeName }</span>
+                    <span className="text-sm font-bold text-green-600">
+                      { (employee.readiness_score * 100).toFixed(0) }%
+                    </span>
                   </li>
-                );
-              }) }
-            </ul>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <AlertCircle className="w-12 h-12 mb-4 text-warning" />
-              <h3 className="mb-2 text-lg font-semibold text-foreground">
-                No activity yet
-              </h3>
-              <p className="max-w-sm text-sm text-gray-500">
-                When you perform actions like signing in or updating your
-                account, they'll appear here.
-              </p>
-            </div>
-          ) }
+                )) }
+              </ul>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <p className="text-sm text-muted-foreground">No readiness data available.</p>
+              </div>
+            )}
+          </Card>
+
+          <Card className="p-6 border shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold">Attrition Risk</h2>
+            {snapshot.attrition_risk.length > 0 ? (
+              <ul className="space-y-3">
+                { snapshot.attrition_risk.map((employee) => (
+                  <li key={ employee.employeeId } className="flex items-center justify-between">
+                    <span className="text-sm">{ employee.employeeName }</span>
+                    <span className="text-sm font-bold text-red-600">
+                      { (employee.risk_score * 100).toFixed(0) }%
+                    </span>
+                  </li>
+                )) }
+              </ul>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <p className="text-sm text-muted-foreground">No high risk employees detected.</p>
+              </div>
+            )}
+          </Card>
         </div>
       </div>
     </div>

@@ -286,9 +286,9 @@ export const employeeSkills = pgTable("employee_skills", {
 	proficiencyLevel: integer('proficiency_level'),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-}, (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.skillId] }),
-}));
+}, (table) => ([
+	primaryKey({ columns: [ table.userId, table.skillId ] }),
+]));
 
 export const rawReports = pgTable("raw_reports", {
     id: uuid('id').defaultRandom().primaryKey(),

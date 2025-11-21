@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/drizzle';
 import { eq } from 'drizzle-orm';
-import { b2bTeams, employees, employeeSkills, skills, snapshots } from '@/lib/db/schema';
+import { teams, users, employeeSkills, skills, snapshots } from '@/lib/db/schema';
 import { auth } from '@/auth';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string; }; }) {
@@ -13,10 +13,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string; 
     }
 
     try {
-        const team = await db.query.b2bTeams.findFirst({
-            where: eq(b2bTeams.id, teamId),
+        const team = await db.query.teams.findFirst({
+            where: eq(teams.id, teamId),
             with: {
-                employees: {
+                users: {
                     with: {
                         employeeSkills: {
                             with: {
@@ -38,10 +38,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string; 
 
         // In a real-world scenario, these calculations would be more sophisticated
         // and likely pre-computed in materialized views.
-        const skillHeatmapAccumulator = team.employees
+        const skillHeatmapAccumulator = team.users
             .flatMap((e) => e.employeeSkills)
             .reduce((acc, es) => {
-                const skillName = es.skill.name;
+                const skillName = es.skill?.name;
+                if (!skillName) return acc;
+
                 if (!acc[ skillName ]) {
                     acc[ skillName ] = { skillName, totalProficiency: 0, count: 0 };
                 }
@@ -55,19 +57,19 @@ export async function GET(req: NextRequest, { params }: { params: { id: string; 
             averageProficiency: s.totalProficiency / s.count,
         }));
 
-        const promotionReadiness = team.employees
+        const promotionReadiness = team.users
             .filter((e) => e.snapshots && e.snapshots[ 0 ] && e.snapshots[ 0 ].promotionTimeline !== null && e.snapshots[ 0 ].promotionTimeline <= 6)
             .map((e) => ({
                 employeeId: e.id,
-                employeeName: e.name,
+                employeeName: e.name ?? 'Unknown',
                 readiness_score: 1 - (e.snapshots[ 0 ].promotionTimeline! / 12),
             }));
 
-        const attritionRisk = team.employees
+        const attritionRisk = team.users
             .filter((e) => e.snapshots && e.snapshots[ 0 ] && e.snapshots[ 0 ].automationRisk !== null && Number(e.snapshots[ 0 ].automationRisk) > 0.5)
             .map((e) => ({
                 employeeId: e.id,
-                employeeName: e.name,
+                employeeName: e.name ?? 'Unknown',
                 risk_score: Number(e.snapshots[ 0 ].automationRisk),
             }));
 
