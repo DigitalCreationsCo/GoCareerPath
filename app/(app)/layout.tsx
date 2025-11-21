@@ -11,7 +11,9 @@ export default async function AppLayout({
     <div className="relative flex flex-col h-screen bg-gradient-primary-glow">
       <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-background animate-gradient" />
       <Header session={ session } />
-      { children }
+      <main className="relative">
+        { children }
+      </main>
     </div>
   );
 }

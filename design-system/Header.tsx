@@ -10,11 +10,11 @@ DropdownMenuItem,
 DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar/avatar';
-import { useRouter } from 'next/navigation';
 import { User } from '@/lib/types';
 import useSWR, { mutate } from 'swr';
 import { Logo } from '@/components/logo';
 import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 // --- fetcher and UserMenu (unchanged) ---
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -67,23 +67,23 @@ function UserMenu({ session }: any) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col">
-        <DropdownMenuItem className="cursor-pointer hover:text-foreground!">
+        { !window.location.pathname.startsWith("/chat") && <DropdownMenuItem className="cursor-pointer hover:text-foreground!">
           <Link href="/chat" className="flex items-center justify-end w-full">
             <span>Continue Chat</span>
           </Link>
-        </DropdownMenuItem>
+        </DropdownMenuItem> || <></> }
         <DropdownMenuItem onClick={ handleNewChat } className="cursor-pointer hover:text-foreground!">
           <div className="flex items-center w-full">
             <PlusCircleIcon className="w-4 h-4 mr-2" />
             <span>New Chat</span>
           </div>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:text-foreground!">
+        { session.user.role === "owner" && <DropdownMenuItem className="cursor-pointer hover:text-foreground!">
           <Link href="/dashboard" className="flex items-center w-full">
             <Home className="w-4 h-4 mr-2" />
             <span>Dashboard</span>
           </Link>
-        </DropdownMenuItem>
+        </DropdownMenuItem> || <></> }
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="cursor-pointer hover:text-foreground! flex w-full gap-0">
@@ -99,7 +99,7 @@ function UserMenu({ session }: any) {
 
 export function Header({ session }: any) {
   return (
-    <header className="z-10 w-full transition-all duration-300 bg-transparent md:block">
+    <header className="z-10 h-[42px] w-full transition-all duration-300 bg-transparent md:block">
       <div className="flex items-center justify-between px-3 pt-2 mx-auto">
         <Link href="/" className="flex items-center">
           <div className='hidden'>

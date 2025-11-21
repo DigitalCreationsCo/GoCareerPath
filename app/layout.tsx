@@ -7,6 +7,8 @@ import { Toaster } from "@/components/ui/sonner"
 import { GoogleTagManager } from '@/components/googletagmanager';
 import { cn, dateJobsDisplaced } from '@/lib/utils';
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { SessionProvider } from 'next-auth/react';
+import { authConfig, basePath } from '@/auth.config';
 
 export const metadata: Metadata = {
   title: 'GoCareerPath — Find & Pivot to Your AI-Proof Career Path',
@@ -71,26 +73,27 @@ export default async function RootLayout({
          manrope.className,
         `bg-background text-foreground`, 
         "antialiased min-h-[100dvh] relative"
-      ])}>
-        <GoogleTagManager />
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N5RPQTFM"
-        height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript>
-
-        <SWRConfig
-          value={{
-            fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
-              // '/api/user': getUser(),
-              // '/api/team': getTeamForUser()
-            }
-          }}
-        >
-          <NuqsAdapter>
-              {children}
-            <Toaster position="bottom-center" />
-          </NuqsAdapter>
-        </SWRConfig>
+      ]) }>
+        <SessionProvider basePath={ basePath } >
+          <GoogleTagManager />
+          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N5RPQTFM"
+          height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript>
+          <SWRConfig
+            value={{
+              fallback: {
+                // We do NOT await here
+                // Only components that read this data will suspend
+                // '/api/user': getUser(),
+                // '/api/team': getTeamForUser()
+              }
+            }}
+          >
+            <NuqsAdapter>
+                {children}
+              <Toaster position="bottom-center" />
+            </NuqsAdapter>
+          </SWRConfig>
+        </SessionProvider>
       </body>
     </html>
   );

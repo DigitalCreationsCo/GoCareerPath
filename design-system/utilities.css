@@ -371,6 +371,11 @@
     @apply text-4xl max-w-[400px] md:max-w-full text-center place-self-center mb-8 leading-tight tracking-tight;
     font-optical-sizing: auto;
   }
+  
+  .heading2 {
+    @apply text-lg lg:text-2xl max-w-[400px] md:max-w-full mb-4 leading-tight;
+    font-optical-sizing: auto;
+  }
 
   .subtitle {
     @apply text-lg leading-snug text-muted-foreground;

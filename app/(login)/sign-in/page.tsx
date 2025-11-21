@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 export default async function SignInPage() {
   const session = await auth();
   if (session?.user) {
-    return redirect('/chat');
+    return session.user.role === "owner" ? redirect("/dashboard") : redirect('/chat');
   }
   return (
     <Login />

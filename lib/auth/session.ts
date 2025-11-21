@@ -1,10 +1,10 @@
 "use server";
 
 import { compare, hash } from 'bcryptjs';
-import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-
-const key = new TextEncoder().encode(process.env.AUTH_SECRET);
+import { db } from '@/lib/db/drizzle';
+import { sessions } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 const SALT_ROUNDS = 10;
 
@@ -19,47 +19,39 @@ export async function comparePasswords(
   return compare(plainTextPassword, hashedPassword);
 }
 
-type SessionData = {
-  user: { id: string };
-  expires: string;
-};
+export async function setSession(user: { id: string }) {
+  const sessionToken = crypto.randomUUID();
+  const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
 
-export async function signToken(payload: SessionData) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('1 day from now')
-    .sign(key);
-}
-
-export async function verifyToken(input: string) {
-  console.debug('token input:', input);
-  if (!input.includes('.')) {
-    console.error("Malformed token, missing sections:", input);
-  }
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ['HS256'],
+  await db.insert(sessions).values({
+    sessionToken,
+    userId: user.id,
+    expires,
   });
-  return payload as SessionData;
+
+  (await cookies()).set('authjs.session-token', sessionToken, {
+    expires,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+  });
 }
 
 export async function getSession() {
-  const session = (await cookies()).get('authjs.session-token')?.value;
-  if (!session) return null;
-  return await verifyToken(session);
-}
+  const sessionToken = (await cookies()).get('authjs.session-token')?.value;
+  if (!sessionToken) return null;
 
-export async function setSession(user: { id: string }) {
-  const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const session: SessionData = {
-    user: { id: user.id },
-    expires: expiresInOneDay.toISOString(),
-  };
-  const encryptedSession = await signToken(session);
-  (await cookies()).set('authjs.session-token', encryptedSession, {
-    expires: expiresInOneDay,
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.sessionToken, sessionToken),
+    with: {
+      user: true, // Assuming relation exists, otherwise remove
+    },
   });
+
+  if (!session || session.expires < new Date()) {
+    return null;
+  }
+
+  return session;
 }

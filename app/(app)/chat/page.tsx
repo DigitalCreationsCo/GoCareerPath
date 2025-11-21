@@ -3,8 +3,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
 export default async function NewChatPage() {
-  const user = (await auth())?.user;
-  if (!user?.id) {
+  const session = await auth();
+  if (!session?.user) {
     redirect('/sign-in');
   }
   return (

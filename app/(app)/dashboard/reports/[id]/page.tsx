@@ -47,7 +47,7 @@ export default async function ReportPage(props: ReportPageProps) {
         </Link>
         
         <div className="flex items-center justify-between">
-          <h1 className="text-lg lg:text-2xl font-medium text-foreground">
+          <h1 className="heading2">
             Career Path Report #{report.id}
           </h1>
           <div className="text-sm text-gray-500">
