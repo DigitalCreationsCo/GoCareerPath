@@ -66,27 +66,29 @@ function UserMenu({ session }: any) {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="flex flex-col">
-        { !window.location.pathname.startsWith("/chat") && <DropdownMenuItem className="cursor-pointer hover:text-foreground!">
-          <Link href="/chat" className="flex items-center justify-end w-full">
-            <span>Continue Chat</span>
-          </Link>
-        </DropdownMenuItem> || <></> }
-        <DropdownMenuItem onClick={ handleNewChat } className="cursor-pointer hover:text-foreground!">
-          <div className="flex items-center w-full">
-            <PlusCircleIcon className="w-4 h-4 mr-2" />
-            <span>New Chat</span>
-          </div>
-        </DropdownMenuItem>
-        { session.user.role === "owner" && <DropdownMenuItem className="cursor-pointer hover:text-foreground!">
+      <DropdownMenuContent align="end" className="flex flex-col w-50">
+        { session.user.role === "owner" && <DropdownMenuItem className={ `menuitem`}>
           <Link href="/dashboard" className="flex items-center w-full">
             <Home className="w-4 h-4 mr-2" />
             <span>Dashboard</span>
           </Link>
         </DropdownMenuItem> || <></> }
+        { !window.location.pathname.startsWith("/chat") &&
+          <DropdownMenuItem className={ `menuitem` }>
+            <Link href="/chat" className="flex items-center w-full">
+              <span>Continue Chat</span>
+            </Link>
+          </DropdownMenuItem> || <></>
+        }
+        <DropdownMenuItem onClick={ handleNewChat } className={ `menuitem` }>
+          <div className="flex items-center w-full">
+            <PlusCircleIcon className="w-4 h-4 mr-2" />
+            <span>New Chat</span>
+          </div>
+        </DropdownMenuItem>
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
-            <DropdownMenuItem className="cursor-pointer hover:text-foreground! flex w-full gap-0">
+            <DropdownMenuItem className={`flex w-full gap-0 menuitem`}>
               <LogOut className="w-4 h-4 mr-2" />
               <span>Sign out</span>
             </DropdownMenuItem>

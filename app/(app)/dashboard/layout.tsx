@@ -57,11 +57,11 @@ export default function DashboardLayout({
           </div>
           <nav className="h-full p-4 overflow-y-auto bg-background lg:bg-transparent">
             {navItems.map((item) => (
-              <Link key={item.href} href={item.href} passHref>
+              <Link key={item.href} href={item.href} passHref className='menuitem'>
                 <Button
                   variant={ pathname === item.href ? 'ghost' : 'ghost'}
                   className={`w-full justify-start hover:bg-background/50 ${
-                    pathname === item.href ? 'bg-background/50 inset-shadow-xs' : ''
+                    pathname === item.href ? 'text-foreground bg-background/50 inset-shadow-xs' : ''
                   }`}
                   onClick={() => setIsSidebarOpen(false)}
                 >
