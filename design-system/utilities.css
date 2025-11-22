@@ -384,4 +384,8 @@
   .subtext {
     @apply text-muted-foreground;
   }
+
+  .menuitem {
+    @apply cursor-pointer font-medium hover:text-foreground! text-muted-foreground;
+  }
 }
