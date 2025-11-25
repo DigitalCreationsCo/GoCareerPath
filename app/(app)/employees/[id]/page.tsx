@@ -24,7 +24,7 @@ type EmployeeSnapshot = {
 };
 
 async function getEmployeeSkillProfile(employeeId: string): Promise<EmployeeSkillProfile> {
-  const response = await fetch(`${process.env.BASE_URL}/api/employees/${employeeId}/skill-profile`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/employees/${employeeId}/skill-profile`, {
     headers: {
       Cookie: cookies().toString(),
     },
@@ -36,7 +36,7 @@ async function getEmployeeSkillProfile(employeeId: string): Promise<EmployeeSkil
 }
 
 async function getEmployeeSnapshots(employeeId: string): Promise<EmployeeSnapshot[]> {
-  const response = await fetch(`${process.env.BASE_URL}/api/employees/${employeeId}/snapshot`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/employees/${employeeId}/snapshot`, {
     headers: {
       Cookie: cookies().toString(),
     },
