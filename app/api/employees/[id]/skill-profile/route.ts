@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/drizzle';
 import { eq } from 'drizzle-orm';
-import { employees, employeeSkills, skills, roadmaps } from '@/lib/db/schema';
+import { users, employeeSkills, skills, roadmaps } from '@/lib/db/schema';
 import { auth } from '@/auth';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  const employeeId = params.id;
+  const employeeId = (await params).id;
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const employee = await db.query.employees.findFirst({
-      where: eq(employees.id, employeeId),
+    const employee = await db.query.users.findFirst({
+      where: eq(users.id, employeeId),
       with: {
         employeeSkills: {
           with: {

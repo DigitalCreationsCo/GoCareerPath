@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/drizzle';
 import { eq } from 'drizzle-orm';
-import { employees, snapshots } from '@/lib/db/schema';
+import { snapshots } from '@/lib/db/schema';
 import { auth } from '@/auth';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  const employeeId = params.id;
+  const employeeId = (await params).id;
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   try {
     const employeeSnapshots = await db.query.snapshots.findMany({
-      where: eq(snapshots.employeeId, employeeId),
+      where: eq(snapshots.userId, employeeId),
       orderBy: (snapshots, { desc }) => [desc(snapshots.createdAt)],
       limit: 2, // Get the latest two snapshots to calculate deltas
     });

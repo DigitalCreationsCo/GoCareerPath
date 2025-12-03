@@ -3,10 +3,10 @@ import { db } from '@/lib/db/drizzle';
 import { snapshots } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; }>; }) {
   try {
-    const employeeId = params.id;
-    const employeeSnapshots = await db.select().from(snapshots).where(eq(snapshots.employeeId, employeeId));
+    const employeeId = (await params).id;
+    const employeeSnapshots = await db.select().from(snapshots).where(eq(snapshots.userId, employeeId));
 
     if (employeeSnapshots.length === 0) {
       return NextResponse.json({ message: 'No snapshots found for this employee' }, { status: 404 });
@@ -19,9 +19,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const employeeId = params.id;
+    const employeeId = (await params).id;
     const body = await request.json();
 
     const newSnapshot = await db.insert(snapshots).values({

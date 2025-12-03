@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { teams, users, employeeSkills, skills, snapshots } from '@/lib/db/schema';
 import { auth } from '@/auth';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string; }; }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string; }>; }) {
     const session = await auth();
     const teamId = (await params).id;
 

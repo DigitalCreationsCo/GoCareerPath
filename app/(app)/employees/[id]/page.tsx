@@ -47,18 +47,20 @@ async function getEmployeeSnapshots(employeeId: string): Promise<EmployeeSnapsho
   return response.json();
 }
 
-export default async function EmployeePage({ params }: { params: { id: string } }) {
+export default async function EmployeePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) {
     redirect('/sign-in');
   }
+  
+  const employeeId = (await params).id;
 
-  if (session.user.role !== 'owner' && session.user.id !== params.id) {
+  if (session.user.role !== 'owner' && session.user.id !== employeeId) {
     redirect('/unauthorized');
   }
 
-  const employee = await getEmployeeSkillProfile(params.id);
-  const snapshots = await getEmployeeSnapshots(params.id);
+  const employee = await getEmployeeSkillProfile(employeeId);
+  const snapshots = await getEmployeeSnapshots(employeeId);
 
   return (
     <div className="container p-4 mx-auto">
