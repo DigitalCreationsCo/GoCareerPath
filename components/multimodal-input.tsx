@@ -249,7 +249,7 @@ function PureMultimodalInput({
       />
 
       <PromptInput
-        className="p-3 transition-all duration-200 border border-transparent shadow bg-gradient-card rounded-xl focus-within:border-muted-foreground/50 hover:border-muted-foreground/50"
+        className="p-3 transition-all duration-100 border border-transparent shadow bg-gradient-card rounded-xl focus-within:border-muted-foreground/50 hover:border-muted-foreground/50"
         onSubmit={(event) => {
           event.preventDefault();
           // if (status !== "ready") {
@@ -320,18 +320,14 @@ function PureMultimodalInput({
               selectedModelId={selectedModelId}
             />
           </PromptInputTools> */}
-
-          {status === "submitted" ? (
-            <StopButton setMessages={setMessages} stop={stop} />
-          ) : (
-            <PromptInputSubmit
-              className="transition-colors duration-200 rounded-full size-8 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
-              disabled={!input.trim() || uploadQueue.length > 0}
-              status={status}
-            >
-              <ArrowUpIcon size={14} />
-            </PromptInputSubmit>
-          )}
+         
+          <PromptInputSubmit
+            className="transition-colors duration-200 rounded-full size-8 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+            disabled={!input.trim() || uploadQueue.length > 0}
+            status={status}
+          >
+            <ArrowUpIcon size={14} />
+          </PromptInputSubmit>
         </PromptInputToolbar>
       </PromptInput>
     </div>
@@ -452,7 +448,7 @@ function PureStopButton({
 }) {
   return (
     <Button
-      className="p-1 transition-colors duration-200 rounded-full size-7 bg-foreground text-background hover:bg-foreground/90 disabled:bg-muted disabled:text-muted-foreground"
+      className="transition-colors duration-200 rounded-full bg-background text-primary hover:bg-background hover:text-primary/80 disabled:bg-muted disabled:text-muted-foreground"
       data-testid="stop-button"
       onClick={(event) => {
         event.preventDefault();
@@ -460,7 +456,7 @@ function PureStopButton({
         setMessages((messages) => messages);
       }}
     >
-      <StopIcon size={14} />
+      <StopIcon size={20} />
     </Button>
   );
 }
