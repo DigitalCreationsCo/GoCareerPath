@@ -8,6 +8,6 @@ export default async function NewChatPage() {
     redirect('/sign-in');
   }
   return (
-      <ClientChatWrapper initialMessages={[]} finalReport="" />
+    <ClientChatWrapper initialMessages={[]} finalReport="" />
   );
 }

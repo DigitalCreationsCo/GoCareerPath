@@ -55,7 +55,7 @@ function UserMenu({ session }: any) {
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger>
-        <Avatar className="cursor-pointer size-9">
+        <Avatar className="cursor-pointer size-9 z-50!">
           <AvatarImage alt={session?.user.name || ''} />
           <AvatarFallback>
             {session?.user.name
@@ -67,12 +67,12 @@ function UserMenu({ session }: any) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col w-50">
-        { session.user.role === "owner" && <DropdownMenuItem className={ `menuitem`}>
+        <DropdownMenuItem className={ `menuitem`}>
           <Link href="/dashboard" className="flex items-center w-full">
             <Home className="w-4 h-4 mr-2" />
             <span>Dashboard</span>
           </Link>
-        </DropdownMenuItem> || <></> }
+        </DropdownMenuItem>
         { !window.location.pathname.startsWith("/chat") &&
           <DropdownMenuItem className={ `menuitem` }>
             <Link href="/chat" className="flex items-center w-full">
@@ -101,7 +101,7 @@ function UserMenu({ session }: any) {
 
 export function Header({ session }: any) {
   return (
-    <header className="relative z-10 h-[42px] w-full transition-all duration-300 bg-transparent md:block">
+    <header className="fixed top-0 z-[10] h-[52px] w-full transition-all duration-300 backdrop-blur-md bg-transparent md:block">
       <div className="flex items-center justify-between px-3 pt-2 mx-auto">
         <Link href="/" className="flex items-center">
           <div className='hidden'>

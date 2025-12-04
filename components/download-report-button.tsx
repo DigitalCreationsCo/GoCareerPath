@@ -93,8 +93,9 @@ export function DownloadReportButton({ markdownContent }: DownloadReportButtonPr
         </div>
       )}
       <Button
+        variant="link"
         onClick={handleDownload}
-        className="bg-primary text-white px-4 py-2 font-bold shadow-lg w-60"
+        className="font-bold text-md"
         disabled={loading}
       >
         {loading ? 'Downloading...' : 'Download this report as PDF'}

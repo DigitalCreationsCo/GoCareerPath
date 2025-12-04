@@ -301,7 +301,7 @@
   
   .animate-gradient {
     background-size: auto 200%;
-    animation: shine-vertical 12s ease-in-out infinite;
+    animation: shine-vertical 10s ease-in-out infinite;
   }
 
   .shiny-text {

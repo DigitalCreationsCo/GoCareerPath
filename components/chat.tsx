@@ -290,7 +290,7 @@ export function Chat({
   console.debug('[Chat] shouldShowResumeBanner:', shouldShowResumeBanner);
 
   return (
-    <div className="flex flex-col flex-1 min-w-0 overflow-y-scroll overscroll-behavior-cover h-full touch-pan-y">
+    <div className="min-w-0 touch-pan-y bg-transparent pt-[42px]">
       {shouldShowResumeBanner && (
         <div className="py-2 text-sm border-b border-primary/20 text-primary">
           <div className="flex items-center justify-between px-4 mx-auto md:px-6 md:max-w-4xl">
@@ -305,10 +305,10 @@ export function Chat({
       )}
 
       {isReportFree && finalReport && (
-        <div className="fixed z-10 rounded-md top-4 right-4 bg-background">
+        <div className="fixed z-10 rounded-md top-1.5 right-11">
           <DownloadReportButton markdownContent={finalReport} />
         </div>
-      )}
+      ) }
 
       <Messages
         chatId={chatId}
