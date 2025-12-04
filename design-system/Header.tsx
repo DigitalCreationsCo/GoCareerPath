@@ -101,7 +101,7 @@ function UserMenu({ session }: any) {
 
 export function Header({ session }: any) {
   return (
-    <header className="z-10 h-[42px] w-full transition-all duration-300 bg-transparent md:block">
+    <header className="relative z-10 h-[42px] w-full transition-all duration-300 bg-transparent md:block">
       <div className="flex items-center justify-between px-3 pt-2 mx-auto">
         <Link href="/" className="flex items-center">
           <div className='hidden'>

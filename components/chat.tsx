@@ -290,7 +290,7 @@ export function Chat({
   console.debug('[Chat] shouldShowResumeBanner:', shouldShowResumeBanner);
 
   return (
-    <div className="flex flex-col flex-1 min-w-0 overflow-y-scroll overscroll-behavior-cover h-full touch-pan-y border">
+    <div className="flex flex-col flex-1 min-w-0 overflow-y-scroll overscroll-behavior-cover h-full touch-pan-y">
       {shouldShowResumeBanner && (
         <div className="py-2 text-sm border-b border-primary/20 text-primary">
           <div className="flex items-center justify-between px-4 mx-auto md:px-6 md:max-w-4xl">
