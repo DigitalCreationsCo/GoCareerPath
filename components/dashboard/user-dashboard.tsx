@@ -79,15 +79,20 @@ export function UserDashboard({ report }: UserDashboardProps) {
       <Card className="p-6">
         <h2 className="mb-4 text-xl font-bold">Learning Path</h2>
         <ul className="space-y-3">
-          {bestPath.resources.map((resource, index) => (
+          {bestPath.missing_skills.map((skill, index) => (
             <li key={index} className="flex items-center p-3 transition-all duration-200 bg-gray-100 rounded-md hover:bg-gray-200">
               <div className="mr-3">
                 <span className="text-sm font-medium text-white bg-blue-600 rounded-full size-6 flex-center">{index + 1}</span>
+                <span className="text-sm font-medium text-white bg-blue-600 rounded-full size-6 flex-center">{skill.skill}</span>
+                <span className="text-sm font-medium text-white bg-blue-600 rounded-full size-6 flex-center">{skill.estimated_learning_hours}</span>
+                <span className="text-sm font-medium text-white bg-blue-600 rounded-full size-6 flex-center">{skill.why_it_matters}</span>
               </div>
-              <div>
+              { skill.resources.map((resource, resourceIndex) =>
+                (<div key={`${skill.skill}_resource_${resourceIndex}`}>
                 <p className="font-semibold">{resource.title}</p>
                 <p className="text-sm text-gray-500">{resource.type}</p>
-              </div>
+              </div>)
+              )}
             </li>
           ))}
         </ul>

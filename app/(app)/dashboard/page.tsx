@@ -262,6 +262,9 @@ export default async function DashboardPage() {
     );
   } else {
     const report = await getLatestReportForUser(session.user.id!);
+
+    if (!report) return null;
+
     return (
       <div className="container relative px-4 mx-auto space-y-6">
         <div className="flex flex-col">

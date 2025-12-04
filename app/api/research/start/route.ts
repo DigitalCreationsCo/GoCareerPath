@@ -34,6 +34,7 @@ export async function POST(req: Request) {
     const validChatId = (await getOrCreateChat(user.id, body.chatId)).id;
     const session = await sessionManager.getOrCreateSession(user.id, validChatId, body.configuration);
     const config = sessionManager.createRunnableConfig(session);
+    console.debug("Graph config:", config);
 
     const checkpointer = await checkpointerManager.getCheckpointer();
     if (!checkpointer) {
