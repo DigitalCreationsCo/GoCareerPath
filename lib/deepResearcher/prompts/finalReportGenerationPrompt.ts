@@ -1,11 +1,11 @@
 import { DateString, UserMessageArray } from "./clarifyWithUserInstructions";
 
 export const finalReportGenerationPrompt = (
-  research_brief: string,
-  research_outline: string,
-  messages: UserMessageArray,
-  findings: string,
-  date: DateString
+    research_brief: string,
+    research_outline: string,
+    messages: UserMessageArray,
+    findings: string,
+    date: DateString
 ): string => `
 You will generate TWO versions of a career report: a PREVIEW (free teaser) and a FULL REPORT (complete analysis).
 
@@ -136,7 +136,7 @@ flowchart TD
 
 🎯 Make your next career move with confidence - backed by data, not guesswork.
 
-[Purchase Full Report - $29.99] **→ Get instant access to your complete personalized analysis**
+[Purchase Full Report - $29] **→ Get instant access to your complete personalized analysis**
 
 ---
 

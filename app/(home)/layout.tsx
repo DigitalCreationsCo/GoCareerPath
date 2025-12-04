@@ -4,9 +4,9 @@ import { Header } from "@/components/ui/header";
 export default async function Layout({ children }: { children: React.ReactNode; }) {
   const session = await auth();
   return (
-    <section className="flex flex-col min-h-screen">
+    <div className="relative flex flex-col min-h-screen">
       <Header session={ session } />
       {children}
-    </section>
+    </div>
   );
 }
