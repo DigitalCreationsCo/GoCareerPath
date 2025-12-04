@@ -5,8 +5,8 @@ import { eq } from 'drizzle-orm';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; }>; }) {
   try {
-    const employeeId = (await params).id;
-    const employeeSnapshots = await db.select().from(snapshots).where(eq(snapshots.userId, employeeId));
+    const userId = (await params).id;
+    const employeeSnapshots = await db.select().from(snapshots).where(eq(snapshots.userId, userId));
 
     if (employeeSnapshots.length === 0) {
       return NextResponse.json({ message: 'No snapshots found for this employee' }, { status: 404 });
@@ -19,17 +19,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string; }>; }) {
   try {
-    const employeeId = (await params).id;
+    const userId = (await params).id;
     const body = await request.json();
 
     const newSnapshot = await db.insert(snapshots).values({
       ...body,
-      employeeId,
+      userId,
     }).returning();
 
-    return NextResponse.json(newSnapshot[0], { status: 201 });
+    return NextResponse.json(newSnapshot[ 0 ], { status: 201 });
   } catch (error) {
     console.error('Error creating snapshot:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

@@ -20,14 +20,9 @@ export async function generateMetadata(props: ReportPageProps) {
 export default async function ReportPage(props: ReportPageProps) {
   const params = await props.params;
 
-  const reportId = parseInt(params.id);
+  const reportId = params.id;
   
-  if (isNaN(reportId)) {
-    notFound();
-  }
-
-  // const report = await getReportById(reportId);
-  const report = SAMPLE_DATA
+  const report = await getReportById(reportId);
   
   if (!report) {
     notFound();

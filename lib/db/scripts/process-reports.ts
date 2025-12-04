@@ -24,7 +24,7 @@ async function main() {
             const [ snapshot ] = await tx
                 .insert(snapshots)
                 .values({
-                    employeeId: report.employeeId,
+                    userId: report.userId,
                     reportId: report.id,
                     skillGapScore: extractedData.skillGapScore,
                     upliftProjection: extractedData.upliftProjection,
@@ -34,7 +34,7 @@ async function main() {
                 .returning();
 
             await tx.insert(roadmaps).values({
-                employeeId: report.employeeId,
+                userId: report.userId,
                 snapshotId: snapshot.id,
                 recommendedRole: extractedData.recommendedRole,
                 steps: extractedData.steps,
@@ -47,7 +47,7 @@ async function main() {
                 }
 
                 await tx.insert(employeeSkills).values({
-                    employeeId: report.employeeId,
+                    userId: report.userId,
                     skillId: dbSkill.id,
                     proficiencyLevel: skill.proficiencyLevel,
                 });
@@ -57,7 +57,7 @@ async function main() {
             await tx.update(rawReports).set({ embedding: sql`'[0]'` }).where(eq(rawReports.id, report.id));
         });
 
-        console.log(`Successfully processed report for employee: ${report.employeeId}`);
+        console.log(`Successfully processed report for employee: ${report.userId}`);
     }
 
     console.log('Report processing finished.');

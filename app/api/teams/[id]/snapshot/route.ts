@@ -60,16 +60,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         const promotionReadiness = team.users
             .filter((e) => e.snapshots && e.snapshots[ 0 ] && e.snapshots[ 0 ].promotionTimeline !== null && e.snapshots[ 0 ].promotionTimeline <= 6)
             .map((e) => ({
-                employeeId: e.id,
-                employeeName: e.name ?? 'Unknown',
+                id: e.id,
+                name: e.name ?? 'Unknown',
                 readiness_score: 1 - (e.snapshots[ 0 ].promotionTimeline! / 12),
             }));
 
         const attritionRisk = team.users
             .filter((e) => e.snapshots && e.snapshots[ 0 ] && e.snapshots[ 0 ].automationRisk !== null && Number(e.snapshots[ 0 ].automationRisk) > 0.5)
             .map((e) => ({
-                employeeId: e.id,
-                employeeName: e.name ?? 'Unknown',
+                id: e.id,
+                name: e.name ?? 'Unknown',
                 risk_score: Number(e.snapshots[ 0 ].automationRisk),
             }));
 

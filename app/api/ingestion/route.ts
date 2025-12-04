@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { employeeId, reportData } = await req.json();
+    const { employeeId, reportData }: { employeeId: string; reportData: any} = await req.json();
 
     if (!employeeId || !reportData) {
       return NextResponse.json({ error: 'Missing employeeId or reportData' }, { status: 400 });
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const [newReport] = await db
       .insert(rawReports)
       .values({
-        employeeId,
+        userId: employeeId,
         rawContentJson: reportData,
       })
       .returning();

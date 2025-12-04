@@ -6,7 +6,7 @@ import { auth } from '@/auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  const employeeId = (await params).id;
+  const userId = (await params).id;
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   try {
     const employeeSnapshots = await db.query.snapshots.findMany({
-      where: eq(snapshots.userId, employeeId),
+      where: eq(snapshots.userId, userId),
       orderBy: (snapshots, { desc }) => [desc(snapshots.createdAt)],
       limit: 2, // Get the latest two snapshots to calculate deltas
     });
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     };
 
     return NextResponse.json({
-      employee_id: employeeId,
+      employee_id: userId,
       promotion_timeline: {
         value: latestSnapshot.promotionTimeline,
         unit: 'months',

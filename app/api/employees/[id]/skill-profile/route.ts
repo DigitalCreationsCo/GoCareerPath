@@ -4,9 +4,9 @@ import { eq } from 'drizzle-orm';
 import { users, employeeSkills, skills, roadmaps } from '@/lib/db/schema';
 import { auth } from '@/auth';
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string; }>; }) {
   const session = await auth();
-  const employeeId = (await params).id;
+  const userId = (await params).id;
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   try {
     const employee = await db.query.users.findFirst({
-      where: eq(users.id, employeeId),
+      where: eq(users.id, userId),
       with: {
         employeeSkills: {
           with: {
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           },
         },
         roadmaps: {
-          orderBy: (roadmaps, { desc }) => [desc(roadmaps.createdAt)],
+          orderBy: (roadmaps, { desc }) => [ desc(roadmaps.createdAt) ],
           limit: 1,
         },
       },
@@ -40,9 +40,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     // This is a simplified representation of skill gaps.
     // A real implementation would involve comparing current skills to the skills required for the next role.
     const skillGaps = [
-        { skill_name: 'Go', proficiency_needed: 3 },
-        { skill_name: 'GraphQL', proficiency_needed: 4 }
-    ]
+      { skill_name: 'Go', proficiency_needed: 3 },
+      { skill_name: 'GraphQL', proficiency_needed: 4 }
+    ];
 
     return NextResponse.json({
       employee_id: employee.id,
@@ -50,11 +50,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       role: employee.role,
       current_skills: currentSkills,
       skill_gaps: skillGaps,
-      career_roadmap: employee.roadmaps[0]
+      career_roadmap: employee.roadmaps[ 0 ]
         ? {
-            recommended_role: employee.roadmaps[0].recommendedRole,
-            steps: employee.roadmaps[0].steps?.split('\n'),
-          }
+          recommended_role: employee.roadmaps[ 0 ].recommendedRole,
+          steps: employee.roadmaps[ 0 ].steps?.split('\n'),
+        }
         : null,
     });
   } catch (error) {

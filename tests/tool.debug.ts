@@ -1,7 +1,10 @@
 // lib/deepResearcher/debug-tools.ts
 // Run this to verify your tools are properly structured
 
-import { thinkTool, ConductResearch, ResearchComplete, supervisorTools } from '../lib/deepResearcher/llmUtils';
+import { thinkTool } from '../lib/deepResearcher/llmUtils';
+import { ConductResearch, ResearchComplete } from '../lib/deepResearcher/state';
+
+const supervisorTools = [ thinkTool, ConductResearch, ResearchComplete ];
 
 /**
  * Debug function to verify tool structure
