@@ -15,5 +15,9 @@ export default defineConfig({
       "auth": resolve("./mocks/auth.mock.ts")
     },
     environment: 'jsdom',
+    env: {
+      POSTGRES_URL: 'postgres://mock-url',
+      AUTH_SECRET: 'mock-secret'
+    }
   },
 })

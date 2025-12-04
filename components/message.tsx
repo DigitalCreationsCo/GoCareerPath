@@ -44,7 +44,7 @@ const PurePreviewMessage = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.2 }}
-      className="group/message w-full px-2"
+      className="w-full px-2 group/message"
       data-role={message.role}
       data-testid={`message-${message.role}`}
       >
@@ -55,7 +55,7 @@ const PurePreviewMessage = ({
         })}
       >
         {/* {message.role === "assistant" && (
-          <div className="-mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
+          <div className="flex items-center justify-center -mt-1 rounded-full size-8 shrink-0 bg-background ring-1 ring-border">
             <SparklesIcon size={14} />
           </div>
         )} */}
@@ -65,7 +65,7 @@ const PurePreviewMessage = ({
             "gap-2 md:gap-4": message.parts?.some(
               (p) => p.type === "text" && p.text?.trim()
             ),
-            "min-h-96": message.role !== "user" && requiresScrollPadding,
+            "min-h-40": message.role !== "user" && requiresScrollPadding,
             "w-full":
               (message.role !== "user" &&
                 message.parts?.some(
@@ -113,12 +113,12 @@ const PurePreviewMessage = ({
                 return (
                   <div key={key}>
                     <MessageContent
-                      className={cn({
+                      className={ cn({
                         "w-fit break-words rounded-2xl px-3 py-2 text-left text-white":
                           message.role === "user",
                         "bg-transparent px-0 py-0 text-left text-zinc-500":
                           message.role !== "user",
-                        },
+                      },
                         isGreeting && [
                           msgIndex === 0 
                             ? "text-xl text-foreground" 
@@ -141,11 +141,11 @@ const PurePreviewMessage = ({
               if (mode === "edit") {
                 return (
                   <div
-                    className="flex w-full flex-row items-start gap-3"
+                    className="flex flex-row items-start w-full gap-3"
                     key={key}
                   >
                     <div className="size-8" />
-                    <div className="min-w-0 flex-1">
+                    <div className="flex-1 min-w-0">
                       <MessageEditor
                         key={message.id}
                         message={message}
@@ -170,7 +170,7 @@ const PurePreviewMessage = ({
                 ) {
                   return (
                     <MessageContent
-                      className="bg-transparent px-0 py-0 text-left text-zinc-500"
+                      className="px-0 py-0 text-left bg-transparent text-zinc-500"
                       data-testid="message-final-report-content"
                     >
                       <Response>{payload.arguments.finalReport}</Response>
@@ -180,7 +180,7 @@ const PurePreviewMessage = ({
               } catch (err) {
                 // Optional: handle malformed JSON or missing structure gracefully
                 return (
-                  <div className="p-2 rounded border bg-red-50 text-red-500 text-sm">
+                  <div className="p-2 text-sm text-red-500 border rounded bg-red-50">
                     Error displaying final report: {String(err)}
                   </div>
                 );
@@ -214,7 +214,7 @@ const PurePreviewMessage = ({
             //   if (part.output && "error" in part.output) {
             //     return (
             //       <div
-            //         className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-500 dark:bg-red-950/50"
+            //         className="p-4 text-red-500 border border-red-200 rounded-lg bg-red-50 dark:bg-red-950/50"
             //         key={toolCallId}
             //       >
             //         Error creating document: {String(part.output.error)}
@@ -237,7 +237,7 @@ const PurePreviewMessage = ({
             //   if (part.output && "error" in part.output) {
             //     return (
             //       <div
-            //         className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-500 dark:bg-red-950/50"
+            //         className="p-4 text-red-500 border border-red-200 rounded-lg bg-red-50 dark:bg-red-950/50"
             //         key={toolCallId}
             //       >
             //         Error updating document: {String(part.output.error)}
@@ -271,7 +271,7 @@ const PurePreviewMessage = ({
             //             errorText={undefined}
             //             output={
             //               "error" in part.output ? (
-            //                 <div className="rounded border p-2 text-red-500">
+            //                 <div className="p-2 text-red-500 border rounded">
             //                   Error: {String(part.output.error)}
             //                 </div>
             //               ) : (
@@ -330,17 +330,17 @@ export const ThinkingMessage = () => {
   return (
     <motion.div
       animate={{ opacity: 1 }}
-      className="group/message w-full"
+      className="w-full group/message"
       data-role={role}
       data-testid="message-assistant-loading"
       initial={{ opacity: 0 }}
     >
       <div className="flex items-start justify-start gap-3 animate-pulse">
-        <div className="-mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-background">
+        <div className="flex items-center justify-center -mt-1 rounded-full size-8 shrink-0 bg-background">
           <SparklesIcon size={14} />
         </div>
 
-        <div className="flex w-full flex-col gap-2 md:gap-4">
+        <div className="flex flex-col w-full gap-2 md:gap-4">
           <div className="p-0 text-muted-foreground">
             <LoadingText>Thinking...</LoadingText>
           </div>

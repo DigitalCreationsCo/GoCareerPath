@@ -11,9 +11,11 @@ export const clarifyWithUserInstructions = (
   1. Current/recent job title
   2. Years of experience + industry
   3. Core skills (technical + soft)
-  4. Location/geography preferences
-  5. Target salary range
-  6. Career goals (growth, work-life balance, remote, etc.)
+  4. Self-rating on core skills (ask about each skill ONE question at a time)
+  5. Location/geography preferences
+  6. Target salary range
+  7. Career goals (growth, work-life balance, remote, etc.)
+  8. Specific related accomplishments
   
   **Rules:**
   - If info already provided in messages, skip that question

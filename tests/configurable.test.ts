@@ -1,15 +1,42 @@
 // === Vitest Unit Tests ===
 import { Configuration, McpConfig, ModelSelector, removeVendorPrefix, RunnableConfig, SearchApi } from '@/lib/deepResearcher/configuration';
 import { getApiKeyForModel, getTodayStr, MODEL_TOKEN_LIMITS } from '@/lib/deepResearcher/llmUtils';
-import { clarifyWithUserInstructions } from '@/lib/deepResearcher/prompts/finalReportGenerationPrompt';
+import { clarifyWithUserInstructions } from '@/lib/deepResearcher/prompts/clarifyWithUserInstructions';
 import { ClarifyWithUser } from '@/lib/deepResearcher/state';
 import { getBufferString } from '@/lib/messageUtils';
-import { ChatAnthropic } from '@langchain/anthropic';
 import { HumanMessage } from '@langchain/core/messages';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { ChatOpenAI } from '@langchain/openai';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { configDotenv } from "dotenv";
+
+// Mock LangChain models globally using vi.hoisted
+const { MockChatModel, mockBindTools, mockWithStructuredOutput, mockWithRetry, mockWithConfig, mockInvoke } = vi.hoisted(() => {
+  const mockBindTools = vi.fn().mockReturnThis();
+  const mockWithStructuredOutput = vi.fn().mockReturnThis();
+  const mockWithRetry = vi.fn().mockReturnThis();
+  const mockWithConfig = vi.fn().mockReturnThis();
+  const mockInvoke = vi.fn().mockResolvedValue({ 
+    needClarification: false,
+    question: '',
+    verification: 'Understood. Proceeding with research.',
+    result: 'ok'
+  });
+
+  const MockChatModel = vi.fn(() => ({
+    bindTools: mockBindTools,
+    withStructuredOutput: mockWithStructuredOutput,
+    withRetry: mockWithRetry,
+    withConfig: mockWithConfig,
+    invoke: mockInvoke,
+    stream: vi.fn().mockResolvedValue('streamed'),
+    batch: vi.fn().mockResolvedValue('batched')
+  }));
+  
+  return { MockChatModel, mockBindTools, mockWithStructuredOutput, mockWithRetry, mockWithConfig, mockInvoke };
+});
+
+vi.mock('@langchain/openai', () => ({ ChatOpenAI: MockChatModel }));
+vi.mock('@langchain/google-genai', () => ({ ChatGoogleGenerativeAI: MockChatModel }));
+vi.mock('@langchain/anthropic', () => ({ ChatAnthropic: MockChatModel }));
 
 // Helper to clear all environment variables for full isolation
 function clearProcessEnv() {
@@ -83,40 +110,15 @@ describe('Configuration', () => {
 });
 
 describe('ModelSelector', () => {
-  let DummyModel: any;
-
   beforeEach(() => {
     clearProcessEnv();
-    DummyModel = class { static calls: any[] = [];
-      constructor(opts: any) { (this as any).opts = opts; DummyModel.calls.push(['ctor', opts]); }
-      static reset() { DummyModel.calls = []; }
-      withStructuredOutput(schema: any) { DummyModel.calls.push(['withStructuredOutput', schema]); (this as any)._outSchema = schema; return this; }
-      withRetry(cfg: any) { DummyModel.calls.push(['withRetry', cfg]); return this; }
-      withConfig(cfg: any) { DummyModel.calls.push(['withConfig', cfg]); return this; }
-      async invoke(input:any, config?:any) { 
-        DummyModel.calls.push(['invoke', input, config]); 
-        // Simulate model output that matches the clarifyWithUser schema,
-        // ignore input/config for the test, in real case LLM output parsed.
-        return { 
-          needClarification: false,
-          question: '',
-          verification: 'Understood. Proceeding with research.'
-        }; 
-      }
-      async stream(input:any, config?:any) { DummyModel.calls.push(['stream', input, config]); return 'streamed'; }
-      async batch(inputs:any[], config?:any) { DummyModel.calls.push(['batch', inputs, config]); return 'batched'; }
-    };
-
-    vi.spyOn(console, "log").mockImplementation(() => {});
-    vi.stubGlobal("ChatOpenAI", DummyModel);
-    vi.stubGlobal("ChatGoogleGenerativeAI", DummyModel);
-    vi.stubGlobal("ChatAnthropic", DummyModel);
-  });
-
-  afterEach(() => {
-    clearProcessEnv();
-    DummyModel.reset();
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
+    
+    // Reset default mock implementations
+    mockBindTools.mockReturnThis();
+    mockWithStructuredOutput.mockReturnThis();
+    mockWithRetry.mockReturnThis();
+    mockWithConfig.mockReturnThis();
   });
 
   it('should use correct underlying model for openai, gemini, anthropic, and error on unknown', () => {
@@ -170,9 +172,8 @@ describe('ModelSelector', () => {
       }
     });
 
-    expect(Object.keys(result)).toEqual(
-      expect.arrayContaining(['needClarification', 'question', 'verification'])
-    );
+    expect(result).toBeDefined();
+    expect(mockWithStructuredOutput).toHaveBeenCalledWith(ClarifyWithUser);
   });
 
   it('can bind tools with bindTools and access them', () => {
@@ -195,35 +196,10 @@ describe('ModelSelector', () => {
   it('llm invocation with bindTools will have tools available in the call body', async () => {
     process.env = { ...process.env, ...configDotenv({ path: '.env.local' }).parsed! }
 
-    // Use the correct tools structure to avoid Google's API error:
-    // Gemini tools expect { function_declarations: [{ ... }] }, not { name: ... }
-    // We use the right key & fake a generic function declaration array for testing
     const fakeTools = [
       { function_declarations: [{ name: "toolFn1", description: "desc1" }] },
       { function_declarations: [{ name: "toolFn2", description: "desc2" }] }
     ];
-
-    // Save the original ChatGoogleGenerativeAI
-    const { ChatGoogleGenerativeAI } = require("@langchain/google-genai");
-    const originalCtor = ChatGoogleGenerativeAI;
-
-    let receivedTools: any = undefined;
-    function FakeGoogleGenAI(options: any) {
-      receivedTools = options.tools;
-      return {
-        invoke: () => Promise.resolve({ result: "ok" }),
-        withStructuredOutput: function () { return this; },
-        withRetry: function () { return this; },
-        withConfig: function () { return this; },
-        bindTools: function () { return this; },
-      };
-    }
-
-    Object.defineProperty(require.cache?.[require.resolve("@langchain/google-genai")]?.exports, "ChatGoogleGenerativeAI", {
-      value: FakeGoogleGenAI,
-      writable: true,
-      configurable: true,
-    });
 
     const configurable = new Configuration();
 
@@ -233,10 +209,7 @@ describe('ModelSelector', () => {
       apiKey: getApiKeyForModel(configurable.researchModel, configurable),
     }).invoke("hello");
 
-    expect(receivedTools).toBe(fakeTools);
-
-    // @ts-expect-error
-    require.cache[require.resolve("@langchain/google-genai")].exports.ChatGoogleGenerativeAI = originalCtor;
+    expect(mockBindTools).toHaveBeenCalledWith(fakeTools);
   });
 });
 
@@ -392,4 +365,3 @@ describe("Configuration", () => {
     expect(conf).toBeInstanceOf(Configuration);
   });
 });
-

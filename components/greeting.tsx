@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 
 export const greetingMessageParts = [
   "Welcome to GoCareerPath.",
-  "Work is changing fast—automation is transforming every field. \nFortunately, your skills matter, and they should lead to a stable, well-paid future.",
-  "Answer a few short questions to get your Career Path Report and find the paths most likely to stay strong in the years ahead.",
+  "Work is changing fast — automation is redefining every profession. \nFortunately, your experience has real value, and investing in the rights skills today will secure a stable, high-earning future.",
+  "Answer a few short questions to get your Career Path Report and see which paths offer long-term security, strong demand, and higher income potential in the years ahead.",
 ];
 
 export const Greeting = () => {

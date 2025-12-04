@@ -249,6 +249,7 @@ export async function POST(req: Request) {
           };
 
           controller.enqueue(encoder.encode(JSON.stringify(errorChunk) + "\n"));
+          controller.close();
         } finally {
         }
       },

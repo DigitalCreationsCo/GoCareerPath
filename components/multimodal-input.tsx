@@ -18,7 +18,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { useLocalStorage, useWindowSize } from "usehooks-ts";
-import { saveChatModelAsCookie } from "@/app/(chat)/actions";
+import { saveChatModelAsCookie } from "@/app/(home)/actions";
 import { SelectItem } from "@/components/ui/select";
 // import { chatModels } from "@/lib/ai/models";
 // import { myProvider } from "@/lib/ai/providers";
@@ -249,7 +249,7 @@ function PureMultimodalInput({
       />
 
       <PromptInput
-        className="bg-gradient-card rounded-xl border border-transparent p-3 shadow transition-all duration-200 focus-within:border-muted-foreground/50 hover:border-muted-foreground/50"
+        className="p-3 transition-all duration-100 border border-transparent shadow bg-gradient-card rounded-xl focus-within:border-muted-foreground/50 hover:border-muted-foreground/50"
         onSubmit={(event) => {
           event.preventDefault();
           // if (status !== "ready") {
@@ -308,7 +308,7 @@ function PureMultimodalInput({
           />{" "}
           {/* <Context {...contextProps} /> */}
         </div>
-        <PromptInputToolbar className="!border-top-0 border-t-0! p-0 shadow-none dark:border-0 dark:border-transparent!">
+        <PromptInputToolbar className="!border-top-0 border-t-0! p-0 shadow-none dark:border-0 dark:border-transparent! justify-end">
           {/* <PromptInputTools className="gap-0 sm:gap-0.5">
             <AttachmentsButton
               fileInputRef={fileInputRef}
@@ -320,18 +320,14 @@ function PureMultimodalInput({
               selectedModelId={selectedModelId}
             />
           </PromptInputTools> */}
-
-          {status === "submitted" ? (
-            <StopButton setMessages={setMessages} stop={stop} />
-          ) : (
-            <PromptInputSubmit
-              className="size-8 rounded-full bg-primary text-primary-foreground transition-colors duration-200 hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
-              disabled={!input.trim() || uploadQueue.length > 0}
-              status={status}
-            >
-              <ArrowUpIcon size={14} />
-            </PromptInputSubmit>
-          )}
+         
+          <PromptInputSubmit
+            className="transition-colors duration-200 rounded-full size-8 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+            disabled={!input.trim() || uploadQueue.length > 0}
+            status={status}
+          >
+            <ArrowUpIcon size={14} />
+          </PromptInputSubmit>
         </PromptInputToolbar>
       </PromptInput>
     </div>
@@ -368,7 +364,7 @@ function PureAttachmentsButton({
 
   return (
     <Button
-      className="aspect-square h-8 rounded-lg p-1 transition-colors hover:bg-accent"
+      className="h-8 p-1 transition-colors rounded-lg aspect-square hover:bg-accent"
       data-testid="attachments-button"
       disabled={status !== "ready" || isReasoningModel}
       onClick={(event) => {
@@ -416,11 +412,11 @@ const AttachmentsButton = memo(PureAttachmentsButton);
 //       value={selectedModel?.name}
 //     >
 //       <Trigger
-//         className="flex h-8 items-center gap-2 rounded-lg border-0 bg-background px-2 text-foreground shadow-none transition-colors hover:bg-accent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+//         className="flex items-center h-8 gap-2 px-2 transition-colors border-0 rounded-lg shadow-none bg-background text-foreground hover:bg-accent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
 //         type="button"
 //       >
 //         <CpuIcon size={16} />
-//         <span className="hidden font-medium text-sm sm:block">
+//         <span className="hidden text-sm font-medium sm:block">
 //           {selectedModel?.name}
 //         </span>
 //         <ChevronDownIcon size={16} />
@@ -429,7 +425,7 @@ const AttachmentsButton = memo(PureAttachmentsButton);
 //         <div className="flex flex-col gap-px">
 //           {chatModels.map((model) => (
 //             <SelectItem key={model.id} value={model.name}>
-//               <div className="truncate font-medium text-sm">{model.name}</div>
+//               <div className="text-sm font-medium truncate">{model.name}</div>
 //               <div className="mt-px truncate text-[10px] text-muted-foreground leading-tight">
 //                 {model.description}
 //               </div>
@@ -452,7 +448,7 @@ function PureStopButton({
 }) {
   return (
     <Button
-      className="size-7 rounded-full bg-foreground p-1 text-background transition-colors duration-200 hover:bg-foreground/90 disabled:bg-muted disabled:text-muted-foreground"
+      className="transition-colors duration-200 rounded-full bg-background text-primary hover:bg-background hover:text-primary/80 disabled:bg-muted disabled:text-muted-foreground"
       data-testid="stop-button"
       onClick={(event) => {
         event.preventDefault();
@@ -460,7 +456,7 @@ function PureStopButton({
         setMessages((messages) => messages);
       }}
     >
-      <StopIcon size={14} />
+      <StopIcon size={20} />
     </Button>
   );
 }

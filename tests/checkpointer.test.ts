@@ -15,7 +15,7 @@ describe("convertGraphChannelValuesToUIMessages", () => {
           lc: 1,
           type: "constructor",
           id: ["langchain_core", "messages", "HumanMessage"],
-          kwargs: {
+          lc_kwargs: {
             id: "e11db367-4fa2-4896-a9f2-d796cad3b432",
             content: "",
             additional_kwargs: {
@@ -28,7 +28,7 @@ describe("convertGraphChannelValuesToUIMessages", () => {
           lc: 1,
           type: "constructor",
           id: ["langchain_core", "messages", "AIMessage"],
-          kwargs: {
+          lc_kwargs: {
             content: "What is your current or most recent job title?",
             id: "7f97a9eb-c034-4879-bd1c-7fdc3a0f5bcf",
             tool_calls: [],
@@ -41,7 +41,7 @@ describe("convertGraphChannelValuesToUIMessages", () => {
           lc: 1,
           type: "constructor",
           id: ["langchain_core", "messages", "HumanMessage"],
-          kwargs: {
+          lc_kwargs: {
             id: "cfa7e070-e549-4344-8e18-4a3862afac46",
             content: "SOFTWARE ENGINEER",
             additional_kwargs: {
@@ -54,7 +54,7 @@ describe("convertGraphChannelValuesToUIMessages", () => {
           lc: 1,
           type: "constructor",
           id: ["langchain_core", "messages", "AIMessage"],
-          kwargs: {
+          lc_kwargs: {
             content: "What is your industry and how many years of experience do you have in software engineering?",
             id: "be14a690-a72d-40cc-ab68-5ceee972874c",
             tool_calls: [],
@@ -66,7 +66,7 @@ describe("convertGraphChannelValuesToUIMessages", () => {
       ]
     };
 
-    const uiMessages = convertGraphMessagesToUIMessages(input);
+    const [uiMessages] = convertGraphMessagesToUIMessages(input) as any; // Destructure tuple
 
     expect(Array.isArray(uiMessages)).toBe(true);
     expect(uiMessages.length).toBe(4);

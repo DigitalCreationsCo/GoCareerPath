@@ -1,5 +1,6 @@
 // calculateTimeRemaining.test.ts
 import { calculateTimeRemaining } from '../lib/utils';
+import { describe, it, expect } from 'vitest';
 
 describe('calculateTimeRemaining', () => {
   const MS_IN_HOUR = 1000 * 60 * 60;

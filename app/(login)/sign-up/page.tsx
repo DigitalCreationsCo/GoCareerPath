@@ -1,9 +1,15 @@
+"use server";
+
+import { auth } from '@/auth';
 import { Login } from '../login';
 import { redirect } from 'next/navigation';
 
-export default function SignUpPage() {
-  return redirect('/sign-in');
+export default async function SignUpPage() {
+  const session = await auth();
+  if (session?.user) {
+    return session.user.role === "owner" ? redirect("/dashboard") : redirect('/chat');
+  }
   return (
-    <Login />
+    <Login mode="signup" />
   );
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { addToWaitlist } from '@/lib/db/queries/waitlist';
-import { sendWaitlistConfirmationEmail } from '@/lib/email/waitlist';
+import { sendWaitlistConfirmationEmail } from '@/lib/email/send-waitlist-confirmation-email';
 
 export async function POST(req: Request) {
   try {

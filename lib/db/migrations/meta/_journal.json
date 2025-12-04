@@ -2,5 +2,40 @@
   "version": "7",
   "dialect": "postgresql",
   "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1763463307021,
+      "tag": "0000_real_the_fury",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763547376564,
+      "tag": "0001_clammy_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763572103974,
+      "tag": "0002_condemned_ultimatum",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763572344672,
+      "tag": "0003_panoramic_mole_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763573431138,
+      "tag": "0004_spooky_morbius",
+      "breakpoints": true
+    }
   ]
 }
