@@ -6,6 +6,7 @@ import { Annotation } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
+import { CareerPathResponseSchema } from "../zod-schemas";
 
 export const MessageLike = z.record(z.any());
 export const MessagesState = z.object({
@@ -200,7 +201,7 @@ export type ResearcherOutputState = typeof ResearcherOutputState._type;
 
 export const FinalReportOutput = z.object({
   reportPreview: z.string().describe("Truncated preview version of the report for free users. Contains ONLY: (1) Truncated executive summary (50% length with ellipsis), (2) First flowchart diagram with salary ranges but NO role titles, (3) Call-to-action for full report purchase. Maximum 500 words."),
-  finalReport: z.string().describe("Complete, comprehensive career path report following all specifications. 3,000-4,000 words with 15-20 diagrams, full analysis of all 4 paths, comparison matrices, action plans, and complete source list.")
+  finalReport: CareerPathResponseSchema
 });
 
 export type FinalReportOutput = typeof FinalReportOutput._type;

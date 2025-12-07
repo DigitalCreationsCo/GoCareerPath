@@ -1,11 +1,38 @@
-#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-  }
+/* app/(home)/landing.css */
 
-  .card {
-    padding: 2em;
+.carousel-container {
+  overflow: hidden;
+  width: 100%; /* The visible width of your carousel */
+  /* You can adjust height as needed, or let content define it */
+}
+
+.carousel-ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* The width of the ul needs to be twice the visible width to accommodate duplicated items for infinite scroll */
+  width: 200%; /* This is based on duplicating the content once */
+  animation: slide-infinite 20s linear infinite; /* Adjust duration as needed */
+}
+
+.carousel-ul .carousel-item {
+  flex-shrink: 0; /* Prevent items from shrinking */
+  width: calc(100% / var(--carousel-visible-items, 4)); /* Default to showing 3 items, can be overridden */
+  box-sizing: border-box;
+  padding: 10px; /* Example padding for items */
+  text-align: center;
+  /* Add styling for individual carousel items here, e.g., borders, backgrounds */
+  /* background-color: #f0f0f0; */
+  /* border: 1px solid #ccc; */
+}
+
+@keyframes slide-infinite {
+  0% {
+    transform: translateX(0%);
   }
-  
+  100% {
+    /* Slides the content by 50% of its total width, effectively moving one set of original items out */
+    transform: translateX(-50%);
+  }
+}

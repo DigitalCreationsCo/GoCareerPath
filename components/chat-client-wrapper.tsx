@@ -1,8 +1,9 @@
 "use client";
+ 
 import { generateUUID } from "@/lib/utils";
 import { useRouter, useParams } from "next/navigation";
 import { Chat } from "@/components/chat";
-import { ChatMessage } from "@/lib/types";
+import { CareerPathResponse, ChatMessage } from "@/lib/types";
 import { useEffect, useState } from "react";
 
 /**
@@ -16,7 +17,7 @@ export default function ClientChatWrapper({
   finalReport,
 }: {
   initialMessages: ChatMessage[];
-  finalReport: string;
+  finalReport: CareerPathResponse | null;
 }) {
   const router = useRouter();
   const params = useParams();

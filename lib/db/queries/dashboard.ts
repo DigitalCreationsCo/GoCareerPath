@@ -3,11 +3,17 @@ import { db } from '../drizzle';
 import { reports } from '@/lib/db/schema';
 import { Report } from '@/lib/types';
 
-export async function getLatestReportForUser(userId: string): Promise<Report | undefined> {
+export async function getUserReports(userId: string): Promise<Report[]> {
   const userReports = await db
     .select()
     .from(reports)
     .where(eq(reports.userId, userId));
+
+  return userReports as unknown as Report[];
+}
+
+export async function getLatestReportForUser(userId: string): Promise<Report | undefined> {
+  const userReports = await getUserReports(userId);
 
   if (userReports.length === 0) {
     return undefined;
@@ -20,5 +26,5 @@ export async function getLatestReportForUser(userId: string): Promise<Report | u
     return dateB - dateA;
   });
 
-  return sortedReports[0] as unknown as Report;
+  return sortedReports[0];
 }

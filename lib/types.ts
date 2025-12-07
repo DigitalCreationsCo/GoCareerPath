@@ -86,118 +86,84 @@ export type Attachment = {
 };
 
 
+import {
+    ScoreWeightSchema,
+    ScoreBreakdownSchema,
+    EvidenceSchema,
+    ResourceSchema,
+    MissingSkillSchema,
+    SalarySchema,
+    EntryPathSchema,
+    OutreachTemplatesSchema,
+    RoleOverviewSchema,
+    AutomationResistanceAnalysisSchema,
+    FitAnalysisSchema,
+    SkillTransferBreakdownSchema,
+    MarketIntelligenceSchema,
+    SalaryProgressionSchema,
+    ComparisonMatrixRowSchema,
+    TransitionPhaseSchema,
+    DailyTaskSchema,
+    WeeklySprintSchema,
+    SprintSuccessMetricsSchema,
+    ScriptTemplateSchema,
+    TopCompanySchema,
+    IndustryHotspotSchema,
+    GeographicDemandSchema,
+    ApplicationStrategySchema,
+    SourceSchema,
+    FinalRecommendationSchema,
+    SuccessMindsetSchema,
+    RedFlagSchema,
+    CommunitySchema,
+    BookPodcastSchema,
+    CoachingMentorshipSchema,
+    CareerPathSuggestionSchema,
+    DecisionRowSchema,
+    MetadataSchema,
+    CareerPathResponseSchema
+} from './zod-schemas';
+
+
 /** =========================
     Career Report Data Types
  *  ========================= */
 
-type ScoreWeight = {
-  market_demand: number;
-  de_risking_automation: number;
-  transferability: number;
-  salary_potential: number;
-  time_to_break_in: number;
-};
-
-type ScoreBreakdown = {
-  final: number;
-  automation_risk: number;
-  market_demand: number;
-  transferability: number;
-  salary_potential: number;
-  time_to_break_in: number;
-  weights: ScoreWeight;
-};
-
-type Evidence = {
-  claim: string;
-  rationale: string;
-};
-
-type Resource = {
-  type: 'course' | 'book' | 'yt' | 'project' | 'cert' | 'article' | 'doc';
-  title: string;
-  provider?: string;
-  est_hours?: number;
-};
-
-type MissingSkill = {
-  skill: string;
-  why_it_matters: string;
-  estimated_learning_hours: number;
-  learning_sequence_order: number;
-  resources: Resource[];
-};
-
-type Salary = {
-  currency: string;
-  p50?: number;
-  p90?: number;
-  note?: string;
-};
-
-type EntryPath = {
-  time_to_break_in_months: number;
-  starter_projects: string[];
-  certs?: string[];
-  proof_of_work_assets: string[];
-};
-
-type OutreachTemplates = {
-  cold_dm: string;
-  linkedin_about: string;
-  resume_headline: string;
-};
-
-export type CareerPathSuggestion = {
-  title: string;
-  short_pitch: string;
-  why_future_proof: string;
-  automation_risk: number;
-  market_demand: number;
-  salary: Salary;
-  transferable_skills: string[];
-  missing_skills: MissingSkill[];
-  entry_path: EntryPath;
-  first_14_days: string[];
-  outreach_templates: OutreachTemplates;
-  score_breakdown: ScoreBreakdown;
-  evidence: Evidence[];
-};
-
-export type DecisionRow = {
-  title: string;
-  final_score: number;
-  automation_risk: number;
-  market_demand: number;
-  transferability: number;
-  salary_potential: number;
-  time_to_break_in: number;
-};
-
-export type Metadata = {
-  titles: string[];
-  highlights: string[];
-  best_path: string;
-  summary: string;
-  scores: { title: string; score: number }[];
-  candidate_count: number;
-  generated_at: string;
-  createdAt: string;
-  updatedAt: string;
-  notes?: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-  }
-};
-
-export type CareerPathResponse = {
-  metadata: Metadata;
-  decisionMatrix: DecisionRow[];
-  suggestions: CareerPathSuggestion[];
-  globalRationale: string;
-};
+export type ScoreWeight = z.infer<typeof ScoreWeightSchema>;
+export type ScoreBreakdown = z.infer<typeof ScoreBreakdownSchema>;
+export type Evidence = z.infer<typeof EvidenceSchema>;
+export type Resource = z.infer<typeof ResourceSchema>;
+export type MissingSkill = z.infer<typeof MissingSkillSchema>;
+export type Salary = z.infer<typeof SalarySchema>;
+export type EntryPath = z.infer<typeof EntryPathSchema>;
+export type OutreachTemplates = z.infer<typeof OutreachTemplatesSchema>;
+export type RoleOverview = z.infer<typeof RoleOverviewSchema>;
+export type AutomationResistanceAnalysis = z.infer<typeof AutomationResistanceAnalysisSchema>;
+export type FitAnalysis = z.infer<typeof FitAnalysisSchema>;
+export type SkillTransferBreakdown = z.infer<typeof SkillTransferBreakdownSchema>;
+export type MarketIntelligence = z.infer<typeof MarketIntelligenceSchema>;
+export type SalaryProgression = z.infer<typeof SalaryProgressionSchema>;
+export type ComparisonMatrixRow = z.infer<typeof ComparisonMatrixRowSchema>;
+export type TransitionPhase = z.infer<typeof TransitionPhaseSchema>;
+export type DailyTask = z.infer<typeof DailyTaskSchema>;
+export type WeeklySprint = z.infer<typeof WeeklySprintSchema>;
+export type SprintSuccessMetrics = z.infer<typeof SprintSuccessMetricsSchema>;
+export type ScriptTemplate = z.infer<typeof ScriptTemplateSchema>;
+export type TopCompany = z.infer<typeof TopCompanySchema>;
+export type IndustryHotspot = z.infer<typeof IndustryHotspotSchema>;
+export type GeographicDemand = z.infer<typeof GeographicDemandSchema>;
+export type ApplicationStrategy = z.infer<typeof ApplicationStrategySchema>;
+export type Source = z.infer<typeof SourceSchema>;
+export type FinalRecommendation = z.infer<typeof FinalRecommendationSchema>;
+export type SuccessMindset = z.infer<typeof SuccessMindsetSchema>;
+export type RedFlag = z.infer<typeof RedFlagSchema>;
+export type Community = z.infer<typeof CommunitySchema>;
+export type BookPodcast = z.infer<typeof BookPodcastSchema>;
+export type CoachingMentorship = z.infer<typeof CoachingMentorshipSchema>;
+export type CareerPathSuggestion = z.infer<typeof CareerPathSuggestionSchema>;
+export type DecisionRow = z.infer<typeof DecisionRowSchema>;
+export type Metadata = z.infer<typeof MetadataSchema>;
+export type CareerPathResponse = z.infer<typeof CareerPathResponseSchema>;
 
 
 export enum ActivityType {

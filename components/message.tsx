@@ -11,6 +11,7 @@ import { SparklesIcon } from "./icons";
 import { MessageActions } from "./message-actions";
 import { MessageEditor } from "./message-editor";
 import { MessageReasoning } from "./message-reasoning";
+import { FullReport } from "./report/full-report";
 
 const PurePreviewMessage = ({
   chatId,
@@ -164,12 +165,10 @@ const PurePreviewMessage = ({
                   payload.arguments.finalReport
                 ) {
                   return (
-                    <MessageContent
-                      className="px-0 py-0 text-left bg-transparent text-zinc-500"
+                    <FullReport
                       data-testid="message-final-report-content"
-                    >
-                      <Response>{payload.arguments.finalReport}</Response>
-                    </MessageContent>
+                      report={ payload.arguments.finalReport }
+                      />
                   );
                 }
               } catch (err) {

@@ -52,12 +52,12 @@ function PureMessages({
 
   return (
     <div
-      className="flex-1 overflow-y-scroll overscroll-behavior-contain -webkit-overflow-scrolling-touch touch-pan-y"
+      className="flex-1 h-full overflow-y-scroll overscroll-behavior-contain -webkit-overflow-scrolling-touch touch-pan-y"
       ref={messagesContainerRef}
       style={{ overflowAnchor: "none" }}
     >
       <Conversation className="flex flex-col w-full min-w-0 gap-4 mx-auto md:gap-6">
-        <ConversationContent className="flex flex-col max-w-4xl gap-4 px-2 py-4 mx-auto md:gap-4 md:px-4">
+        <ConversationContent className="flex flex-col max-w-3xl gap-4 px-2 py-4 mx-auto md:gap-4 md:px-4">
           {messages.map((message, index) => {
             const delay = isShowingGreeting ? greetingDelays[index] : 0;
             return (

@@ -20,7 +20,9 @@ import {
   } from '../state';
   import { 
     finalReportGenerationPrompt,
-  } from '../prompts';
+} from '../prompts';
+import { CareerPathResponseSchema } from "@/lib/zod-schemas";
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import { Command, END } from '@langchain/langgraph';
   
 export async function finalReportGeneration(
@@ -50,41 +52,42 @@ export async function finalReportGeneration(
     while (currentRetry <= maxRetries) {
         try {
             const finalReportPrompt = finalReportGenerationPrompt(
-            state.researchBrief || "",
-            state.researchOutline || "", 
-            getBufferString(state.messages || []),
-            findings,
-            getTodayStr()
+                state.researchBrief || "",
+                state.researchOutline || "", 
+                getBufferString(state.messages || []),
+                findings,
+                getTodayStr(),
+                zodToJsonSchema(FinalReportOutput),
             );
             
             console.debug('Generating final report...');
             
-            const reportModel = await configurableModel
+            const reportModel = configurableModel
             .withConfig(writerModelConfig)
             .withStructuredOutput(FinalReportOutput)
 
             const reportOutput = await reportModel.invoke([
                 createMessageFromMessageType("human", finalReportPrompt)
-            ]) as unknown as FinalReportOutput
+            ]) as unknown as FinalReportOutput;
 
             if (!reportOutput.reportPreview || !reportOutput.finalReport) {
                 throw new Error('Invalid report structure: missing reportPreview or finalReport');
             }
 
             const isSellingReport = process.env.NEXT_PUBLIC_IS_REPORT_PURCHASABLE === "true";
-            if (!isSellingReport) {
-                reportOutput.reportPreview = reportOutput.finalReport;
-            }
+            // if (!isSellingReport) {
+            //     reportOutput.reportPreview = reportOutput.finalReport;
+            // }
             
             const previewTokenCount = reportOutput.reportPreview ? reportModel.getNumTokens(reportOutput.reportPreview) : 0;
-            const finalReportTokenCount = reportOutput.finalReport ? reportModel.getNumTokens(reportOutput.finalReport) : 0;
+            const finalReportTokenCount = reportOutput.finalReport ? reportModel.getNumTokens(JSON.stringify(reportOutput.finalReport)) : 0;
 
             console.debug('Report generated successfully:', {
                 hasPreview: !!reportOutput.reportPreview,
                 previewLength: reportOutput.reportPreview?.length || 0,
                 previewTokenCount,
                 hasFinalReport: !!reportOutput.finalReport,
-                finalReportLength: reportOutput.finalReport?.length || 0,
+                finalReportLength: JSON.stringify(reportOutput.finalReport).length || 0,
                 finalReportTokenCount
             });
         
@@ -98,7 +101,7 @@ export async function finalReportGeneration(
                             "tool",
                             JSON.stringify({
                                 name: "finalReport", 
-                                arguments: { finalReport: reportOutput.reportPreview }
+                                arguments: { finalReport: reportOutput.finalReport }
                             })
                         ),
                         createMessageFromMessageType(

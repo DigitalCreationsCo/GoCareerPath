@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useAutoResumeFromCheckpoint } from "@/hooks/use-checkpoint";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
-import type { ChatMessage } from "@/lib/types";
+import type { CareerPathResponse, ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
 import { generateUUID } from "@/lib/utils";
 import { greetingMessageParts } from "./greeting";
@@ -26,7 +26,7 @@ export function Chat({
   initialMessages: ChatMessage[];
   autoResume: boolean;
   initialLastContext?: AppUsage;
-  initialReport: string;
+  initialReport: CareerPathResponse | null;
 }) {
   console.debug('[Chat] Chat component mounted', { chatId, initialMessages, autoResume, initialLastContext });
   
@@ -49,7 +49,7 @@ export function Chat({
   console.debug('[Chat] greetingAnimationDuration:', greetingAnimationDuration);
 
   const [hasSentInitialMessage, setHasSentInitialMessage] = useState(false);
-  const [finalReport, setFinalReport] = useState<string>(initialReport);
+  const [finalReport, setFinalReport] = useState<CareerPathResponse | null>(initialReport);
   const isReportFree = process.env.NEXT_PUBLIC_IS_REPORT_PURCHASABLE === "false";
 
   useEffect(() => {
@@ -152,7 +152,7 @@ export function Chat({
                 }
               }
 
-              if (chunk.type === 'final') {
+              if (chunk.type === 'final') { 
                 if (chunk.finalReport && (chunk.finalReport as string).startsWith("Error")) {
                   throw new Error("An unexpected finalReport was received.");
                 } else {
@@ -290,7 +290,7 @@ export function Chat({
   console.debug('[Chat] shouldShowResumeBanner:', shouldShowResumeBanner);
 
   return (
-    <div className="min-w-0 touch-pan-y bg-transparent pt-[42px]">
+    <div className="min-w-0 touch-pan-y bg-transparent pt-[42px] h-full flex flex-col flex-1">
       {shouldShowResumeBanner && (
         <div className="py-2 text-sm border-b border-primary/20 text-primary">
           <div className="flex items-center justify-between px-4 mx-auto md:px-6 md:max-w-4xl">
@@ -306,7 +306,7 @@ export function Chat({
 
       {isReportFree && finalReport && (
         <div className="fixed z-10 rounded-md top-1.5 right-11">
-          <DownloadReportButton markdownContent={finalReport} />
+          <DownloadReportButton report={finalReport} />
         </div>
       ) }
 

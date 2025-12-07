@@ -14,7 +14,7 @@ export default async function LandingPage() {
         {/* Hero Section */}
         <section className="relative flex justify-center min-h-screen p-2 bg-gradient-primary-glow md:items-center sm:px-6 lg:px-8 snap-start md:snap-none">
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-background" />
-          <div className="relative z-10 max-w-md sm:max-w-[80%] mx-auto text-center space-y-8 animate-slide-up mt-20 md:mt-0">
+          <div className="relative max-w-md sm:max-w-[80%] mx-auto text-center space-y-8 animate-slide-up mt-20 md:mt-0">
             <div className="space-y-4 cursor-default md:pt-4">
               <div className="items-center hidden gap-2 px-4 py-2 mb-0 md:inline-flex text-warning">
                 <Logo size="md" />

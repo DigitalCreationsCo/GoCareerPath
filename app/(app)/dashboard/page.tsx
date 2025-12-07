@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { getTeamForUser, getActivityLogs } from '@/lib/db/queries/user';
-import { getLatestReportForUser } from '@/lib/db/queries/dashboard';
+import { getLatestReportForUser, getUserReports } from '@/lib/db/queries/dashboard';
 import { TeamDataWithMembers, ActivityType } from '@/lib/types';
 import {
   Settings,
@@ -261,9 +261,17 @@ export default async function DashboardPage() {
       </div>
     );
   } else {
-    const report = await getLatestReportForUser(session.user.id!);
+    const reports = await getUserReports(session.user.id!);
 
-    if (!report) return null;
+    if (reports.length === 0) {
+      redirect('/chat');
+    }
+
+    const report = reports.sort((a, b) => {
+        const dateA = new Date((a.metadata as any).generated_at || (a.metadata as any).createdAt || 0).getTime();
+        const dateB = new Date((b.metadata as any).generated_at || (b.metadata as any).createdAt || 0).getTime();
+        return dateB - dateA;
+    })[0];
 
     return (
       <div className="container relative px-4 mx-auto space-y-6">

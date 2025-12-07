@@ -47,7 +47,7 @@ export default async function LandingPage() {
                   size="xl"
                   className='w-full relative py-4 max-w-sm'
                 >
-                  <div className='z-10'>{ isPurchaseable && `Get 4 AI-resistant roles for $29 (one-time)` || `Get My Career Path Report` }</div>
+                  <div>{ isPurchaseable && `Get 4 AI-resistant roles for $29 (one-time)` || `Get My Career Path Report` }</div>
                   {/* <Badge className="absolute stroke-warning stroke-2 fill-destructive right-9 bottom-0" size={ 80 } /> */ }
                 </Button>
               </Link>
@@ -57,7 +57,7 @@ export default async function LandingPage() {
 
         <section className="relative px-4 pt-20 pb-32 sm:px-6 lg:px-20 bg-gradient-primary-glow snap-start md:snap-none">
           <div className="absolute inset-0 bg-gradient-to-b from-background/90 from-[1%] to-background" />
-          <div className="relative z-10 max-w-3xl lg:max-w-full mx-auto space-y-8 text-center">
+          <div className="relative max-w-3xl lg:max-w-full mx-auto space-y-8 text-center">
             <div>
               <h2 className="mb-3 heading">
                 <span className="text-transparent bg-gradient-warning bg-clip-text">
@@ -72,43 +72,45 @@ export default async function LandingPage() {
               <h3 className="mb-2 text-xl heading sm:text-2xl">
                 How Your Career Path Report Is <span className="text-accent">Personalized</span>
               </h3>
-              <ul className="grid max-w-2xl border lg:max-w-full gap-3 mx-auto mt-5 text-left md:grid-cols-2 lg:grid-cols-5 text-muted-foreground">
-                <li className="flex lg:flex-col items-start gap-3">
+              <div className='carousel-container'>
+                <ul className="carousel-ul cursor-default grid max-w-2xl lg:max-w-full gap-3 mx-auto mt-5 text-left md:grid-cols-2 lg:grid-cols-5 text-muted-foreground">
+                  <li className="carousel-item flex lg:flex-col items-center gap-3 hover:scale-102">
                   <span className="mt-1 text-lg">🌎</span>
                   <div>
                     <span className="text-foreground">Location</span>
                     <div>Find roles growing in your region or country—faster interviews, fewer dead ends.</div>
                   </div>
                 </li>
-                <li className="flex lg:flex-col items-start gap-3">
+                  <li className="carousel-item flex lg:flex-col items-center gap-3 hover:scale-102">
                   <span className="mt-1 text-lg lg:text-4xl">🎓</span>
                   <div>
                     <span className="text-foreground">Experience Level</span>
                     <div>Match into realistic, in-demand roles that align with your background.</div>
                   </div>
                 </li>
-                <li className="flex lg:flex-col items-start gap-3">
+                  <li className="carousel-item flex lg:flex-col items-center gap-3 hover:scale-102">
                   <span className="mt-1 text-lg lg:text-4xl">🛠️</span>
                   <div>
                     <span className="text-foreground">Transferable Skills</span>
                     <div>Understand exactly how your current skills translate into stronger opportunities.</div>
                   </div>
                 </li>
-                <li className="flex lg:flex-col items-start gap-3">
+                  <li className="carousel-item flex lg:flex-col items-center gap-3 hover:scale-102">
                   <span className="mt-1 text-lg lg:text-4xl">💰</span>
                   <div>
                     <span className="text-foreground">Salary Goals</span>
                     <div>Explore career paths that meet or exceed your earning targets.</div>
                   </div>
                 </li>
-                <li className="flex lg:flex-col items-start gap-3 md:col-span-2 lg:col-span-1">
+                  <li className="carousel-item flex lg:flex-col items-center gap-3 hover:scale-102 md:col-span-2 lg:col-span-1">
                   <span className="mt-1 text-lg lg:text-4xl">🎯</span>
                   <div>
                     <span className="text-foreground">Personal Ambitions</span>
                     <div>Your interests, strengths, and timeline inform every recommendation.</div>
                   </div>
                 </li>
-              </ul>
+                </ul>
+              </div>
               <div className="mt-8 space-y-6">
                 <p className="mx-auto subtitle md:max-w-2xl">
                   Your report is custom-built—no generic templates. Pivot with confidence.
@@ -135,8 +137,8 @@ export default async function LandingPage() {
               <p className="mx-auto subtitle md:max-w-2xl">
                 A personalized career report saves months of uncertainty and helps you pivot efficiently into work that stays strong in the AI era.
               </p>
-              <ul className="grid max-w-2xl gap-4 mx-auto mt-5 text-left md:grid-cols-2 text-muted-foreground">
-                <li className="flex items-start gap-3">
+              <ul className="cursor-default grid max-w-2xl gap-4 mx-auto mt-5 text-left md:grid-cols-2 text-muted-foreground">
+                <li className="card flex items-start gap-3 p-4 transition hover:-translate-y-1">
                   <span className="mt-1 text-lg">⚡</span>
                   <div>
                     <span className="text-foreground">Avoid High-Risk Roles</span>
@@ -145,7 +147,7 @@ export default async function LandingPage() {
                     </div>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="card flex items-start gap-3 p-4 transition hover:-translate-y-1 bg-gradient-card">
                   <span className="mt-1 text-lg">🚀</span>
                   <div>
                     <span className="text-foreground">Step-by-Step Action Plan</span>
@@ -154,14 +156,14 @@ export default async function LandingPage() {
                     </div>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="card flex items-start gap-3 p-4 transition hover:-translate-y-1 bg-gradient-card">
                   <span className="mt-1 text-lg">🔒</span>
                   <div>
                     <span className="text-foreground">Increase Career Stability</span>
                     <div>The right role today protects you from displacement tomorrow.</div>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="card flex items-start gap-3 p-4 transition hover:-translate-y-1 bg-gradient-card">
                   <span className="mt-1 text-lg">🎯</span>
                   <div>
                     <span className="text-foreground">Skip Guesswork</span>
@@ -196,29 +198,29 @@ export default async function LandingPage() {
                 Every personalized Career Path Report includes:
               </p>
             </div>
-            <ul className="grid max-w-2xl gap-4 mx-auto text-left md:grid-cols-2">
-              <li className="p-4 transition rounded-lg hover:bg-gradient-to-r hover:from-pink-200/40 hover:to-blue-100/30">
+            <ul className="cursor-default grid max-w-2xl gap-4 mx-auto text-left md:grid-cols-2">
+              <li className="p-4 transition rounded-lg hover:bg-gradient-to-r hover:from-pink-200/40 hover:to-blue-100/30 hover:shadow-sm hover:-translate-y-1">
                 <span className='text-2xl'>🎯</span>{' '}
                 <span>Custom Career Strategy</span>
                 <p className="mt-1 ml-1 text-muted-foreground">
                   A structured roadmap showing how to transition into 4 AI-resistant roles.
                 </p>
               </li>
-              <li className="p-4 transition rounded-lg hover:bg-gradient-to-l hover:from-indigo-200/30 hover:to-purple-100/30">
+              <li className="p-4 transition rounded-lg hover:bg-gradient-to-l hover:from-indigo-200/30 hover:to-purple-100/30 hover:shadow-sm hover:-translate-y-1">
                 <span className='text-2xl'>📚</span>{' '}
                 <span>Skills Gap Analysis</span>
                 <p className="mt-1 ml-1 text-muted-foreground">
                   Identify the exact skills you must strengthen with time estimates to complete them.
                 </p>
               </li>
-              <li className="p-4 transition rounded-lg hover:bg-gradient-to-r hover:from-green-200/20 hover:to-blue-100/20">
+              <li className="p-4 transition rounded-lg hover:bg-gradient-to-r hover:from-green-200/20 hover:to-blue-100/20 hover:shadow-sm hover:-translate-y-1">
                 <span className='text-2xl'>🚀</span>{' '}
                 <span>30-Day Sprint</span>
                 <p className="mt-1 ml-1 text-muted-foreground">
                   A daily mini-action plan that builds confidence and progress quickly.
                 </p>
               </li>
-              <li className="p-4 transition rounded-lg hover:bg-gradient-to-l hover:from-yellow-100/40 hover:to-pink-100/20">
+              <li className="p-4 transition rounded-lg hover:bg-gradient-to-l hover:from-yellow-100/40 hover:to-pink-100/20 hover:shadow-sm hover:-translate-y-1">
                 <span className='text-2xl'>💼</span>{' '}
                 <span>Hiring Scripts & Outreach Templates</span>
                 <p className="mt-1 ml-1 text-muted-foreground">
