@@ -73,6 +73,7 @@ npm install
 # env
 cp .env.example .env
 # set LLM_PROVIDER, LLM_API_KEY, TAVILY_API_KEY, MCP_ENDPOINT, NEXT_PUBLIC_VERCEL_URL, etc.
+# Note: Sample data is no longer used for database seeding.
 
 # dev
 npm run dev        # Next.js dev server
