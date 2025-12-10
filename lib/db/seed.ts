@@ -1,4 +1,3 @@
-import { SAMPLE_DATA } from '@/lib/sample-data';
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
 import { users, teams, teamMembers, reports } from '@/lib/db/schema';
@@ -76,7 +75,8 @@ async function seed() {
   });
 
   console.debug('Seeding reports...');
-  await db.insert(reports).values(SAMPLE_DATA);
+  console.debug('Seed data not available. DB not seeded. Continuing....')
+  // await db.insert(reports).values(SAMPLE_DATA);
 
   console.debug('Seeding Stripe products and prices...');
   await createStripeProducts();

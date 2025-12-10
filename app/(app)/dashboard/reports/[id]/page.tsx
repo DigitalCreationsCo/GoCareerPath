@@ -4,7 +4,6 @@ import CareerPathReport from '@/components/report';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { SAMPLE_DATA } from '@/lib/sample-data';
 
 type ReportPageProps = {
   params: Promise<{

@@ -4,7 +4,6 @@ import { auth } from '@/auth';
 import { FullReport } from '@/components/report/full-report';
 import { ReportEmail } from '@/components/emails/report-email/report-email';
 import { CareerPathResponseSchema } from '@/lib/zod-schemas';
-import ReactDOMServer from 'react-dom/server';
 import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import React from 'react';
@@ -40,6 +39,7 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const reportData = CareerPathResponseSchema.parse(body.report);
 
+        const ReactDOMServer = (await import('react-dom/server')).default
         const reportHtml = ReactDOMServer.renderToStaticMarkup(React.createElement(FullReport, { report: reportData }));
 
         browser = await getBrowser();
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         await resend.emails.send({
             from: 'GoCareerPath <noreply@gocareerpath.com>',
             to: session.user.email,
-            subject: 'Your Career Path Report is Ready!',
+            subject: 'Your Career Path Report is Ready',
             html: emailHtml,
             attachments: [
                 {

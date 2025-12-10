@@ -58,6 +58,6 @@ export default async function ChatPage({
   // ];
 
   return (
-    <ClientChatWrapper initialMessages={ initialMessages } finalReport={ finalReport } />
+    <ClientChatWrapper initialMessages={ initialMessages } finalReport={ JSON.parse(finalReport) } />
   );
 }
