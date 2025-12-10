@@ -27,127 +27,27 @@ You are strictly limited to the following actions:
 
 ## Changed Files
 ```
-'.vscode/launch.jsonn''components/messages.tsxn''design-system/Header.tsxn''lib/deepResearcher/actions/finalReportGeneration.tsn''lib/deepResearcher/configuration.tsn''lib/deepResearcher/llmUtils.tsn''next.config.jsn'```
+'README.mdn'```
 
 ## Code Changes
 ```diff
-diff --git a/.vscode/launch.json b/.vscode/launch.json
-index 40d32d0..de2257b 100644
---- a/.vscode/launch.json
-+++ b/.vscode/launch.json
-@@ -23,18 +23,34 @@
-             "name": "Next.js: debug full stack",
-             "type": "node",
-             "request": "launch",
--            "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
--            "runtimeArgs": ["--inspect"],
--            "skipFiles": ["<node_internals>/**"],
--            "outFiles": [
--                "${workspaceFolder}/**/*.js"
-+            "program": "${workspaceFolder}/node_modules/.bin/next",
-+            "args": [
-+                "dev"
-+            ],
-+            "runtimeArgs": [
-+                "--inspect"
-+            ],
-+            "env": {
-+                "__NEXT_DISABLE_TURBOPACK": "1"
-+            },
-+            "cwd": "${workspaceFolder}",
-+            "sourceMaps": true,
-+            "skipFiles": [
-+                "<node_internals>/**",
-+                "node_modules/**"
-+            ],
-+            "console": "integratedTerminal",
-+            "internalConsoleOptions": "neverOpen",
-+            "resolveSourceMapLocations": [
-+                "${workspaceFolder}/**",
-+                "!**/node_modules/**"
-             ],
-             "serverReadyAction": {
--              "action": "debugWithChrome",
--              "killOnServerStop": true,
--              "pattern": "- Local:.+(https?://.+)",
--              "uriFormat": "%s",
--              "webRoot": "${workspaceFolder}"
-+                "action": "debugWithChrome",
-+                "killOnServerStop": true,
-+                "pattern": "- Local:.+(https?://.+)",
-+                "uriFormat": "%s",
-+                "webRoot": "${workspaceFolder}"
-             }
-         }
-     ]
-diff --git a/components/messages.tsx b/components/messages.tsx
-index 99e30f4..5158939 100644
---- a/components/messages.tsx
-+++ b/components/messages.tsx
-@@ -57,7 +57,7 @@ function PureMessages({
-       style={{ overflowAnchor: "none" }}
-     >
-       <Conversation className="flex flex-col w-full min-w-0 gap-4 mx-auto md:gap-6">
--        <ConversationContent className="flex flex-col max-w-3xl gap-4 px-2 py-4 mx-auto md:gap-4 md:px-4">
-+        <ConversationContent className="flex flex-col max-w-4xl gap-4 px-4 py-4 mx-auto md:gap-4 md:px-6">
-           {messages.map((message, index) => {
-             const delay = isShowingGreeting ? greetingDelays[index] : 0;
-             return (
-diff --git a/design-system/Header.tsx b/design-system/Header.tsx
-index 32eb88f..5b918d1 100644
---- a/design-system/Header.tsx
-+++ b/design-system/Header.tsx
-@@ -101,7 +101,7 @@ function UserMenu({ session }: any) {
+diff --git a/README.md b/README.md
+index 9a0bb5f..03090e8 100644
+--- a/README.md
++++ b/README.md
+@@ -73,6 +73,7 @@ npm install
+ # env
+ cp .env.example .env
+ # set LLM_PROVIDER, LLM_API_KEY, TAVILY_API_KEY, MCP_ENDPOINT, NEXT_PUBLIC_VERCEL_URL, etc.
++# Note: Sample data is no longer used for database seeding.
  
- export function Header({ session }: any) {
-   return (
--    <header className="fixed top-0 z-[10] h-[52px] w-full transition-all duration-300 mask-b-from-0% backdrop-blur-md bg-transparent md:block">
-+    <header className="fixed top-0 z-[10] h-[52px] w-full transition-all duration-300 backdrop-blur-md bg-transparent md:block">
-       <div className="flex items-center justify-between px-3 pt-2 mx-auto">
-         <Link href="/" className="flex items-center">
-           <div className='hidden'>
-diff --git a/lib/deepResearcher/actions/finalReportGeneration.ts b/lib/deepResearcher/actions/finalReportGeneration.ts
-index 32a8714..f872c32 100644
---- a/lib/deepResearcher/actions/finalReportGeneration.ts
-+++ b/lib/deepResearcher/actions/finalReportGeneration.ts
-@@ -176,4 +176,4 @@ export async function finalReportGeneration(
-             notes: []
-         }
-     });
--}
-\ No newline at end of file
-+}
-diff --git a/lib/deepResearcher/configuration.ts b/lib/deepResearcher/configuration.ts
-index 8e0873c..67ca56f 100644
---- a/lib/deepResearcher/configuration.ts
-+++ b/lib/deepResearcher/configuration.ts
-@@ -553,4 +553,4 @@ export class ModelSelector {
-   }
- }
+ # dev
+ npm run dev        # Next.js dev server
+@@ -163,4 +164,4 @@ Agents should output JSON matching your configured schema.
  
--export const configurableModel = new ModelSelector();
+ MIT
+ 
+----
++---
 \ No newline at end of file
-+export const configurableModel = new ModelSelector();
-diff --git a/lib/deepResearcher/llmUtils.ts b/lib/deepResearcher/llmUtils.ts
-index f53247e..8467db8 100644
---- a/lib/deepResearcher/llmUtils.ts
-+++ b/lib/deepResearcher/llmUtils.ts
-@@ -992,4 +992,4 @@ export function getTodayStr(): string {
-     "Dec",
-   ];
-   return `${days[now.getDay()]} ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
--}
-\ No newline at end of file
-+}
-diff --git a/next.config.js b/next.config.js
-index 241c96f..0def435 100644
---- a/next.config.js
-+++ b/next.config.js
-@@ -1,5 +1,6 @@
- /** @type {import('next').NextConfig} */
- const nextConfig = {
-+  productionBrowserSourceMaps: true,
-   experimental: {
-     clientSegmentCache: true,
-   },
 ```
