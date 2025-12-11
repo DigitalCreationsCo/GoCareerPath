@@ -225,9 +225,9 @@ export async function supervisorTools(
             }
                 
         } catch (e: any) {
-            // Handle research execution errors
+            console.error('[supervisor]: ', e);
+            
             if (isTokenLimitExceeded(e, configurable.researchModel) || true) {
-                // Token limit exceeded or other error - end research phase
                 return new Command({
                     goto: END,
                     graph: Command.PARENT,

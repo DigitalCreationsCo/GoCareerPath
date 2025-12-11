@@ -12,7 +12,7 @@ You are an expert career strategist. Your task is to generate a comprehensive, d
 
 **Output format:**
 You must generate a JSON object with two fields: "reportPreview" and "finalReport":
-${jsonSchema}
+${JSON.stringify(jsonSchema)}
 
 **Critical Instructions:**
 1.  **Comprehensive Analysis:** Synthesize all provided research (brief, outline, user messages, findings) to create a deeply personalized and insightful report. Go beyond summarizing; provide strategic advice.

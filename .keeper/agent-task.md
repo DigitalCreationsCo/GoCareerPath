@@ -27,27 +27,21 @@ You are strictly limited to the following actions:
 
 ## Changed Files
 ```
-'README.mdn'```
+'app/(app)/chat/[chatId]/page.tsxn'```
 
 ## Code Changes
 ```diff
-diff --git a/README.md b/README.md
-index 9a0bb5f..03090e8 100644
---- a/README.md
-+++ b/README.md
-@@ -73,6 +73,7 @@ npm install
- # env
- cp .env.example .env
- # set LLM_PROVIDER, LLM_API_KEY, TAVILY_API_KEY, MCP_ENDPOINT, NEXT_PUBLIC_VERCEL_URL, etc.
-+# Note: Sample data is no longer used for database seeding.
+diff --git a/app/(app)/chat/[chatId]/page.tsx b/app/(app)/chat/[chatId]/page.tsx
+index c241702..54b684a 100644
+--- a/app/(app)/chat/[chatId]/page.tsx
++++ b/app/(app)/chat/[chatId]/page.tsx
+@@ -58,6 +58,6 @@ export default async function ChatPage({
+   // ];
  
- # dev
- npm run dev        # Next.js dev server
-@@ -163,4 +164,4 @@ Agents should output JSON matching your configured schema.
- 
- MIT
- 
-----
-+---
+   return (
+-    <ClientChatWrapper initialMessages={ initialMessages } finalReport={ JSON.parse(finalReport) } />
++    <ClientChatWrapper initialMessages={ initialMessages } finalReport={ null } />
+   );
+ }
 \ No newline at end of file
 ```
